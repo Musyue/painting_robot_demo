@@ -228,7 +228,7 @@ class AuboTrajectory():
 def main():
     ratet=1
     IP=rospy.get_param('aubo_ip')
-    StartPoint=rospy.set_param('aubo_start_point', [-3.3364,12.406,-81.09,-91.207,-86.08,0.164])#(-3.3364,12.406,-81.09,-91.207,-86.08,0.164)
+    StartPoint=rospy.set_param('aubo_start_point', [-3.07,-2.094,80.07,64.0747,95.11,89.98])#(-3.3364,12.406,-81.09,-91.207,-86.08,0.164)
     StartPoint=tuple(rospy.get_param('aubo_start_point'))
     Sector_Length=rospy.get_param('sector_length')#0.8 #m
     Sector_Width=rospy.get_param('sector_width')#0.2 #m
@@ -258,11 +258,11 @@ def main():
             Left_Right_Flag =rospy.get_param('left_right_flag')#1
             open_aubo_oprea_flag=rospy.get_param('open_aubo_oprea_flag')
             if open_aubo_oprea_flag==1:
-                    Aub.Spray_Painting_Cartesian_Sector_Planning(Robot,StartPoint,Sector_Length,Sector_Width,Sector_Nums,Left_Right_Flag)
-                    #Aub.DisConnect_Aubo(Robot)
-                    time.sleep(4)
-                    print("Sleep time is over,then climb robot goes to initial point")
-
+                Aub.Spray_Painting_Cartesian_Sector_Planning(Robot,StartPoint,Sector_Length,Sector_Width,Sector_Nums,Left_Right_Flag)
+                #Aub.DisConnect_Aubo(Robot)
+                time.sleep(10)
+                print("Sleep time is over,then climb robot goes to initial point")
+                rospy.set_param('open_aubo_oprea_flag',0)
             else:
                     print("Please wait Mobile platform waypoint over")
             rate.sleep()

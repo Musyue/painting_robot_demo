@@ -4,18 +4,18 @@
   <group ns="aubo_pkg_para">
 
     <!--set /climb_pkg_para/close all 3dof driver-->
-    <param name="aubo_ip" value='192.168.1.11'>
+    <param name="aubo_ip" value='192.168.1.11'/>
     <!-- <param name="aubo_start_point" value='(-3.3364,12.406,-81.09,-91.207,-86.08,0.164)'> -->
     <!--set /climb_pkg_para/close all 3dof driver-->
-    <param name="sector_length" value="0.8">
-    <param name="sector_width" value="0.2">
-    <param name="sector_nums" value="4">
-    <param name="left_right_flag" value="1">
-    <param name="painting_oprea_over" value="0">
+    <param name="sector_length" value="0.5"/>
+    <param name="sector_width" value="0.2"/>
+    <param name="sector_nums" value="4"/>
+    <param name="left_right_flag" value="1"/>
+    <param name="painting_oprea_over" value="0"/>
     
-    <param name="auboworkspacelen" value="1.1">
-    <param name="auboWorkspacewidth" value="0.7">
-    <param name="open_aubo_oprea_flag" value="0">
+    <param name="auboworkspacelen" value="1.1"/>
+    <param name="auboWorkspacewidth" value="0.7"/>
+    <param name="open_aubo_oprea_flag" value="1"/>
     <node pkg="painting_robot_demo" type="aubo_sector_control.py" name="aubo_sector_control" output="screen" >
     </node>
     

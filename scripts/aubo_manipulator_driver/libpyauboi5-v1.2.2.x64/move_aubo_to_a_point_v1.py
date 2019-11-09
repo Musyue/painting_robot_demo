@@ -120,7 +120,7 @@ def main_1(test_count):
                 # robot.set_end_max_line_velc(0.2)
                 robot.set_end_max_line_velc(0.5)
                 #2.201483051543076, 0.6007801690465803, -1.6538903718214268, -2.254670466743149, -0.6306866810367909, -5.986492283682916e-08
-                joint_radian = deg_to_rad((10.3,3.6,-89.9,-91.2,-86.04,0.15))#((0,0,0,0,0,0))
+                joint_radian = deg_to_rad((-3.3364,12.406,-81.09,-91.207,-86.08,0.164))#((0,0,0,0,0,0))
                 #logger.info("move joint to {0}".format(joint_radian))
                 robot.move_joint(joint_radian)
 
