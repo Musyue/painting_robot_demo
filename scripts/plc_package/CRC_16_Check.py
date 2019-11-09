@@ -83,6 +83,7 @@ class RobotCRC16:
         str2=str(hex(self.CRC16_PY(array)))[2:]
         # print str1
         # print str2
+        str2=str2.zfill(len(str2)+4-len(str2))
         # print(str1+str2)
         return str1+str2
 def main():
@@ -94,10 +95,10 @@ def main():
     array5=[0x03,0x06,0x00,0x02,0x00,0x64]
     array6=[0x03,0x03,0x00,0x00,0x00,0x02]
     array7=[0x03,0x20,0x10,0x01,0x05]
-    array8=[0x04,0x03,0x00,0x0B,0x00,0x01]
-    array9=[0x01,0x03,0x00,0x05,0x00,0x01]
+    array8=[0x04,0x06,0x00,0x32,0x00,0x01]#04 06 00 14 00 01
+    array9=[0x04,0x06,0x00,0x32,0x00,0x01]#04 06 00 32 00 01
     # k=[3, 6, 0, 0, 0, 1]
-    print(climb.Combining_CRC_and_info(array9),type(climb.Combining_CRC_and_info(array9)))
+    print(climb.Combining_CRC_and_info(array8),type(climb.Combining_CRC_and_info(array8)))
     # array3 = [str(hex(x))[2:].zfill(2) for x in array1]
     # print array3,"".join(array3)
     # array2 = ["{:x}".format(x) for x in array1]

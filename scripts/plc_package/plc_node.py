@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python
 # -*- coding: utf_8 -*-
 import rospy
@@ -6,10 +5,9 @@ import sys
 import binascii
 import inspect
 import serial
-import commands
 import time
-from src.painting_robot_demo.scripts.plc_package.CRC_16_Check import *
-from src.painting_robot_demo.scripts.plc_package.plc_command import *
+from CRC_16_Check import *
+from plc_command import *
 from textwrap import wrap
 from std_msgs.msg import String,UInt64MultiArray
 
@@ -30,7 +28,9 @@ class PLCPKG:
         :param message: String "010600000001480A" or "01 06 00 00 00 01 48 0A"
         :return: int list
         """
+        print("message",message)
         message_bytes = message.replace(" ",'').decode('hex')
+        print("message_bytes",message_bytes)
         # print str(hex(message_bytes))
         ser.write(message_bytes)
         ser.flushInput()
@@ -62,7 +62,7 @@ def main():
         open_serial_port_again_flag=1
 
     count=0
-    rate = rospy.Rate(10)
+    rate = rospy.Rate(1)
     while not rospy.is_shutdown():
         plc_port_ok_flag = rospy.get_param("plc_port_ok_flag")
         rospy.loginfo("%s is %s", rospy.resolve_name('plc_port_ok_flag'), plc_port_ok_flag)
@@ -122,20 +122,26 @@ def main():
         if open_serial_port_again_flag!=1 and plc_port_ok_flag==1:
             # read line encode data
             read_line_encode_data,line_encode_str=plcpkg.Send_message_to_port(ser,plcpkg.crc16.Combining_CRC_and_info(plcpkg.plccmd.READ_LINE_ENCODE))
-            if len(read_line_encode_data)!=0:
-                rospy.set_param('read_line_encode', read_line_encode_data)
+            rospy.loginfo("-------read line %s-%s",read_line_encode_data,line_encode_str)
+            if len(read_line_encode_data)!=0 and read_line_encode_data[0]==4:
+                rospy.set_param('read_line_encode', read_line_encode_data[4]/100.0)
             # read  read_limit_switch_status
             read_limit_switch_status_data,read_limit_switch_status_str=plcpkg.Send_message_to_port(ser,plcpkg.crc16.Combining_CRC_and_info(plcpkg.plccmd.READ_LIMIT_SWITCH_STATUS))
-            if len(read_limit_switch_status_data)!=0:
-                rospy.set_param('read_limit_switch_status', read_limit_switch_status_data)
-                rospy.set_param('top_limit_switch_status', read_limit_switch_status_data[2])#here wait for affirm
-                rospy.set_param('mid_limit_switch_status', read_limit_switch_status_data[1])
-                rospy.set_param('bottom_limit_switch_status', read_limit_switch_status_data[0])
             
+            if len(read_limit_switch_status_data)!=0 and read_limit_switch_status_data[4]!=0:
+                read_limit_status_data=bin(read_limit_switch_status_data[4])[2:]
+                read_limit_status_data=read_limit_status_data.zfill(len(read_limit_status_data)+3-len(read_limit_status_data))
+                rospy.loginfo("read_limit_status_data------%s",read_limit_status_data)
+                rospy.set_param('read_limit_switch_status', read_limit_switch_status_data[4])
+                rospy.set_param('top_limit_switch_status', int(list(read_limit_status_data)[0]))#here wait for affirm
+                rospy.set_param('mid_limit_switch_status', int(list(read_limit_status_data)[1]))
+                rospy.set_param('bottom_limit_switch_status', int(list(read_limit_status_data)[2]))
+                # rospy.logerr("-------read limit switch %s-%d",read_limit_switch_status_data,int(list(read_limit_status_data)[2]))
             # read line encode data
             read_echos_status_data,read_echos_status_str=plcpkg.Send_message_to_port(ser,plcpkg.crc16.Combining_CRC_and_info(plcpkg.plccmd.READ_ECHOS_STATUS))
             if len(read_echos_status_data)!=0:
-                rospy.set_param('read_echos_status', read_echos_status_data)
+                rospy.set_param('read_echos_status', read_echos_status_data[4])
+            # rospy.logerr("-------read echos %s-%s",read_echos_status_data,read_echos_status_str)
             
             # write_front_light_open_forever
             #light
@@ -161,6 +167,7 @@ def main():
                 plcpkg.Send_message_to_port(ser,plcpkg.crc16.Combining_CRC_and_info(plcpkg.plccmd.WRITE_MOBILE_PLATFORM_BRAKE_OPEN))
             #electric sitwch
             if write_electric_switch_painting_close==2:
+                rospy.logerr("in electric----")
                 plcpkg.Send_message_to_port(ser,plcpkg.crc16.Combining_CRC_and_info(plcpkg.plccmd.WRITE_ELECTRIC_SWITCH_PAINTING_CLOSE))
             if write_electric_switch_painting_open==1:
                 plcpkg.Send_message_to_port(ser,plcpkg.crc16.Combining_CRC_and_info(plcpkg.plccmd.WRITE_ELECTRIC_SWITCH_PAINTING_OPEN))         
