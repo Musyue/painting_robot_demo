@@ -1,24 +1,52 @@
 <launch>
 
   <!-- set /global_example parameter -->  
-  <group ns="search_port">
+  <group ns="plc_pkg_para">
+    <!--set /plc_pkg_para/top_limit_switch_status-->
+    <param name="top_limit_switch_status" value="0" />
+    <!--set /plc_pkg_para/mid_limit_switch_status-->
+    <param name="mid_limit_switch_status" value="0">
+    <!--set /plc_pkg_para/bottom_limit_switch_status-->
+    <param name="bottom_limit_switch_status" value="0">
+    <param name="climb_distance_tracking_over" value="0">
 
-    <!-- set /search_port/imu_port -->
-    <param name="imu_port" value="/dev/ttyUSB0" />
-    <!-- set /search_port/imu_port_baudrate -->
-    <param name="imu_port_baudrate" value="115200" />
+    <param name="rotation_distance_tracking_over" value="0">
 
-    <!-- set /search_port/plc_port -->
-    <param name="plc_port" value="/dev/ttyUSB1" />
-    <!-- set /search_port/plc_port_baudrate -->
-    <param name="plc_port_baudrate" value="115200" />
-    <!-- set /search_port/plc_modbussearchcmd -->
-    <param name="plc_port_search_cmd" value="010300050001940b" />
-    <!-- set /search_port/3dof_port -->
-    <param name="climb_port" value="/dev/ttyUSB2" />
-    <!-- set /search_port/imu_port_baudrate -->
-    <param name="climb_port_baudrate" value="19200" />
+    <!--the below ones are written by zy-->
+    <!--set /plc_pkg_para/test_plc_communication-->
+    <param name="test_plc_communication" value="0" />
+    <!--set /plc_pkg_para/read_line_encode-->
+    <param name="read_line_encode" value="0">
+    <!--set /plc_pkg_para/read_limit_switch_status-->
+    <param name="read_limit_switch_status" value="0">
+    <!--set /plc_pkg_para/read_echos_status-->
+    <param name="read_echos_status" value="0">
 
+    <!--set /plc_pkg_para/write_front_light_open_forever 1-->
+    <param name="write_front_light_open_forever" value="00">
+    <!--set /plc_pkg_para/write_front_light_fast_blink 2-->
+    <param name="write_front_light_fast_blink" value="00">
+    <!--set /plc_pkg_para/write_front_light_slow_blink 3-->
+    <param name="write_front_light_slow_blink" value="00">
+    <!--set /plc_pkg_para/write_front_lingth_close 4-->
+    <param name="write_front_lingth_close" value="00">
+
+    <!--set /plc_pkg_para/write_flex_pole_motor_close 1-->
+    <param name="write_flex_pole_motor_close" value="00">
+    <!--set /plc_pkg_para/write_flex_pole_motor_up-->
+    <param name="write_flex_pole_motor_up" value="00">
+    <!--set /plc_pkg_para/write_flex_pole_motor_down-->
+    <param name="write_flex_pole_motor_down" value="00">
+
+    <!--set /plc_pkg_para/write_mobile_platform_brake_close-->
+    <param name="write_mobile_platform_brake_close" value="0">
+    <!--set /plc_pkg_para/write_mobile_platform_brake_open-->
+    <param name="write_mobile_platform_brake_open" value="00">
+
+    <!--set /plc_pkg_para/write_electric_switch_painting_close-->
+    <param name="write_electric_switch_painting_close" value="00">
+    <!--set /plc_pkg_para/write_electric_switch_painting_open-->
+    <param name="write_electric_switch_painting_open" value="00">
 
     <node pkg="painting_robot_demo" type="Plc_node.py" name="Plc_node" output="screen" >
     
@@ -27,3 +55,4 @@
   </group>
   
 </launch>
+

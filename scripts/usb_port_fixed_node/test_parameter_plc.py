@@ -20,7 +20,7 @@ def param_talker():
     # fetch the utterance parameter from our parent namespace
     utterance = rospy.get_param('utterance')
     rospy.loginfo("%s is %s", rospy.resolve_name('utterance'), utterance)
-    
+    print(tuple(utterance))
     # fetch topic_name from the ~private namespace
     topic_name = rospy.get_param('~topic_name')
     rospy.loginfo("%s is %s", rospy.resolve_name('~topic_name'), topic_name)
@@ -37,6 +37,7 @@ def param_talker():
     # set some parameters
     rospy.loginfo('setting parameters...')
     rospy.set_param('list_of_floats', [1., 2., 3., 4.])
+    print(rospy.get_param('list_of_floats'),type(rospy.get_param('list_of_floats')))
     rospy.set_param('bool_True', True)
     rospy.set_param('~private_bar', 1+2)
     rospy.set_param('to_delete', 'baz')
@@ -54,11 +55,11 @@ def param_talker():
     rospy.loginfo('found global_example parameter under key: %s'%param_name)
     
     # publish the value of utterance repeatedly
-    pub = rospy.Publisher(topic_name, String, queue_size=10)
-    while not rospy.is_shutdown():
-        pub.publish(utterance)
-        rospy.loginfo(utterance)
-        rospy.sleep(1)
+    # pub = rospy.Publisher(topic_name, String, queue_size=10)
+    # while not rospy.is_shutdown():
+    #     pub.publish(utterance)
+    #     rospy.loginfo(utterance)
+    #     rospy.sleep(1)
         
 if __name__ == '__main__':
     try:

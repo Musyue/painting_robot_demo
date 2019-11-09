@@ -1,0 +1,18 @@
+<launch>
+
+  <!-- set /global_example parameter -->  
+  <group ns="control_mobile_pkg_para">
+
+    <!--set /climb_pkg_para/close all 3dof driver-->
+    <param name="open_control_mobile_platform" value="0">
+    <param name="mobile_tracking_stop_flag" value="0">
+    <!--set /climb_pkg_para/close all 3dof driver-->
+    <param name="ref_velocity" value="0.1">
+
+    <node pkg="painting_robot_demo" type="mobile_control_node.py" name="mobile_control_node" output="screen" >
+    </node>
+    
+  </group>
+  
+</launch>
+

@@ -19,7 +19,11 @@
     <!-- set /search_port/imu_port_baudrate -->
     <param name="climb_port_baudrate" value="19200" />
     <!-- set /search_port/all_port_ok_flag -->
-    <param name="all_port_ok_flag" value="0" />
+    <param name="plc_port_ok_flag" value="0" />
+    <!-- set /search_port/imu_port_ok_flag -->
+    <param name="imu_port_ok_flag" value="0" />
+    <!-- set /search_port/climb_port_ok_flag -->
+    <param name="climb_port_ok_flag" value="0" />
 
     <node pkg="painting_robot_demo" type="search_usb_port_pub.py" name="search_usb_port_pub" output="screen" >
     

@@ -1,0 +1,32 @@
+<launch>
+
+  <!-- set /global_example parameter -->
+  <include file="$(find painting_robot_demo)/launch/search_usb_port.launch">
+  </include>
+  <include file="$(find painting_robot_demo)/launch/plc_node.launch">
+  </include>
+  <include file="$(find painting_robot_demo)/launch/can_node.launch">
+  </include>
+  <include file="$(find painting_robot_demo)/launch/mobile_platform_driver.launch">
+  </include>
+  <include file="$(find painting_robot_demo)/launch/climb_robot_node.launch">
+  </include>
+  <include file="$(find painting_robot_demo)/launch/aubo_control_node.launch">
+  </include>
+  <group ns="painting_pkg_para">
+
+    <param name="sector_length" value="0.8">
+    <param name="sector_width" value="0.2">
+    <param name="sector_nums" value="4">
+    <param name="left_right_flag" value="1">
+
+    <param name="auboworkspacelen" value="1.1">
+    <param name="auboWorkspacewidth" value="0.7">
+    <param name="open_aubo_oprea_flag" value="0">
+    <node pkg="painting_robot_demo" type="aubo_sector_control.py" name="aubo_sector_control" output="screen" >
+    </node>
+    
+  </group>
+  
+</launch>
+
