@@ -77,7 +77,7 @@ class Control3DOFROBOT():
         :return:
         """
         outputPulse = outputDistance/3.6
-        self.Control_3DOF_Robot(master, control_id, velocity, outputPulse)
+        self.Control_3DOF_Robot(master, control_id, velocity, -1.0*outputPulse)
 
 
     def Rotation_Robot(self, master, velocity, outputDegree, control_id=2):  # position control
@@ -90,8 +90,9 @@ class Control3DOFROBOT():
         :return:
         """
         rospy.loginfo("outputDegree: 0-360 Degree,Positive clockwise,Negtive disclockwise")
+        
         outputPulse = outputDegree / 6.5
-        self.Control_3DOF_Robot(master, control_id, velocity, outputPulse)
+        self.Control_3DOF_Robot(master, control_id, velocity, -1.0*outputPulse)
 
 
     def Climbing_Robot(self, master, velocity, outputDistance, control_id=3):  # position control
@@ -106,7 +107,7 @@ class Control3DOFROBOT():
 
         rospy.loginfo("outputDegree: 0-360 Degree,Positive down,Negtive up")
         outputPulse = outputDistance /5.6
-        self.Control_3DOF_Robot(master, control_id, velocity, outputPulse)
+        self.Control_3DOF_Robot(master, control_id, velocity, -1.0*outputPulse)
 
 
     def Read_3DOF_Controller_Buffe(self, master):
@@ -163,6 +164,9 @@ def main():
     c3dof.Init_node()
     rate = rospy.Rate(1)
     while not rospy.is_shutdown():
+        read_line_encode = rospy.get_param("read_line_encode")
+        rospy.loginfo("%s is %s", rospy.resolve_name('read_line_encode'), read_line_encode)
+    
         climb_port_ok_flag = rospy.get_param("climb_port_ok_flag")
         rospy.loginfo("%s is %s", rospy.resolve_name('climb_port_ok_flag'), climb_port_ok_flag)
 
@@ -196,6 +200,16 @@ def main():
         distance_climb_control = rospy.get_param("distance_climb_control")
         rospy.loginfo("%s is %s", rospy.resolve_name('distance_climb_control'), distance_climb_control)
 
+        top_limit_switch_status = rospy.get_param("top_limit_switch_status")
+        rospy.loginfo("%s is %s", rospy.resolve_name('top_limit_switch_status'), top_limit_switch_status)
+
+        mid_limit_switch_status = rospy.get_param("mid_limit_switch_status")
+        rospy.loginfo("%s is %s", rospy.resolve_name('mid_limit_switch_status'), mid_limit_switch_status)
+        
+        bottom_limit_switch_status = rospy.get_param("bottom_limit_switch_status")
+        rospy.loginfo("%s is %s", rospy.resolve_name('bottom_limit_switch_status'), bottom_limit_switch_status)
+
+
         if c3dof.Openmodbus_ok_flag!=1 and climb_port_ok_flag==1:
 
             if close_all_3dof_climb_driver_flag==1:
@@ -203,7 +217,21 @@ def main():
                 open_hold_flag=0
                 open_rotation_flag=0
                 open_rotation_flag=0
+            if top_limit_switch_status==1:
+                c3dof.Open_Stop_Enable_Driver(Master,1,0)
+                rospy.set_param('top_limit_switch_status',0)
 
+            if mid_limit_switch_status==1:
+                # c3dof.Open_Stop_Enable_Driver(Master,1,0)
+                # time.sleep(0.1)
+                c3dof.Open_Stop_Enable_Driver(Master,3,0)
+                rospy.set_param('mid_limit_switch_status',0)
+            if read_line_encode!=0 and read_line_encode<0.42:
+                c3dof.Open_Stop_Enable_Driver(Master,1,0)
+                # pass
+            if bottom_limit_switch_status==1:
+                c3dof.Open_Stop_Enable_Driver(Master,2,0)
+                rospy.set_param('bottom_limit_switch_status',0)
             if enable_control_stand_bar==1:
                 c3dof.Open_Stop_Enable_Driver(Master,1,1)
                 rospy.set_param('enable_control_stand_bar',0)

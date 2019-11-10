@@ -2,14 +2,17 @@
   <!-- set /global_example parameter -->  
   <group ns="search_port">
 
-    <!--set /plc_pkg_para/top_limit_switch_status-->
+    <!--set /plc_pkg_para/top_limit_switch_status 1-on -->
     <param name="top_limit_switch_status" value="0" />
-    <!--set /plc_pkg_para/mid_limit_switch_status-->
+    <!--set /plc_pkg_para/mid_limit_switch_status 1-on -->
     <param name="mid_limit_switch_status" value="0" />
-    <!--set /plc_pkg_para/bottom_limit_switch_status-->
+    <!--set /plc_pkg_para/bottom_limit_switch_status 1 on-->
     <param name="bottom_limit_switch_status" value="0" />
-    <param name="climb_distance_tracking_over" value="0" />
 
+
+    <param name="climb_distance_tracking_over" value="0" />
+    <!-- anticlockwise abs encode increase -->
+    <param name="rotation_abs_encode" value="0" />
     <param name="rotation_distance_tracking_over" value="0" />
 
     <!--the below ones are written by zy-->
@@ -31,11 +34,11 @@
     <!--set /plc_pkg_para/write_front_lingth_close 4-->
     <param name="write_front_lingth_close" value="0" />
 
-    <!--set /plc_pkg_para/write_flex_pole_motor_close 1-->
+    <!--set /plc_pkg_para/write_flex_pole_motor_close 3-->
     <param name="write_flex_pole_motor_close" value="0" />
-    <!--set /plc_pkg_para/write_flex_pole_motor_up-->
+    <!--set /plc_pkg_para/write_flex_pole_motor_up 1-->
     <param name="write_flex_pole_motor_up" value="0" />
-    <!--set /plc_pkg_para/write_flex_pole_motor_down-->
+    <!--set /plc_pkg_para/write_flex_pole_motor_down 2-->
     <param name="write_flex_pole_motor_down" value="0" />
 
     <!--set /plc_pkg_para/write_mobile_platform_brake_close-->

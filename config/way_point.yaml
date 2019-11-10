@@ -1,7 +1,7 @@
 dis_interval: 0.05
 
-points_num: 5 
-x_coordinate_list: [0.5, 1.0, 2.0, 2.0, 2.0]
-y_coordinate_list: [0.0, 0.0, 0.0, 1.0, 2.0]
-yaw_list: [0.0, 0.0, 0.0, 0.0, 0.0]
-flag_list: [true, true, false, true, true]
+points_num: 1 
+x_coordinate_list: [0.134]
+y_coordinate_list: [0.303]
+yaw_list: [3.135]
+flag_list: [true]

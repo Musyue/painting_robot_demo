@@ -28,9 +28,9 @@ class PLCPKG:
         :param message: String "010600000001480A" or "01 06 00 00 00 01 48 0A"
         :return: int list
         """
-        print("message",message)
+        # print("message",message)
         message_bytes = message.replace(" ",'').decode('hex')
-        print("message_bytes",message_bytes)
+        # print("message_bytes",message_bytes)
         # print str(hex(message_bytes))
         ser.write(message_bytes)
         ser.flushInput()
@@ -117,17 +117,18 @@ def main():
 
         write_electric_switch_painting_open = rospy.get_param("write_electric_switch_painting_open")
         rospy.loginfo("%s is %s", rospy.resolve_name('write_electric_switch_painting_open'), write_electric_switch_painting_open)
-
+        rotation_abs_encode = rospy.get_param("rotation_abs_encode")
+        rospy.loginfo("%s is %s", rospy.resolve_name('rotation_abs_encode'), rotation_abs_encode)
 
         if open_serial_port_again_flag!=1 and plc_port_ok_flag==1:
             # read line encode data
             read_line_encode_data,line_encode_str=plcpkg.Send_message_to_port(ser,plcpkg.crc16.Combining_CRC_and_info(plcpkg.plccmd.READ_LINE_ENCODE))
-            rospy.loginfo("-------read line %s-%s",read_line_encode_data,line_encode_str)
+            rospy.logerr("-------read line %s-%s",read_line_encode_data,line_encode_str)
             if len(read_line_encode_data)!=0 and read_line_encode_data[0]==4:
                 rospy.set_param('read_line_encode', read_line_encode_data[4]/100.0)
             # read  read_limit_switch_status
             read_limit_switch_status_data,read_limit_switch_status_str=plcpkg.Send_message_to_port(ser,plcpkg.crc16.Combining_CRC_and_info(plcpkg.plccmd.READ_LIMIT_SWITCH_STATUS))
-            
+            rotation_abs_encode_data,rotation_abs_encode_str=plcpkg.Send_message_to_port(ser,plcpkg.crc16.Combining_CRC_and_info(plcpkg.plccmd.READ_ROTATION_ENCODE_DATA))            
             if len(read_limit_switch_status_data)!=0 and read_limit_switch_status_data[4]!=0:
                 read_limit_status_data=bin(read_limit_switch_status_data[4])[2:]
                 read_limit_status_data=read_limit_status_data.zfill(len(read_limit_status_data)+3-len(read_limit_status_data))
@@ -137,6 +138,15 @@ def main():
                 rospy.set_param('mid_limit_switch_status', int(list(read_limit_status_data)[1]))
                 rospy.set_param('bottom_limit_switch_status', int(list(read_limit_status_data)[2]))
                 # rospy.logerr("-------read limit switch %s-%d",read_limit_switch_status_data,int(list(read_limit_status_data)[2]))
+            #read abs encode for rotation 
+            if len(rotation_abs_encode_data)!=0 and rotation_abs_encode_data[0]==2:
+                high16str=hex(rotation_abs_encode_data[5])[2:]
+                low16str=hex(rotation_abs_encode_data[6])[2:]
+                high16str=high16str.zfill(len(high16str)+2-len(high16str))
+                low16str=low16str.zfill(len(low16str)+2-len(low16str))
+                newdata='0x'+high16str+low16str
+                rospy.set_param('rotation_abs_encode',int(newdata,16))
+                rospy.logerr('-----rotation encode --%s--%d',newdata,int(newdata,16))
             # read line encode data
             read_echos_status_data,read_echos_status_str=plcpkg.Send_message_to_port(ser,plcpkg.crc16.Combining_CRC_and_info(plcpkg.plccmd.READ_ECHOS_STATUS))
             if len(read_echos_status_data)!=0:

@@ -10,10 +10,10 @@ import os
 from math import *
 from bitstring import Bits
 
-from src.painting_robot_demo.scripts.mobile_platform_driver.mobilecommand import *
-from src.painting_robot_demo.scripts.mobile_platform_driver.can_analysis_driver import *
+from mobilecommand import *
+from can_analysis_driver import *
 import time
-from src.painting_robot_demo.scripts.mobile_platform_driver.mobileplatform_driver_steptech import *
+from mobileplatform_driver_steptech import *
 import binascii
 
 import numpy as np
@@ -422,20 +422,20 @@ def main():
     flg=1
     flag=1
 
-    print(mpfh.strmessage)
-    print(mpfh.vels(speed,turn))
+    rospy.loginfo(mpfh.strmessage)
+    rospy.loginfo(mpfh.vels(speed,turn))
 
     while not rospy.is_shutdown():
         if 0 not in [mpfh.fl_abs_encode,mpfh.fr_abs_encode,mpfh.rl_abs_encode,mpfh.rr_abs_encode]:
             if flg:
                 OutputPulse=[mpfh.fl_abs_encode,mpfh.fr_abs_encode,mpfh.rl_abs_encode,mpfh.rr_abs_encode]
-                print("PositionData:",OutputPulse)
+                rospy.loginfo("PositionData---%s",str(OutputPulse))
                 mpfh.MobileControl.Send_Position_Driver(int(OutputPulse[0]),mpfh.MobileControl.CanAnalysis.yamlDic['steering_channel_pdo']['front_steering_left_rpdo']['rpdo']['rpdo3'])
                 mpfh.MobileControl.Send_Position_Driver(int(OutputPulse[1]),mpfh.MobileControl.CanAnalysis.yamlDic['steering_channel_pdo']['front_steering_right_rpdo']['rpdo']['rpdo3'])
                 mpfh.MobileControl.Send_Position_Driver(int(OutputPulse[2]),mpfh.MobileControl.CanAnalysis.yamlDic['steering_channel_pdo']['rear_steering_left_rpdo']['rpdo']['rpdo3'])
                 mpfh.MobileControl.Send_Position_Driver(int(OutputPulse[3]),mpfh.MobileControl.CanAnalysis.yamlDic['steering_channel_pdo']['rear_steering_right_rpdo']['rpdo']['rpdo3'])
                 flg=0
-        print(mpfh.Imuobj.ImuAngularvelocity)
+        # print(mpfh.Imuobj.ImuAngularvelocity)
         # if mpfh.open_keyboard_or_bicycle_status==False:
         
         recevenum=mpfh.MobileControl.CanAnalysis.Can_GetReceiveNum(0)
@@ -483,35 +483,35 @@ def main():
                     mpfh.MobileControl.Send_Velocity_Driver(1*int(VelocityData),0,mpfh.MobileControl.CanAnalysis.yamlDic['walking_channel_pdo']['rear_walking_right_rpdo']['rpdo']['rpdo3'])
                 elif key =='j':
                     OutputPulse=mpfh.output_pulse_position_control([-1.0,-1.0,-1.0,-1.0],pi/2)
-                    print "PositionData:",OutputPulse
+                    rospy.loginfo("PositionData---%s",str(OutputPulse))
                     mpfh.MobileControl.Send_Position_Driver(int(OutputPulse[0]),mpfh.MobileControl.CanAnalysis.yamlDic['steering_channel_pdo']['front_steering_left_rpdo']['rpdo']['rpdo3'])
                     mpfh.MobileControl.Send_Position_Driver(int(OutputPulse[1]),mpfh.MobileControl.CanAnalysis.yamlDic['steering_channel_pdo']['front_steering_right_rpdo']['rpdo']['rpdo3'])
                     mpfh.MobileControl.Send_Position_Driver(int(OutputPulse[2]),mpfh.MobileControl.CanAnalysis.yamlDic['steering_channel_pdo']['rear_steering_left_rpdo']['rpdo']['rpdo3'])
                     mpfh.MobileControl.Send_Position_Driver(int(OutputPulse[3]),mpfh.MobileControl.CanAnalysis.yamlDic['steering_channel_pdo']['rear_steering_right_rpdo']['rpdo']['rpdo3'])
                 elif key =='l':
                     OutputPulse=mpfh.output_pulse_position_control([1.0,1.0,1.0,1.0],pi/2)
-                    print "PositionData:",OutputPulse
+                    rospy.loginfo("PositionData---%s",str(OutputPulse))
                     mpfh.MobileControl.Send_Position_Driver(int(OutputPulse[0]),mpfh.MobileControl.CanAnalysis.yamlDic['steering_channel_pdo']['front_steering_left_rpdo']['rpdo']['rpdo3'])
                     mpfh.MobileControl.Send_Position_Driver(int(OutputPulse[1]),mpfh.MobileControl.CanAnalysis.yamlDic['steering_channel_pdo']['front_steering_right_rpdo']['rpdo']['rpdo3'])
                     mpfh.MobileControl.Send_Position_Driver(int(OutputPulse[2]),mpfh.MobileControl.CanAnalysis.yamlDic['steering_channel_pdo']['rear_steering_left_rpdo']['rpdo']['rpdo3'])
                     mpfh.MobileControl.Send_Position_Driver(int(OutputPulse[3]),mpfh.MobileControl.CanAnalysis.yamlDic['steering_channel_pdo']['rear_steering_right_rpdo']['rpdo']['rpdo3'])
                 elif key == 'u':
                     OutputPulse=mpfh.output_pulse_position_control([-1.0,-1.0,-1.0,-1.0],pi/4)
-                    print "PositionData:",OutputPulse
+                    rospy.loginfo("PositionData---%s",str(OutputPulse))
                     mpfh.MobileControl.Send_Position_Driver(int(OutputPulse[0]),mpfh.MobileControl.CanAnalysis.yamlDic['steering_channel_pdo']['front_steering_left_rpdo']['rpdo']['rpdo3'])
                     mpfh.MobileControl.Send_Position_Driver(int(OutputPulse[1]),mpfh.MobileControl.CanAnalysis.yamlDic['steering_channel_pdo']['front_steering_right_rpdo']['rpdo']['rpdo3'])
                     mpfh.MobileControl.Send_Position_Driver(int(OutputPulse[2]),mpfh.MobileControl.CanAnalysis.yamlDic['steering_channel_pdo']['rear_steering_left_rpdo']['rpdo']['rpdo3'])
                     mpfh.MobileControl.Send_Position_Driver(int(OutputPulse[3]),mpfh.MobileControl.CanAnalysis.yamlDic['steering_channel_pdo']['rear_steering_right_rpdo']['rpdo']['rpdo3'])
                 elif key == 'o':
                     OutputPulse=mpfh.output_pulse_position_control([1.0,1.0,1.0,1.0],pi/4)
-                    print "PositionData:",OutputPulse
+                    rospy.loginfo("PositionData---%s",str(OutputPulse))
                     mpfh.MobileControl.Send_Position_Driver(int(OutputPulse[0]),mpfh.MobileControl.CanAnalysis.yamlDic['steering_channel_pdo']['front_steering_left_rpdo']['rpdo']['rpdo3'])
                     mpfh.MobileControl.Send_Position_Driver(int(OutputPulse[1]),mpfh.MobileControl.CanAnalysis.yamlDic['steering_channel_pdo']['front_steering_right_rpdo']['rpdo']['rpdo3'])
                     mpfh.MobileControl.Send_Position_Driver(int(OutputPulse[2]),mpfh.MobileControl.CanAnalysis.yamlDic['steering_channel_pdo']['rear_steering_left_rpdo']['rpdo']['rpdo3'])
                     mpfh.MobileControl.Send_Position_Driver(int(OutputPulse[3]),mpfh.MobileControl.CanAnalysis.yamlDic['steering_channel_pdo']['rear_steering_right_rpdo']['rpdo']['rpdo3'])
                 elif key == 'm':
                     OutputPulse=mpfh.output_pulse_position_control([-1.0,1.0,1.0,-1.0],turn)
-                    print "PositionData",OutputPulse
+                    rospy.loginfo("PositionData---%s",str(OutputPulse))
                     fl_data=input("fl_data:")
                     rl_data=input("rl_data:")
                     fr_data=input("fr_data:")
@@ -527,21 +527,21 @@ def main():
                 
                 elif key == 'r':
                     OutputPulse=mpfh.output_pulse_position_control([1.0,-1.0,-1.0,1.0],pi/4)
-                    print "PositionData",OutputPulse
+                    rospy.loginfo("PositionData---%s",str(OutputPulse))
                     mpfh.MobileControl.Send_Position_Driver(int(OutputPulse[0]),mpfh.MobileControl.CanAnalysis.yamlDic['steering_channel_pdo']['front_steering_left_rpdo']['rpdo']['rpdo3'])
                     mpfh.MobileControl.Send_Position_Driver(int(OutputPulse[1]),mpfh.MobileControl.CanAnalysis.yamlDic['steering_channel_pdo']['front_steering_right_rpdo']['rpdo']['rpdo3'])
                     mpfh.MobileControl.Send_Position_Driver(int(OutputPulse[2]),mpfh.MobileControl.CanAnalysis.yamlDic['steering_channel_pdo']['rear_steering_left_rpdo']['rpdo']['rpdo3'])
                     mpfh.MobileControl.Send_Position_Driver(int(OutputPulse[3]),mpfh.MobileControl.CanAnalysis.yamlDic['steering_channel_pdo']['rear_steering_right_rpdo']['rpdo']['rpdo3'])
                 elif key == '.':
                     OutputPulse=mpfh.output_pulse_position_control([-1.0,1.0,1.0,-1.0],turn)
-                    print "PositionData:",OutputPulse
+                    rospy.loginfo("PositionData---%s",str(OutputPulse))
                     mpfh.MobileControl.Send_Position_Driver(int(OutputPulse[0]),mpfh.MobileControl.CanAnalysis.yamlDic['steering_channel_pdo']['front_steering_left_rpdo']['rpdo']['rpdo3'])
                     mpfh.MobileControl.Send_Position_Driver(int(OutputPulse[1]),mpfh.MobileControl.CanAnalysis.yamlDic['steering_channel_pdo']['front_steering_right_rpdo']['rpdo']['rpdo3'])
                     mpfh.MobileControl.Send_Position_Driver(int(OutputPulse[2]),mpfh.MobileControl.CanAnalysis.yamlDic['steering_channel_pdo']['rear_steering_left_rpdo']['rpdo']['rpdo3'])
                     mpfh.MobileControl.Send_Position_Driver(int(OutputPulse[3]),mpfh.MobileControl.CanAnalysis.yamlDic['steering_channel_pdo']['rear_steering_right_rpdo']['rpdo']['rpdo3'])
                 elif key == 'b':
                     OutputPulse=mpfh.output_pulse_position_control([.0,.0,.0,.0],turn)
-                    print "PositionData:",OutputPulse
+                    rospy.loginfo("PositionData---%s",str(OutputPulse))
                     mpfh.MobileControl.Send_Position_Driver(int(OutputPulse[0]),mpfh.MobileControl.CanAnalysis.yamlDic['steering_channel_pdo']['front_steering_left_rpdo']['rpdo']['rpdo3'])
                     mpfh.MobileControl.Send_Position_Driver(int(OutputPulse[1]),mpfh.MobileControl.CanAnalysis.yamlDic['steering_channel_pdo']['front_steering_right_rpdo']['rpdo']['rpdo3'])
                     mpfh.MobileControl.Send_Position_Driver(int(OutputPulse[2]),mpfh.MobileControl.CanAnalysis.yamlDic['steering_channel_pdo']['rear_steering_left_rpdo']['rpdo']['rpdo3'])
@@ -556,9 +556,9 @@ def main():
                 count = 0
                 if speed>=20:
                     speed=0.1
-                print mpfh.vels(speed,turn)
+                rospy.loginfo(mpfh.vels(speed,turn))
                 if (status == 14):
-                    print mpfh.strmessage
+                    rospy.loginfo(mpfh.strmessage)
                 status = (status + 1) % 15
             # 停止键
             elif key == ' ' or key =='k':

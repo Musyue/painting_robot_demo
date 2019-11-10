@@ -199,10 +199,16 @@ bool StraightLinePath::GeneratePath(
 }
 
 void StraightLinePath::PublishPath(const ros::TimerEvent&) {
-  if (!ros::param::get(manipulator_status_name_, if_manipulator_finish_)) {
-    if_manipulator_finish_ = false;
-  }
 
+  int flag_tmp = 0;
+  if (!ros::param::get(manipulator_status_name_, flag_tmp)) {
+    flag_tmp = 0;
+  }
+  if (0 == flag_tmp) {
+    if_manipulator_finish_ = false;
+  } else if (1 == flag_tmp) {
+    if_manipulator_finish_ = true;
+  }
   if (if_manipulator_finish_) {
     nav_msgs::Path path;
     geometry_msgs::PoseStamped cur_pose;

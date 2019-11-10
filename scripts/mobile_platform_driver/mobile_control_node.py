@@ -7,7 +7,7 @@ from sensor_msgs.msg import Imu
 import time 
 from math import *
 import numpy as np
-from src.painting_robot_demo.scripts.mobile_platform_driver.mobileplatform_driver_steptech import *
+from mobileplatform_driver_steptech import *
 from geometry_msgs.msg import Twist,Pose
 from scipy.io import loadmat
 import tf2_ros
@@ -23,7 +23,7 @@ class AGV4WDICONTROLLER():
         self.car_width=0.395
         self.imu_sub=rospy.Subscriber('/imu_data',Imu,self.Imu_callback)
         self.cmd_vel_sub=rospy.Subscriber('/cmd_vel',Twist,self.CmdVel_callback)
-        self.path_sub=rospy.Subscriber('/mobile_base_path',Path,self.PathTarget_callback)
+        self.path_sub=rospy.Subscriber('/straight_path',Path,self.PathTarget_callback)
         self.ImuOrientation=()
         self.ImuAngularvelocity=()
         self.ImuLinearAcceleration=()
@@ -46,7 +46,7 @@ class AGV4WDICONTROLLER():
         self.reference_y=0
         self.reference_pha=0
         self.reference_beta=0
-        ####hoffamn
+        ####hoffamnlog
         self.tfBuffer = tf2_ros.Buffer()
         self.listener = tf2_ros.TransformListener(self.tfBuffer)
         self.tranformtfs="map"
@@ -374,6 +374,7 @@ def main():
    end_step_tracking_kp=0.5#1.0
    open_control_mobile_platform=rospy.get_param('open_control_mobile_platform')
    while not rospy.is_shutdown():
+        open_control_mobile_platform=rospy.get_param('open_control_mobile_platform')
         if open_control_mobile_platform!=0:
             if len(agvobj.path_all)!=0:
                 try:

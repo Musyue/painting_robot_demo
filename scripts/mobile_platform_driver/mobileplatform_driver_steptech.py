@@ -6,9 +6,9 @@ from ctypes import *
 import yaml
 import os
 from math import *
-from src.mobile_robot.src.logger_config.logger_set import *
-from src.painting_robot_demo.scripts.mobile_platform_driver.mobilecommand import *
-from src.painting_robot_demo.scripts.mobile_platform_driver.can_analysis_driver import *
+from logger_set import *
+from mobilecommand import *
+from can_analysis_driver import *
 import time
 class MobilePlatformDriver():
     def __init__(self,):

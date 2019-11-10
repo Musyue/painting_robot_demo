@@ -1,14 +1,14 @@
 #! /usr/bin/env python
 # coding=utf-8
-import rospy
+# import rospy
 import sys
-sys.path.append("..")
+# sys.path.append("..")
 from ctypes import *
 import yaml
 import os
 from math import pi
-from src.mobile_robot.src.logger_config.logger_set import *
-from src.painting_robot_demo.scripts.mobile_platform_driver.mobilecommand import *
+from logger_set import *
+from mobilecommand import *
 import time
 class VCI_BOARD_INFO(Structure):
     _fields_ = [('hw_Version',c_ushort),
@@ -44,18 +44,18 @@ class VCI_INIT_CONFIG(Structure):
 
 class CanAnalysisDriver:
     def __init__(self):
-        self.configname=rospy.get_param('yaml_can_name')#"mobileparameter.yaml"
+        self.configname="mobileparameter.yaml"
 
-        self.canlibpath=rospy.get_param('cansolib_path')
+        self.canlibpath="/data/ros/yue_wk_2019/src/painting_robot_demo/lib/libcontrolcan.so"#rospy.get_param('cansolib_path')
         self.OpreateCanAnalysis = cdll.LoadLibrary(self.canlibpath)#(str('/data/ros/yue_wk_2019/src/painting_robot_demo/lib/libcontrolcan.so'))
-        self.canyamlconfig_path=rospy.get_param('canyaml_config_path')
+        self.canyamlconfig_path="/data/ros/yue_wk_2019/src/painting_robot_demo/config/"#rospy.get_param('canyaml_config_path')
         self.yamlDic={}
         self.Opreating_Yaml()# init yaml
         
         self.logger = LoggerSetClass(0)
     def Opreating_Yaml(self):
 
-        yaml_path = str("/data/ros/yue_wk_2019/src/mobile_robot/src/config/"+self.configname)
+        yaml_path = self.canyamlconfig_path+self.configname#str("/data/ros/yue_wk_2019/src/mobile_robot/src/config/"+self.configname)
         # print yaml_path
         file_data = open(yaml_path)
         self.yamlDic = yaml.load(file_data)
