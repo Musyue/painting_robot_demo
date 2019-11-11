@@ -16,6 +16,10 @@ class AuboTrajectory():
         self.PubState = rospy.Publisher("/open_aubo_state_flag", Bool, queue_size=10)
         self.Pubsignal = rospy.Publisher("/signal", Bool, queue_size=10)
         self.OpenstateBool=[False]
+        self.OpenElectricSwitch=0
+        self.CloseElectricSwitch=0
+        self.open_home_point=0
+        self.home_point_aubo=()
     def Init_node(self):
         rospy.init_node("aubo_sector_planning")
 
@@ -214,10 +218,25 @@ class AuboTrajectory():
                 robot.move_line(joint_radian)
                 Temp_joint_angular=joint_radian
                 #open or close painting switch
+                rospy.logerr("-------aubo waypoint-----%d",i)
                 if i==0:
-                    rospy.set_param('write_electric_switch_painting_open',1)
+                    rospy.logerr("open electric switch-------")
+                    # self.OpenElectricSwitch=1
+                    # rospy.set_param('write_electric_switch_painting_open',1)
+                    os.system('rosparam set /search_port/write_electric_switch_painting_open 1')
+                    time.sleep(2.2)
+                    # time.sleep(0.1)
+                    
                 if i==(len(Last_Queue)-1):
-                    rospy.set_param('write_electric_switch_painting_open',0)
+                    rospy.logerr("close electric switch-------")
+                    os.system('rosparam set /search_port/write_electric_switch_painting_close 1')
+                    os.system('rosparam set /search_port/write_electric_switch_painting_open 0')
+                    
+                    time.sleep(2.2)
+                    # time.sleep(0.1)
+                    os.system('rosparam set /search_port/write_electric_switch_painting_close 0')
+                    # self.CloseElectricSwitch=1
+                    # rospy.set_param('write_electric_switch_painting_close',1)
             print("Path planning OK,Go back to start point----")
             self.Aubo_Move_to_Point(robot, StartPoint)
             rospy.set_param('painting_oprea_over',1)
@@ -230,6 +249,7 @@ def main():
     IP=rospy.get_param('aubo_ip')
     StartPoint=rospy.set_param('aubo_start_point', [-3.07,-2.094,80.07,64.0747,95.11,89.98])#(-3.3364,12.406,-81.09,-91.207,-86.08,0.164)
     StartPoint=tuple(rospy.get_param('aubo_start_point'))
+    home_point_aubo=(-3.06,44.26,62.00,64.06,95.16,90.03)
     Sector_Length=rospy.get_param('sector_length')#0.8 #m
     Sector_Width=rospy.get_param('sector_width')#0.2 #m
     Sector_Nums=rospy.get_param('sector_nums')#4
@@ -256,15 +276,30 @@ def main():
             Sector_Width=rospy.get_param('sector_width')#0.2 #m
             Sector_Nums=rospy.get_param('sector_nums')#4
             Left_Right_Flag =rospy.get_param('left_right_flag')#1
+            aubo_go_back_initial_point=rospy.get_param('aubo_go_back_initial_point')
             open_aubo_oprea_flag=rospy.get_param('open_aubo_oprea_flag')
+            if aubo_go_back_initial_point==1:
+                # Aub.open_home_point=1
+                Aub.Aubo_Move_to_Point(Robot,home_point_aubo)
+                rospy.set_param('aubo_go_back_initial_point',0)
             if open_aubo_oprea_flag==1:
                 Aub.Spray_Painting_Cartesian_Sector_Planning(Robot,StartPoint,Sector_Length,Sector_Width,Sector_Nums,Left_Right_Flag)
                 #Aub.DisConnect_Aubo(Robot)
-                time.sleep(10)
-                print("Sleep time is over,then climb robot goes to initial point")
+                # if Aub.OpenElectricSwitch==1:
+                #     rospy.logerr("Open electric------")
+                #     rospy.set_param('write_electric_switch_painting_open',1)
+                #     Aub.OpenElectricSwitch=0
+                # if Aub.CloseElectricSwitch==1:
+                #     rospy.logerr("Close electric------")
+                #     rospy.set_param('write_electric_switch_painting_close',1)
+                #     rospy.set_param('write_electric_switch_painting_open',0)
+                #     rospy.set_param('write_electric_switch_painting_close',0)
+                #     Aub.CloseElectricSwitch=0
+                time.sleep(4)
+                rospy.loginfo("Sleep time is over,then climb robot goes to initial point")
                 rospy.set_param('open_aubo_oprea_flag',0)
             else:
-                    print("Please wait Mobile platform waypoint over")
+                rospy.loginfo("Please wait Mobile platform waypoint over")
             rate.sleep()
     except:
         pass

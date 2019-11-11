@@ -24,18 +24,22 @@ class StraightLinePath {
   std::string map_frame_id_;
   std::string base_frame_id_;
   std::string path_topic_;
-  std::string manipulator_status_name_;
+  // std::string manipulator_status_name_;
 
   std::vector<double> x_coordinate_list_;
   std::vector<double> y_coordinate_list_;
   std::vector<double> yaw_list_;
+  std::vector<int> turning_point_num_list_;
   std::vector<bool> flag_list_;
 
   int points_num_;
+  int path_num_;
   double dis_interval_;
-  bool if_manipulator_finish_;
-  size_t cur_index_;
+  // bool if_manipulator_finish_;
+  // size_t cur_index_;
   double plan_frequency_;
+  int path_index_;
+  int skip_count_;
 
   ros::Publisher path_pub_;
   ros::Timer path_pub_timer_;
@@ -45,8 +49,10 @@ StraightLinePath::StraightLinePath(ros::NodeHandle& nh,
                                    ros::NodeHandle& nh_private) {
   ParamInit(nh_private);
   ReadFile();
-  if_manipulator_finish_ = false;
-  cur_index_ = 0;
+  // if_manipulator_finish_ = false;
+  // cur_index_ = 0;
+  path_index_ = -1;
+  skip_count_ = 0;
 
   path_pub_ = nh.advertise<nav_msgs::Path>(path_topic_, 10);
   path_pub_timer_ = nh.createTimer(ros::Duration(1.0 / plan_frequency_),
@@ -58,8 +64,8 @@ void StraightLinePath::ParamInit(ros::NodeHandle& nh_private) {
   nh_private.param("map_frame_id", map_frame_id_, std::string("map"));
   nh_private.param("base_frame_id", base_frame_id_, std::string("base_link"));
   nh_private.param("path_topic", path_topic_, std::string("straight_path"));
-  nh_private.param("manipulator_status_name", manipulator_status_name_,
-                   std::string("if_manipulator_finish"));
+  // nh_private.param("manipulator_status_name", manipulator_status_name_,
+  //                  std::string("if_manipulator_finish"));
   nh_private.param("plan_frequency", plan_frequency_, 10.0);
 }
 
@@ -74,7 +80,8 @@ void StraightLinePath::ReadFile() {
   y_coordinate_list_.clear();
   yaw_list_.clear();
   flag_list_.clear();
-  int n = 0;
+
+  path_num_ = 0;
   for (size_t i = 0; i < points_num_; i++) {
     double x_tmp = file["x_coordinate_list"][i].as<double>();
     double y_tmp = file["y_coordinate_list"][i].as<double>();
@@ -86,9 +93,36 @@ void StraightLinePath::ReadFile() {
     yaw_list_.push_back(yaw_tmp);
     flag_list_.push_back(flag_tmp);
 
-    n++;
-    std::cout << n << std::endl;
+    // std::cout << "=========" << std::endl;
+    // std::cout << "x is " << x_tmp << std::endl;
+    // std::cout << "y is " << y_tmp << std::endl;
+    // std::cout << "yaw tmp is " << yaw_tmp << std::endl;
+    // std::cout << "=========" << std::endl;
+
+    if (flag_tmp) {
+      path_num_++;
+      // int turning_point_num = 0;
+      // for (size_t j = 0; j < i - 1; j++) {
+      //   if (!flag_list_[j]) {
+      //     turning_point_num++;
+      //   }
+      // }
+      // turning_point_num_list_.push_back(turning_point_num);
+    }
   }
+  ROS_INFO("path num is : %d", path_num_);
+
+  // for (size_t i = 0; i < points_num_; i++) {
+  //   int turning_point_num = 0;
+  //   for (size_t j = 0; j < i; j++) {
+  //     if (!yaw_list_[j]) {
+  //       turning_point_num++;
+  //     }
+  //   }
+  //   if (i - 1 >= 0&&!flag_list_) {
+  //   }
+  //   turning_point_num_list_.push_back(turning_point_num);
+  // }
 }
 
 bool StraightLinePath::GetPose(geometry_msgs::PoseStamped* pose) {
@@ -158,24 +192,7 @@ bool StraightLinePath::GeneratePath(
   path->header.frame_id = map_frame_id_;
   path->header.stamp = ros::Time::now();
 
-  // std::cout << "the last point : " << path->poses.end()->pose.position.x << "
-  // "
-  //           << path->poses.end()->pose.position.y << std::endl;
-  // std::cout << "dis interval is " << dis_interval_ << std::endl;
-  // std::cout << "max dis : " << max_dis << std::endl;
-  // std::cout << "segment angle" << segment_angle << std::endl;
-
   while (path_point_dis + dis_interval_ < max_dis) {
-    // std::cout << "++++++++++++" << std::endl;
-    // std::cout << "the last point : " << path->poses.back().pose.position.x
-    //           << "  " << path->poses.back().pose.position.y << std::endl;
-    // std::cout << "dis interval is " << dis_interval_ << std::endl;
-    // std::cout << "max dis : " << max_dis << std::endl;
-    // std::cout << "segment angle" << segment_angle << std::endl;
-    // std::cout << "cos is : " << cos(segment_angle)
-    //           << "  sin is : " << sin(segment_angle) << std::endl;
-    // std::cout << "point dis : " << path_point_dis << std::endl;
-
     path_point_dis += dis_interval_;
     geometry_msgs::PoseStamped pose_tmp;
     pose_tmp.header.frame_id = map_frame_id_;
@@ -199,21 +216,32 @@ bool StraightLinePath::GeneratePath(
 }
 
 void StraightLinePath::PublishPath(const ros::TimerEvent&) {
+  // if (!ros::param::get(manipulator_status_name_, if_manipulator_finish_)) {
+  //   if_manipulator_finish_ = false;
+  // }
 
-  int flag_tmp = 0;
-  if (!ros::param::get(manipulator_status_name_, flag_tmp)) {
-    flag_tmp = 0;
+  if (!ros::param::get("path_index", path_index_)) {
+    ROS_WARN("cannot receive path index!!");
   }
-  if (0 == flag_tmp) {
-    if_manipulator_finish_ = false;
-  } else if (1 == flag_tmp) {
-    if_manipulator_finish_ = true;
+  if (path_index_ > path_num_) {
+    ROS_WARN(
+        "path index exceeds the limit, the index will set as the final segment "
+        "of path");
+    path_index_ = path_num_;
   }
-  if (if_manipulator_finish_) {
+
+  path_index_ = path_index_ - 1;
+  if (path_index_ >= 0) {
     nav_msgs::Path path;
     geometry_msgs::PoseStamped cur_pose;
     if (!GetPose(&cur_pose)) {
       ROS_WARN("get robot pose failure");
+      return;
+    }
+    if (path_index_ + skip_count_ > path_num_ - 1) {
+      path.header.frame_id = map_frame_id_;
+      path.header.stamp = ros::Time::now();
+      path.poses.clear();
       return;
     }
 
@@ -223,41 +251,65 @@ void StraightLinePath::PublishPath(const ros::TimerEvent&) {
       goal_pose.header.frame_id = map_frame_id_;
       goal_pose.header.stamp = ros::Time::now();
 
-      goal_pose.pose.position.x = x_coordinate_list_[cur_index_];
-      goal_pose.pose.position.y = y_coordinate_list_[cur_index_];
+      std::cout << "the index i use is : " << path_index_ + skip_count_
+                << std::endl;
+
+      goal_pose.pose.position.x = x_coordinate_list_[path_index_ + skip_count_];
+      goal_pose.pose.position.y = y_coordinate_list_[path_index_ + skip_count_];
 
       tf::Quaternion goal_quat =
-          tf::createQuaternionFromYaw(yaw_list_[cur_index_]);
+          tf::createQuaternionFromYaw(yaw_list_[path_index_ + skip_count_]);
       goal_pose.pose.orientation.x = goal_quat.x();
       goal_pose.pose.orientation.y = goal_quat.y();
       goal_pose.pose.orientation.z = goal_quat.z();
       goal_pose.pose.orientation.w = goal_quat.w();
 
+      // ROS_INFO("cur pose : x: %.4f, y: %.4f; goal pose : x: %.4f, y: %.4f",
+      //          cur_pose.pose.position.x, cur_pose.pose.position.y,
+      //          goal_pose.pose.position.x, goal_pose.pose.position.y);
       if (!GeneratePath(cur_pose, goal_pose, &path)) {
         ROS_WARN("get path failure");
+      } else {
+        ROS_INFO("get path success");
       }
 
-      ROS_INFO("%d", (int)cur_index_);
-      if (flag_list_[cur_index_]) {
+      // ROS_INFO("%d", (int)path_index_);
+      ROS_INFO("set a goal");
+      if (flag_list_[path_index_ + skip_count_]) {
         break;
       }
+      skip_count_++;
       cur_pose = goal_pose;
 
-      if (cur_index_ < points_num_ - 1) {
-        cur_index_++;
-      } else {
-        ROS_WARN("do not set the last goal point to false");
-        return;
-      }
+      // if (path_index_ < path_num_ - 1) {
+      //   cur_index_++;
+      // } else {
+      //   ROS_WARN("do not set the last goal point to false");
+      //   return;
+      // }
+
     }  // end of getting path loop
 
-    path_pub_.publish(path);
-    ros::param::set(manipulator_status_name_, 0);
-    if (cur_index_ < points_num_ - 1) {
-      cur_index_++;
-    } else {
-      return;
+    int pre_index = path_index_;
+    while (true) {
+      path_pub_.publish(path);
+      ros::Duration(0.2).sleep();
+      ros::param::get("path_index", path_index_);
+      // std::cout << "path index " << path_index_ << std::endl;
+      // std::cout << "pre index " << pre_index << std::endl;
+
+      if (path_index_ - 1 != pre_index) {
+        // std::cout << "index modified" << std::endl;
+        break;
+      }
     }
+    // ros::param::set(manipulator_status_name_, 0);
+    // if (cur_index_ < points_num_ - 1) {
+    //   cur_index_++;
+    // } else {
+    //   return;
+    // }
+
   }  // end of path publish operation
 }
 

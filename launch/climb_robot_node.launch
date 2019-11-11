@@ -7,15 +7,21 @@
     <param name="close_all_3dof_climb_driver_flag" value="0"/>
 
     <!--set /climb_pkg_para/enable_control_stand_bar 1 enable 2 disable-->
-    <param name="enable_control_stand_bar" value="1" />
+    <param name="enable_control_stand_bar" value="2" />
     <!--set /climb_pkg_para/enable_control_rotation 1 enable 2 disable-->
-    <param name="enable_control_rotation" value="0"/>
+    <param name="enable_control_rotation" value="2"/>
     <!--set /climb_pkg_para/enable_climb_control-->
-    <param name="enable_climb_control" value="0"/>
+    <param name="enable_climb_control" value="2"/>
+    <!-- close driver second -->
+    <param name="enable_second_control_stand_bar" value="0" />
+
+    <param name="enable_second_climb_control" value="0"/>
+
+
     <!-- get  climb_line_homing_abs_encode_data-->
     <param name="climb_line_homing_abs_encode_data" value="0.40"/>
     <!-- get  rotation_homing_abs_encode_data-->
-    <param name="rotation_homing_abs_encode_data" value="48181"/>
+    <param name="rotation_homing_abs_encode_data" value="50128"/>
     <!--set /climb_pkg_para/enable_control_stand_bar-->
     <param name="velocity_control_stand_bar" value="1000" />
     <!--set /climb_pkg_para/enable_control_rotation-->
@@ -23,12 +29,12 @@
     <!--set /climb_pkg_para/enable_climb_control-->
     <param name="velocity_climb_control" value="1000"/>
 
-    <!--set /climb_pkg_para/enable_control_stand_bar 10=1cm neg-down pos-up-->
-    <param name="distance_control_stand_bar" value="100.0" />
-    <!--set /climb_pkg_para/enable_control_rotation pos-anticlockwise neg-clokwise-->
-    <param name="rad_control_rotation" value="60.0"/>
-    <!--set /climb_pkg_para/enable_climb_control pos-up neg-down-->
-    <param name="distance_climb_control" value="-10.0"/>    
+    <!--set /climb_pkg_para/enable_control_stand_bar velocity-0.05/8=0.00625m/s 0.0-0.3-max neg-down pos-up-->
+    <param name="distance_control_stand_bar" value="0" />
+    <!--set /climb_pkg_para/enable_control_rotation 0-3.14 max pos-anticlockwise neg-clokwise-->
+    <param name="rad_control_rotation" value="0"/>
+    <!--set /climb_pkg_para/enable_climb_control 0-2.5m max pos-up neg-down-->
+    <param name="distance_climb_control" value="0.1"/>    
 
     <node pkg="painting_robot_demo" type="climb_node.py" name="climb_node" output="screen" >
     </node>

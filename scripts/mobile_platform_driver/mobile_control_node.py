@@ -355,7 +355,7 @@ def main():
    flaggg=1
    pathfilename='path'#'pathsmallCirclexythera'
    limit_error_rad_for_start_point=0.1#rad
-   rotation_velocity=0.5
+   rotation_velocity=0.1
    flag_path_tracking=0
    flag_send_ref_velocity_for_onece=0
    flag_close_all=1
@@ -366,7 +366,7 @@ def main():
    flag_open_servo_pha=0.0
    flag_open_pi_4=0.0
    first_step_roation_linear_velocity=0
-   first_step_roation_kp=1/(2*pi)
+   first_step_roation_kp=1/(4*2*pi)#1/(2*pi)
    first_step_roation_ki=0.1/(2*pi)
    first_step_roation_error=0
    first_step_roation_error_max=10.0
@@ -445,6 +445,7 @@ def main():
                             agvobj.mpfh.Send_diff_degree_position_to_four_steering_wheel([-1.0,-1.0,-1.0,-1.0],[0.0,0.0,0.0,0.0])
                             time.sleep(2)
                             flag_for_servo_to_end_point=0
+                            # rospy.set_param('open_control_mobile_platform',0)
                             #notice pating node mobile base stop
                             rospy.set_param('mobile_tracking_stop_flag',1)
 

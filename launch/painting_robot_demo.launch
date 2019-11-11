@@ -1,7 +1,7 @@
 <launch>
 
   <!-- set /global_example parameter -->
-  <include file="$(find painting_robot_demo)/launch/search_usb_port.launch">
+  <!-- <include file="$(find painting_robot_demo)/launch/search_usb_port.launch">
   </include>
   <include file="$(find painting_robot_demo)/launch/plc_node.launch">
   </include>
@@ -12,18 +12,16 @@
   <include file="$(find painting_robot_demo)/launch/climb_robot_node.launch">
   </include>
   <include file="$(find painting_robot_demo)/launch/aubo_control_node.launch">
-  </include>
-  <group ns="painting_pkg_para">
+  </include> -->
+  <group ns="search_port">
 
-    <param name="sector_length" value="0.8">
-    <param name="sector_width" value="0.2">
-    <param name="sector_nums" value="4">
-    <param name="left_right_flag" value="1">
+    <param name="climb_max_length" value="0">
+    <param name="climb_way_point_length" value="0">
+    <param name="rotation_distance_tracking_over" value="0">
+    <param name="mobile_tracking_stop_flag" value="1">
 
-    <param name="auboworkspacelen" value="1.1">
-    <param name="auboWorkspacewidth" value="0.7">
-    <param name="open_aubo_oprea_flag" value="0">
-    <node pkg="painting_robot_demo" type="aubo_sector_control.py" name="aubo_sector_control" output="screen" >
+    <param name="path_num_planning" value="1">
+    <node pkg="painting_robot_demo" type="painting_opreating_node.py" name="painting_opreating_node" output="screen" >
     </node>
     
   </group>

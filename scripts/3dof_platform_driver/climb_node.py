@@ -12,7 +12,7 @@ import modbus_tk
 import modbus_tk.defines as cst
 from modbus_tk import modbus_rtu
 import readchar
-
+from math import *
 
 class Control3DOFROBOT():
     def __init__(self,PORT,BaudRate,Nodename):
@@ -72,11 +72,11 @@ class Control3DOFROBOT():
 
         :param master:
         :param velocity:
-        :param outputPulse:5.5cm -20 Negtive up,Positive Down
+        :param outputPulse:Distance unit:m pos up,neg Down
         :param control_id:
         :return:
         """
-        outputPulse = outputDistance/3.6
+        outputPulse = outputDistance*444.4
         self.Control_3DOF_Robot(master, control_id, velocity, -1.0*outputPulse)
 
 
@@ -91,7 +91,7 @@ class Control3DOFROBOT():
         """
         rospy.loginfo("outputDegree: 0-360 Degree,Positive clockwise,Negtive disclockwise")
         
-        outputPulse = outputDegree / 6.5
+        outputPulse = outputDegree*9.17
         self.Control_3DOF_Robot(master, control_id, velocity, -1.0*outputPulse)
 
 
@@ -105,8 +105,8 @@ class Control3DOFROBOT():
         :return:
         """
 
-        rospy.loginfo("outputDegree: 0-360 Degree,Positive down,Negtive up")
-        outputPulse = outputDistance /5.6
+        rospy.loginfo("outputDegree: 0-360 Degree,neg down,pos up")
+        outputPulse = outputDistance *42.5
         self.Control_3DOF_Robot(master, control_id, velocity, -1.0*outputPulse)
 
 
@@ -164,9 +164,14 @@ def main():
     c3dof.Init_node()
     rate = rospy.Rate(1)
     while not rospy.is_shutdown():
+        rotation_homing_abs_encode_data=rospy.get_param("rotation_homing_abs_encode_data")
+        rospy.loginfo("%s is %s", rospy.resolve_name('rotation_homing_abs_encode_data'), rotation_homing_abs_encode_data)
         read_line_encode = rospy.get_param("read_line_encode")
         rospy.loginfo("%s is %s", rospy.resolve_name('read_line_encode'), read_line_encode)
-    
+        rotation_abs_encode= rospy.get_param("rotation_abs_encode")
+        rospy.loginfo("%s is %s", rospy.resolve_name('rotation_abs_encode'), rotation_abs_encode)
+        rospy.logerr("rotation %s---rad--",1.1*(-rotation_homing_abs_encode_data+rotation_abs_encode)*2*pi/1024)
+        
         climb_port_ok_flag = rospy.get_param("climb_port_ok_flag")
         rospy.loginfo("%s is %s", rospy.resolve_name('climb_port_ok_flag'), climb_port_ok_flag)
 
@@ -209,6 +214,14 @@ def main():
         bottom_limit_switch_status = rospy.get_param("bottom_limit_switch_status")
         rospy.loginfo("%s is %s", rospy.resolve_name('bottom_limit_switch_status'), bottom_limit_switch_status)
 
+        enable_second_control_stand_bar = rospy.get_param("enable_second_control_stand_bar")
+        rospy.loginfo("%s is %s", rospy.resolve_name('enable_second_control_stand_bar'), enable_second_control_stand_bar)
+
+
+        enable_second_climb_control = rospy.get_param("enable_second_climb_control")
+        rospy.loginfo("%s is %s", rospy.resolve_name('enable_second_climb_control'), enable_second_climb_control)
+
+
 
         if c3dof.Openmodbus_ok_flag!=1 and climb_port_ok_flag==1:
 
@@ -218,20 +231,32 @@ def main():
                 open_rotation_flag=0
                 open_rotation_flag=0
             if top_limit_switch_status==1:
-                c3dof.Open_Stop_Enable_Driver(Master,1,0)
-                rospy.set_param('top_limit_switch_status',0)
+                if enable_second_control_stand_bar==0:
+                    c3dof.Open_Stop_Enable_Driver(Master,1,0)
+                    rospy.set_param('top_limit_switch_status',0)
+                else:
+                    rospy.set_param('top_limit_switch_status',0)
 
             if mid_limit_switch_status==1:
                 # c3dof.Open_Stop_Enable_Driver(Master,1,0)
                 # time.sleep(0.1)
-                c3dof.Open_Stop_Enable_Driver(Master,3,0)
-                rospy.set_param('mid_limit_switch_status',0)
-            if read_line_encode!=0 and read_line_encode<0.42:
-                c3dof.Open_Stop_Enable_Driver(Master,1,0)
+                if enable_second_climb_control==0:
+                    c3dof.Open_Stop_Enable_Driver(Master,3,0)
+                    rospy.set_param('mid_limit_switch_status',0)
+                else:
+                    rospy.set_param('mid_limit_switch_status',0)
+            if read_line_encode!=0 and read_line_encode<0.35:#0.39-->-80---0.44--->0
+                if enable_second_control_stand_bar==0:
+                    c3dof.Open_Stop_Enable_Driver(Master,1,0)
+                else:
+                    pass
                 # pass
             if bottom_limit_switch_status==1:
-                c3dof.Open_Stop_Enable_Driver(Master,2,0)
-                rospy.set_param('bottom_limit_switch_status',0)
+                if enable_second_control_stand_bar==0:
+                    c3dof.Open_Stop_Enable_Driver(Master,1,0)
+                    rospy.set_param('bottom_limit_switch_status',0)
+                else:
+                    rospy.set_param('bottom_limit_switch_status',0)
             if enable_control_stand_bar==1:
                 c3dof.Open_Stop_Enable_Driver(Master,1,1)
                 rospy.set_param('enable_control_stand_bar',0)

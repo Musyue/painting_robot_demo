@@ -62,63 +62,63 @@ def main():
         open_serial_port_again_flag=1
 
     count=0
-    rate = rospy.Rate(1)
+    rate = rospy.Rate(10)
     while not rospy.is_shutdown():
         plc_port_ok_flag = rospy.get_param("plc_port_ok_flag")
-        rospy.loginfo("%s is %s", rospy.resolve_name('plc_port_ok_flag'), plc_port_ok_flag)
+        # rospy.loginfo("%s is %s", rospy.resolve_name('plc_port_ok_flag'), plc_port_ok_flag)
 
         read_line_encode = rospy.get_param("read_line_encode")
-        rospy.loginfo("%s is %s", rospy.resolve_name('read_line_encode'), read_line_encode)
+        # rospy.loginfo("%s is %s", rospy.resolve_name('read_line_encode'), read_line_encode)
 
         # fetch the utterance parameter from our parent namespace
         read_limit_switch_status = rospy.get_param('read_limit_switch_status')
-        rospy.loginfo("%s is %s", rospy.resolve_name('read_limit_switch_status'), read_limit_switch_status)
+        # rospy.loginfo("%s is %s", rospy.resolve_name('read_limit_switch_status'), read_limit_switch_status)
 
         read_echos_status = rospy.get_param("read_echos_status")
-        rospy.loginfo("%s is %s", rospy.resolve_name('read_echos_status'), read_echos_status)
+        # rospy.loginfo("%s is %s", rospy.resolve_name('read_echos_status'), read_echos_status)
 
 
         write_front_light_open_forever = rospy.get_param("write_front_light_open_forever")
-        rospy.loginfo("%s is %s", rospy.resolve_name('write_front_light_open_forever'), write_front_light_open_forever)
+        # rospy.loginfo("%s is %s", rospy.resolve_name('write_front_light_open_forever'), write_front_light_open_forever)
 
         # fetch the utterance parameter from our parent namespace
         write_front_light_fast_blink = rospy.get_param('write_front_light_fast_blink')
-        rospy.loginfo("%s is %s", rospy.resolve_name('write_front_light_fast_blink'), write_front_light_fast_blink)
+        # rospy.loginfo("%s is %s", rospy.resolve_name('write_front_light_fast_blink'), write_front_light_fast_blink)
 
         write_front_light_slow_blink = rospy.get_param("write_front_light_slow_blink")
-        rospy.loginfo("%s is %s", rospy.resolve_name('write_front_light_slow_blink'), write_front_light_slow_blink)
+        # rospy.loginfo("%s is %s", rospy.resolve_name('write_front_light_slow_blink'), write_front_light_slow_blink)
 
 
 
         write_front_lingth_close = rospy.get_param("write_front_lingth_close")
-        rospy.loginfo("%s is %s", rospy.resolve_name('write_front_lingth_close'), write_front_lingth_close)
+        # rospy.loginfo("%s is %s", rospy.resolve_name('write_front_lingth_close'), write_front_lingth_close)
 
 
         write_flex_pole_motor_close = rospy.get_param("write_flex_pole_motor_close")
-        rospy.loginfo("%s is %s", rospy.resolve_name('write_flex_pole_motor_close'), write_flex_pole_motor_close)
+        # rospy.loginfo("%s is %s", rospy.resolve_name('write_flex_pole_motor_close'), write_flex_pole_motor_close)
 
         # fetch the utterance parameter from our parent namespace
         write_flex_pole_motor_up = rospy.get_param('write_flex_pole_motor_up')
-        rospy.loginfo("%s is %s", rospy.resolve_name('write_flex_pole_motor_up'), write_flex_pole_motor_up)
+        # rospy.loginfo("%s is %s", rospy.resolve_name('write_flex_pole_motor_up'), write_flex_pole_motor_up)
 
         write_flex_pole_motor_down = rospy.get_param("write_flex_pole_motor_down")
-        rospy.loginfo("%s is %s", rospy.resolve_name('write_flex_pole_motor_down'), write_flex_pole_motor_down)
+        # rospy.loginfo("%s is %s", rospy.resolve_name('write_flex_pole_motor_down'), write_flex_pole_motor_down)
 
 
         write_mobile_platform_brake_close = rospy.get_param("write_mobile_platform_brake_close")
-        rospy.loginfo("%s is %s", rospy.resolve_name('write_mobile_platform_brake_close'), write_mobile_platform_brake_close)
+        # rospy.loginfo("%s is %s", rospy.resolve_name('write_mobile_platform_brake_close'), write_mobile_platform_brake_close)
 
         # fetch the utterance parameter from our parent namespace
         write_mobile_platform_brake_open = rospy.get_param('write_mobile_platform_brake_open')
-        rospy.loginfo("%s is %s", rospy.resolve_name('write_mobile_platform_brake_open'), write_mobile_platform_brake_open)
+        # rospy.loginfo("%s is %s", rospy.resolve_name('write_mobile_platform_brake_open'), write_mobile_platform_brake_open)
 
         write_electric_switch_painting_close = rospy.get_param("write_electric_switch_painting_close")
-        rospy.loginfo("%s is %s", rospy.resolve_name('write_electric_switch_painting_close'), write_electric_switch_painting_close)
+        # rospy.logerr("%s is %s", rospy.resolve_name('write_electric_switch_painting_close'), write_electric_switch_painting_close)
 
         write_electric_switch_painting_open = rospy.get_param("write_electric_switch_painting_open")
-        rospy.loginfo("%s is %s", rospy.resolve_name('write_electric_switch_painting_open'), write_electric_switch_painting_open)
+        # rospy.logerr("%s is %s", rospy.resolve_name('write_electric_switch_painting_open'), write_electric_switch_painting_open)
         rotation_abs_encode = rospy.get_param("rotation_abs_encode")
-        rospy.loginfo("%s is %s", rospy.resolve_name('rotation_abs_encode'), rotation_abs_encode)
+        # rospy.loginfo("%s is %s", rospy.resolve_name('rotation_abs_encode'), rotation_abs_encode)
 
         if open_serial_port_again_flag!=1 and plc_port_ok_flag==1:
             # read line encode data
@@ -176,10 +176,11 @@ def main():
             if write_mobile_platform_brake_open==2:
                 plcpkg.Send_message_to_port(ser,plcpkg.crc16.Combining_CRC_and_info(plcpkg.plccmd.WRITE_MOBILE_PLATFORM_BRAKE_OPEN))
             #electric sitwch
-            if write_electric_switch_painting_close==2:
-                rospy.logerr("in electric----")
+            if write_electric_switch_painting_close==1:
+                # rospy.logerr("in electric----")
                 plcpkg.Send_message_to_port(ser,plcpkg.crc16.Combining_CRC_and_info(plcpkg.plccmd.WRITE_ELECTRIC_SWITCH_PAINTING_CLOSE))
             if write_electric_switch_painting_open==1:
+                # rospy.logerr(" open electric switch---")
                 plcpkg.Send_message_to_port(ser,plcpkg.crc16.Combining_CRC_and_info(plcpkg.plccmd.WRITE_ELECTRIC_SWITCH_PAINTING_OPEN))         
                 
         else:

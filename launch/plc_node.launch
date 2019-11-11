@@ -46,9 +46,9 @@
     <!--set /plc_pkg_para/write_mobile_platform_brake_open-->
     <param name="write_mobile_platform_brake_open" value="0" />
 
-    <!--set /plc_pkg_para/write_electric_switch_painting_close-->
+    <!--set /plc_pkg_para/write_electric_switch_painting_close 1-->
     <param name="write_electric_switch_painting_close" value="0" />
-    <!--set /plc_pkg_para/write_electric_switch_painting_open-->
+    <!--set /plc_pkg_para/write_electric_switch_painting_open 1 -->
     <param name="write_electric_switch_painting_open" value="0" />
 
     <node pkg="painting_robot_demo" type="plc_node.py" name="plc_node" output="screen" >
