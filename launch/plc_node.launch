@@ -1,7 +1,8 @@
 <launch>
   <!-- set /global_example parameter -->  
   <group ns="search_port">
-
+    <!--set /plc_pkg_para/top_limit_switch_status 1-on -->
+    <param name="read_buffer_bytes_num" value="6" />
     <!--set /plc_pkg_para/top_limit_switch_status 1-on -->
     <param name="top_limit_switch_status" value="0" />
     <!--set /plc_pkg_para/mid_limit_switch_status 1-on -->
@@ -42,7 +43,7 @@
     <param name="write_flex_pole_motor_down" value="0" />
 
     <!--set /plc_pkg_para/write_mobile_platform_brake_close-->
-    <param name="write_mobile_platform_brake_close" value="0" />
+    <param name="write_mobile_platform_brake_close" value="1" />
     <!--set /plc_pkg_para/write_mobile_platform_brake_open-->
     <param name="write_mobile_platform_brake_open" value="0" />
 

@@ -17,7 +17,7 @@ class SerarchUSB():
     def __init__(self,nodename):
         self.nodename=nodename
         self.iostatebuff=[]
-        self.readstringlength=25
+        self.readstringlength=8
         self.pwd=0
     def Init_node(self):
         rospy.init_node(self.nodename)
@@ -41,7 +41,7 @@ class SerarchUSB():
             master = modbus_rtu.RtuMaster(
                 serial.Serial(port=port, baudrate=Baudrate, bytesize=8, parity='O', stopbits=1, xonxoff=0)
             )
-            master.set_timeout(5.0)
+            master.set_timeout(1.0)
             master.set_verbose(True)
             buf1=master.execute(1, cst.READ_HOLDING_REGISTERS, 0, 8)
             buf2=master.execute(2, cst.READ_HOLDING_REGISTERS, 0, 8)

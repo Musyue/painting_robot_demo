@@ -156,7 +156,8 @@ class AuboTrajectory():
         Last_Queue=[]
         for i in range(Sector_Nums):
             Res_Left.append({i:(pose[0],pose[1]-Sector_Length/2.0,pose[2]-i*Sector_Width)})
-            Res_Right.append({i:(pose[0], pose[1] + Sector_Length / 2.0, pose[2]-i*Sector_Width)})
+            Res_Right.append({i:(pose[0], pose[1] + Sector_Length, pose[2]-i*Sector_Width)})#here set long length planning for left
+            # Res_Right.append({i:(pose[0], pose[1] + Sector_Length / 2.0, pose[2]-i*Sector_Width)})
         if Left_Right_Flag:
             for i in range(len(Res_Left)):
                 if i%2==0:#Even
@@ -224,16 +225,16 @@ class AuboTrajectory():
                     # self.OpenElectricSwitch=1
                     # rospy.set_param('write_electric_switch_painting_open',1)
                     os.system('rosparam set /search_port/write_electric_switch_painting_open 1')
-                    time.sleep(2.2)
-                    # time.sleep(0.1)
+                    # time.sleep(1.2)
+                    time.sleep(0.15)
                     
                 if i==(len(Last_Queue)-1):
                     rospy.logerr("close electric switch-------")
                     os.system('rosparam set /search_port/write_electric_switch_painting_close 1')
                     os.system('rosparam set /search_port/write_electric_switch_painting_open 0')
                     
-                    time.sleep(2.2)
-                    # time.sleep(0.1)
+                    # time.sleep(1.2)
+                    time.sleep(0.15)
                     os.system('rosparam set /search_port/write_electric_switch_painting_close 0')
                     # self.CloseElectricSwitch=1
                     # rospy.set_param('write_electric_switch_painting_close',1)
