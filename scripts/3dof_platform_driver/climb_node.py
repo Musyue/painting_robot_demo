@@ -162,7 +162,7 @@ def main():
     open_hold_flag=0
     Master=c3dof.Connect_3DOF_MODbus_RTU()
     c3dof.Init_node()
-    rate = rospy.Rate(1)
+    rate = rospy.Rate(3)
     while not rospy.is_shutdown():
         rotation_homing_abs_encode_data=rospy.get_param("rotation_homing_abs_encode_data")
         rospy.loginfo("%s is %s", rospy.resolve_name('rotation_homing_abs_encode_data'), rotation_homing_abs_encode_data)
@@ -226,14 +226,20 @@ def main():
         if c3dof.Openmodbus_ok_flag!=1 and climb_port_ok_flag==1:
 
             if close_all_3dof_climb_driver_flag==1:
-                c3dof.Emergency_Stop_All(Master)
+                try:
+                    c3dof.Emergency_Stop_All(Master)
+                except:
+                    rospy.logerr("some errors with Emergency_Stop_All(Master)")
                 open_hold_flag=0
                 open_rotation_flag=0
                 open_rotation_flag=0
             if top_limit_switch_status==1:
                 if enable_second_control_stand_bar==0:
-                    c3dof.Open_Stop_Enable_Driver(Master,1,0)
-                    rospy.set_param('top_limit_switch_status',0)
+                    try:
+                        c3dof.Open_Stop_Enable_Driver(Master,1,0)
+                    except:
+                        rospy.logerr("some errors with Open_Stop_Enable_Driver--- hold--0")
+                    # rospy.set_param('top_limit_switch_status',0)
                 else:
                     rospy.set_param('top_limit_switch_status',0)
 
@@ -241,57 +247,93 @@ def main():
                 # c3dof.Open_Stop_Enable_Driver(Master,1,0)
                 # time.sleep(0.1)
                 if enable_second_climb_control==0:
-                    c3dof.Open_Stop_Enable_Driver(Master,3,0)
+                    try:
+                        c3dof.Open_Stop_Enable_Driver(Master,3,0)
+                    except:
+                        rospy.logerr("some errors with Open_Stop_Enable_Driver--- climb--0")
                     rospy.set_param('mid_limit_switch_status',0)
                 else:
                     rospy.set_param('mid_limit_switch_status',0)
             if read_line_encode!=0 and read_line_encode<0.35:#0.39-->-80---0.44--->0
                 if enable_second_control_stand_bar==0:
-                    c3dof.Open_Stop_Enable_Driver(Master,1,0)
+                    try:
+                        c3dof.Open_Stop_Enable_Driver(Master,1,0)
+                    except:
+                        rospy.logerr("some errors with Open_Stop_Enable_Driver--- hold--0")
                 else:
                     pass
                 # pass
             if bottom_limit_switch_status==1:
                 if enable_second_control_stand_bar==0:
-                    c3dof.Open_Stop_Enable_Driver(Master,1,0)
+                    try:
+                        c3dof.Open_Stop_Enable_Driver(Master,1,0)
+                    except:
+                        rospy.logerr("some errors with Open_Stop_Enable_Driver--- hold--0")
                     rospy.set_param('bottom_limit_switch_status',0)
                 else:
                     rospy.set_param('bottom_limit_switch_status',0)
             if enable_control_stand_bar==1:
-                c3dof.Open_Stop_Enable_Driver(Master,1,1)
-                rospy.set_param('enable_control_stand_bar',0)
+                try:
+                    c3dof.Open_Stop_Enable_Driver(Master,1,1)
+                except:
+                    rospy.logerr("some errors with Open_Stop_Enable_Driver--- hold--1")
+                # rospy.set_param('enable_control_stand_bar',0)
                 open_hold_flag=1
             if enable_control_stand_bar==2:
-                c3dof.Open_Stop_Enable_Driver(Master,1,0)
-                rospy.set_param('enable_control_stand_bar',0)
+                try:
+                    c3dof.Open_Stop_Enable_Driver(Master,1,0)
+                except:
+                    rospy.logerr("some errors with Open_Stop_Enable_Driver--- hold--0")
+                # rospy.set_param('enable_control_stand_bar',0)
                 open_hold_flag=0
 
             if enable_control_rotation==1:
-                c3dof.Open_Stop_Enable_Driver(Master,2,1)
-                rospy.set_param('enable_control_rotation',0)
+                try:
+                    c3dof.Open_Stop_Enable_Driver(Master,2,1)
+                except:
+                    rospy.logerr("some errors with Open_Stop_Enable_Driver--- climb--0")
+                # rospy.set_param('enable_control_rotation',0)
                 open_rotation_flag=1
                 
             if enable_control_rotation==2:
-                c3dof.Open_Stop_Enable_Driver(Master,2,0)
+                try:
+                    c3dof.Open_Stop_Enable_Driver(Master,2,0)
+                except:
+                    rospy.logerr("some errors with Open_Stop_Enable_Driver--- rotation--0")                
                 rospy.set_param('enable_control_rotation',0)
                 open_rotation_flag=0
             if enable_climb_control==1:
-                c3dof.Open_Stop_Enable_Driver(Master,3,1)
+                try:
+                    c3dof.Open_Stop_Enable_Driver(Master,3,1)
+                except:
+                    rospy.logerr("some errors with Open_Stop_Enable_Driver--- climb--1") 
                 rospy.set_param('enable_climb_control',0)
                 open_climb_flag=1
             if enable_climb_control==2:
-                c3dof.Open_Stop_Enable_Driver(Master,3,0)
+                try:
+                    c3dof.Open_Stop_Enable_Driver(Master,3,0)
+                except:
+                    rospy.logerr("some errors with Open_Stop_Enable_Driver--- climb--0")                     
                 rospy.set_param('enable_climb_control',0)
                 open_climb_flag=0
             #set velocity
             if open_hold_flag==1:
-                c3dof.Holding_Robot(Master,velocity_control_stand_bar,distance_control_stand_bar)
+                try:
+                    c3dof.Holding_Robot(Master,velocity_control_stand_bar,distance_control_stand_bar)
+                except:
+                    rospy.logerr("something errro with holding----")
                 open_hold_flag=0
             if open_climb_flag==1:
-                c3dof.Climbing_Robot(Master,velocity_climb_control,distance_climb_control)
+                try:
+                    c3dof.Climbing_Robot(Master,velocity_climb_control,distance_climb_control)
+                except:
+                    rospy.logerr("something errro with climbing----")
                 open_climb_flag=0
             if open_rotation_flag==1:
-                c3dof.Rotation_Robot(Master,velocity_control_rotation,rad_control_rotation) 
+                try:
+                    c3dof.Rotation_Robot(Master,velocity_control_rotation,rad_control_rotation) 
+                except:
+                    rospy.logerr("something errro with rotation----")
                 open_rotation_flag=0       
         else:
             Master=c3dof.Connect_3DOF_MODbus_RTU()

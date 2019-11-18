@@ -15,13 +15,14 @@
   </include> -->
   <group ns="search_port">
 
-    <param name="climb_max_length" value="0">
-    <param name="climb_way_point_length" value="0">
-    <param name="rotation_distance_tracking_over" value="0">
-    <param name="mobile_tracking_stop_flag" value="1">
+    <param name="climb_max_length" value="0.5" />
+    <param name="climb_way_point_length" value="0.2"/>
+    <param name="rotation_distance_tracking_over" value="0"/>
+    <param name="climb_distance_tracking_over" value="0"/>
+    <param name="mobile_tracking_stop_flag" value="1"/>
 
-    <param name="path_num_planning" value="1">
-    <node pkg="painting_robot_demo" type="painting_opreating_node.py" name="painting_opreating_node" output="screen" >
+    <param name="path_num_planning" value="1"/>
+    <node pkg="painting_robot_demo" type="painting_opreating_node_os.py" name="painting_opreating_node_os" output="screen" >
     </node>
     
   </group>

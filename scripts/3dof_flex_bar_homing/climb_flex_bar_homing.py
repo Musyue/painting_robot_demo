@@ -11,8 +11,8 @@ import time
 
 
 class FLEX3DOFROBOTHOME():
-    def __init__(self):
-        pass
+    def __init__(self,nodename):
+        self.nodename=nodename
     def Init_node(self):
         rospy.init_node(self.nodename)
     
@@ -29,6 +29,7 @@ def main():
         write_flex_pole_motor_down = rospy.get_param("write_flex_pole_motor_down")
         rospy.loginfo("%s is %s", rospy.resolve_name('write_flex_pole_motor_down'), write_flex_pole_motor_down)
         if home_climb_flex_bar==1:
+            # rospy.set_param('distance_control_stand_bar',0)
             rospy.set_param('distance_control_stand_bar',0)
             time.sleep(5)
             rospy.loginfo("waiting for stand bar go to start point")
@@ -37,7 +38,7 @@ def main():
             rospy.loginfo("waiting for flex bar go down to start point")
             rospy.set_param('write_flex_pole_motor_down',0)
             rospy.set_param('distance_climb_control',0)
-            time.sleep(2)
+            time.sleep(5)
             rospy.loginfo("waiting for climb robot go down to start point")
             rospy.set_param('rad_control_rotation',0)
             time.sleep(3)

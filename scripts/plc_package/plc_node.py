@@ -114,7 +114,7 @@ def main():
 
 
         write_mobile_platform_brake_close = rospy.get_param("write_mobile_platform_brake_close")
-        rospy.logerr("%s is %s", rospy.resolve_name('write_mobile_platform_brake_close'), write_mobile_platform_brake_close)
+        # rospy.logerr("%s is %s", rospy.resolve_name('write_mobile_platform_brake_close'), write_mobile_platform_brake_close)
 
         # fetch the utterance parameter from our parent namespace
         write_mobile_platform_brake_open = rospy.get_param('write_mobile_platform_brake_open')
@@ -151,11 +151,11 @@ def main():
             # read  read_limit_switch_status
             read_limit_switch_status_data,read_limit_switch_status_str=plcpkg.Send_message_to_port(ser,plcpkg.crc16.Combining_CRC_and_info(plcpkg.plccmd.READ_LIMIT_SWITCH_STATUS))
             rotation_abs_encode_data,rotation_abs_encode_str=plcpkg.Send_message_to_port(ser,plcpkg.crc16.Combining_CRC_and_info(plcpkg.plccmd.READ_ROTATION_ENCODE_DATA))            
-            
+            rospy.loginfo("%s----read_limit_switch_status_data",read_limit_switch_status_data)
             if len(read_limit_switch_status_data)!=0 and read_limit_switch_status_data[0]==4:
                 read_limit_status_data=bin(read_limit_switch_status_data[4])[2:]
                 read_limit_status_data=read_limit_status_data.zfill(len(read_limit_status_data)+3-len(read_limit_status_data))
-                # rospy.loginfo("read_limit_status_data------%s",read_limit_status_data)
+                rospy.loginfo("read_limit_status_data------%s",read_limit_status_data)
                 # rospy.set_param('read_limit_switch_status', read_limit_switch_status_data[4])
                 rospy.set_param('top_limit_switch_status', int(list(read_limit_status_data)[0]))#here wait for affirm
                 rospy.set_param('mid_limit_switch_status', int(list(read_limit_status_data)[1]))

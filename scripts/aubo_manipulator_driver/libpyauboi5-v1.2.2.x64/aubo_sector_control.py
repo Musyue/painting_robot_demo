@@ -241,6 +241,8 @@ class AuboTrajectory():
             print("Path planning OK,Go back to start point----")
             self.Aubo_Move_to_Point(robot, StartPoint)
             rospy.set_param('painting_oprea_over',1)
+            os.system('rosparam set /search_port/painting_oprea_over 1')
+                    
             # 清除所有已经设置的全局路点
             robot.remove_all_waypoint()
             #self.DisConnect_Aubo_No_ShutDown(robot)
