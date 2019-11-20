@@ -151,6 +151,7 @@ def main():
             # read  read_limit_switch_status
             read_limit_switch_status_data,read_limit_switch_status_str=plcpkg.Send_message_to_port(ser,plcpkg.crc16.Combining_CRC_and_info(plcpkg.plccmd.READ_LIMIT_SWITCH_STATUS))
             rotation_abs_encode_data,rotation_abs_encode_str=plcpkg.Send_message_to_port(ser,plcpkg.crc16.Combining_CRC_and_info(plcpkg.plccmd.READ_ROTATION_ENCODE_DATA))            
+            rospy.loginfo("%s----rotation_abs_encode_data",rotation_abs_encode_data)            
             rospy.loginfo("%s----read_limit_switch_status_data",read_limit_switch_status_data)
             if len(read_limit_switch_status_data)!=0 and read_limit_switch_status_data[0]==4:
                 read_limit_status_data=bin(read_limit_switch_status_data[4])[2:]
@@ -162,13 +163,13 @@ def main():
                 rospy.set_param('bottom_limit_switch_status', int(list(read_limit_status_data)[2]))
                 rospy.logerr("-------read limit switch %s-%d",read_limit_switch_status_data,int(list(read_limit_status_data)[2]))
             #read abs encode for rotation 
-            if len(rotation_abs_encode_data)!=0 and rotation_abs_encode_data[0]==2:
+            if len(rotation_abs_encode_data)!=0 and rotation_abs_encode_data[0]==3:
                 high16str=hex(rotation_abs_encode_data[5])[2:]
                 low16str=hex(rotation_abs_encode_data[6])[2:]
                 high16str=high16str.zfill(len(high16str)+2-len(high16str))
                 low16str=low16str.zfill(len(low16str)+2-len(low16str))
                 newdata='0x'+high16str+low16str
-                rospy.set_param('-------rotation_abs_encode',int(newdata,16))
+                rospy.set_param('rotation_abs_encode',int(newdata,16))
                 rospy.logerr('-----rotation encode --%s--%d',rotation_abs_encode_data,int(newdata,16))
             # read line encode data
             read_echos_status_data,read_echos_status_str=plcpkg.Send_message_to_port(ser,plcpkg.crc16.Combining_CRC_and_info(plcpkg.plccmd.READ_ECHOS_STATUS))
@@ -223,7 +224,7 @@ def main():
             try:
                 ser = serial.Serial(port=plc_port, baudrate=plc_port_baudrate, bytesize=serial.EIGHTBITS, parity=serial.PARITY_NONE, stopbits=1,timeout=0.3, xonxoff=0,rtscts=False,dsrdtr=False)
             except:
-                rospy.logerr("Please check PLC Usb port----,I will reconnect after three seconds-----")
+                rospy.loginfo("Please check PLC Usb port----,I will reconnect after three seconds-----")
                 open_serial_port_again_flag=1
                 time.sleep(3)
             

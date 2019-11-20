@@ -27,7 +27,7 @@
     <param name="read_echos_status" value="0" />
 
     <!--set /plc_pkg_para/write_front_light_open_forever 1-->
-    <param name="write_front_light_open_forever" value="1" />
+    <param name="write_front_light_open_forever" value="0" />
     <!--set /plc_pkg_para/write_front_light_fast_blink 2-->
     <param name="write_front_light_fast_blink" value="0" />
     <!--set /plc_pkg_para/write_front_light_slow_blink 3-->
