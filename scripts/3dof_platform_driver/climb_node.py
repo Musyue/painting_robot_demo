@@ -85,11 +85,11 @@ class Control3DOFROBOT():
 
         :param master:
         :param velocity: 0-2500
-        :param outputDegree: 0-360Degree,Positive clockwise,Negtive disclockwise
+        :param outputDegree: 0-360Degree,Positive disclockwise,Negtive clockwise
         :param control_id:
         :return:
         """
-        rospy.loginfo("outputDegree: 0-360 Degree,Positive clockwise,Negtive disclockwise")
+        rospy.loginfo("0-360 Degree,Positive disclockwise,Negtive clockwise")
         
         outputPulse = outputDegree*9.17
         self.Control_3DOF_Robot(master, control_id, velocity, -1.0*outputPulse)
@@ -105,7 +105,7 @@ class Control3DOFROBOT():
         :return:
         """
 
-        rospy.loginfo("outputDegree: 0-360 Degree,neg down,pos up")
+        rospy.loginfo("------climb robot,neg down,pos up")
         outputPulse = outputDistance *42.5
         self.Control_3DOF_Robot(master, control_id, velocity, -1.0*outputPulse)
 
@@ -255,8 +255,8 @@ def main():
                         rospy.logerr("some errors with Open_Stop_Enable_Driver--- hold--0")
                     rospy.set_param('open_hold_flag',0)
                     # rospy.set_param('top_limit_switch_status',0)
-                else:
-                    rospy.set_param('top_limit_switch_status',0)
+                # else:
+                #     rospy.set_param('top_limit_switch_status',0)
 
             if mid_limit_switch_status==1:
                 # c3dof.Open_Stop_Enable_Driver(Master,1,0)
@@ -268,9 +268,9 @@ def main():
                     except:
                         rospy.logerr("some errors with mid_limit_switch_status--- climb--0")
                     rospy.set_param('open_hold_flag',0)
-                    rospy.set_param('mid_limit_switch_status',0)
-                else:
-                    rospy.set_param('mid_limit_switch_status',0)
+                    # rospy.set_param('mid_limit_switch_status',0)
+                # else:
+                #     rospy.set_param('mid_limit_switch_status',0)
             if read_line_encode!=0 and read_line_encode<0.35:#0.39-->-80---0.44--->0
                 if enable_second_control_stand_bar==0:
                     try:
@@ -287,10 +287,10 @@ def main():
                         c3dof.Open_Stop_Enable_Driver(Master,1,0)
                     except:
                         rospy.logerr("some errors with bottom_limit_switch_status--- hold")
-                    rospy.set_param('bottom_limit_switch_status',0)
+                    # rospy.set_param('bottom_limit_switch_status',0)
                     rospy.set_param('open_hold_flag',0)
-                else:
-                    rospy.set_param('bottom_limit_switch_status',0)
+                # else:
+                #     rospy.set_param('bottom_limit_switch_status',0)
             if enable_control_stand_bar==1:
                 try:
                     c3dof.Open_Stop_Enable_Driver(Master,1,1)

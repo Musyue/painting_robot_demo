@@ -22,7 +22,7 @@ class LISTPRARMETERS():
     def opreating_cmd(self,ns_name,param_ns):
         cmd_str='rosparam get /'+ns_name+'/'+param_ns
         (status, output) = commands.getstatusoutput(cmd_str)
-        rospy.loginfo('/'+ns_name+'/'+param_ns+'data:-->'+output)
+        rospy.loginfo('/'+ns_name+'/'+param_ns+'--data:-->'+output)
 def main():
     nodename="list_parameters_node"
 
