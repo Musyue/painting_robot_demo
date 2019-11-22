@@ -248,11 +248,12 @@ class AuboTrajectory():
             #self.DisConnect_Aubo_No_ShutDown(robot)
 
 def main():
-    ratet=1
+    ratet=10
     IP=rospy.get_param('aubo_ip')
     StartPoint=rospy.set_param('aubo_start_point', [-3.07,-2.094,80.07,64.0747,95.11,89.98])#(-3.3364,12.406,-81.09,-91.207,-86.08,0.164)
     StartPoint=tuple(rospy.get_param('aubo_start_point'))
-    home_point_aubo=(-3.06,44.26,62.00,64.06,95.16,90.03)
+    PullbacktobarPoint=(-3.07,36.79,37.03,64.06,95.16,89.97)
+    opreating_start_point_aubo=(-3.07,-2.094,80.07,64.0747,95.11,89.98)
     Sector_Length=rospy.get_param('sector_length')#0.8 #m
     Sector_Width=rospy.get_param('sector_width')#0.2 #m
     Sector_Nums=rospy.get_param('sector_nums')#4
@@ -281,9 +282,14 @@ def main():
             Left_Right_Flag =rospy.get_param('left_right_flag')#1
             aubo_go_back_initial_point=rospy.get_param('aubo_go_back_initial_point')
             open_aubo_oprea_flag=rospy.get_param('open_aubo_oprea_flag')
+            aubo_go_back_opreating_point=rospy.get_param('aubo_go_back_opreating_point')
+            if aubo_go_back_opreating_point==1:
+                # Aub.open_home_point=1
+                Aub.Aubo_Move_to_Point(Robot,opreating_start_point_aubo)
+                rospy.set_param('aubo_go_back_opreating_point',0)
             if aubo_go_back_initial_point==1:
                 # Aub.open_home_point=1
-                Aub.Aubo_Move_to_Point(Robot,home_point_aubo)
+                Aub.Aubo_Move_to_Point(Robot,PullbacktobarPoint)
                 rospy.set_param('aubo_go_back_initial_point',0)
             if open_aubo_oprea_flag==1:
                 Aub.Spray_Painting_Cartesian_Sector_Planning(Robot,StartPoint,Sector_Length,Sector_Width,Sector_Nums,Left_Right_Flag)

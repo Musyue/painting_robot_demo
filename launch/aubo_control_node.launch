@@ -15,6 +15,7 @@
     <param name="left_right_flag" value="1"/>
     <param name="painting_oprea_over" value="0"/>
     <param name="aubo_go_back_initial_point" value="0"/>
+    <param name="aubo_go_back_opreating_point" value="0"/>
     <param name="auboworkspacelen" value="1.1"/>
     <param name="auboWorkspacewidth" value="0.7"/>
     <param name="open_aubo_oprea_flag" value="0"/>

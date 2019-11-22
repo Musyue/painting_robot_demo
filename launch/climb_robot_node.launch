@@ -3,7 +3,7 @@
   <!-- set /global_example parameter -->  
   <group ns="search_port">
 
-    <param name="open_climb_flag" value="1" />
+    <param name="open_climb_flag" value="0" />
 
     <param name="open_hold_flag" value="0"/>
 
@@ -21,7 +21,7 @@
     <!--set /climb_pkg_para/enable_control_rotation 1 enable 2 disable-->
     <param name="enable_control_rotation" value="0"/>
     <!--set /climb_pkg_para/enable_climb_control-->
-    <param name="enable_climb_control" value="1"/>
+    <param name="enable_climb_control" value="0"/>
     <!-- close driver second -->
     <param name="enable_second_control_stand_bar" value="0" />
 
@@ -41,12 +41,12 @@
 
     <!--set /climb_pkg_para/enable_control_stand_bar velocity-0.05/8=0.00625m/s 0.0-0.3-max neg-down pos-up-->
     <param name="distance_control_stand_bar" value="0" />
-    <!--set /climb_pkg_para/enable_control_rotation 0-3.14 max pos-anticlockwise neg-clokwise-->
-    <param name="rad_control_rotation" value="1.57"/>
+    <!--set /climb_pkg_para/enable_control_rotation -3.14-0.8 max pos-anticlockwise neg-clokwise-->
+    <param name="rad_control_rotation" value="0"/>
     <!--set /climb_pkg_para/enable_climb_control 0-2.5m max pos-up neg-down-->
-    <param name="distance_climb_control" value="-0.4"/>    
+    <param name="distance_climb_control" value="0"/>    
 
-    <node pkg="painting_robot_demo" type="climb_node.py" name="climb_node" output="screen" >
+    <node pkg="painting_robot_demo" type="climb_modbus_node.py" name="climb_modbus_node" output="screen" >
     </node>
     
   </group>

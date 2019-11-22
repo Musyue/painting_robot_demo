@@ -29,28 +29,45 @@ def main():
         write_flex_pole_motor_down = rospy.get_param("write_flex_pole_motor_down")
         rospy.loginfo("%s is %s", rospy.resolve_name('write_flex_pole_motor_down'), write_flex_pole_motor_down)
         if home_climb_flex_bar==1:
+
+            os.system('rosparam set /search_port/open_climb_flag 0')
+            rospy.set_param('rad_control_rotation',0)
+            os.system('rosparam set /search_port/open_rotation_flag 1')
+            time.sleep(8)
+            rospy.loginfo("waiting for rotation robot go  to start rad/degree")
+            rospy.set_param('distance_climb_control',0)
+            os.system('rosparam set /search_port/open_climb_flag 1')
+            time.sleep(6)
+            rospy.loginfo("waiting for climb robot go down to start point")
             # rospy.set_param('distance_control_stand_bar',0)
+            os.system('rosparam set /search_port/aubo_go_back_initial_point 1')
+            time.sleep(4)
+            rospy.loginfo("waiting for aubo robot go back to bar point")
+            os.system('rosparam set /search_port/aubo_go_back_initial_point 0')
+
             os.system('rosparam set /search_port/enable_control_stand_bar 1')
-            
+            os.system('rosparam set /search_port/enable_control_stand_bar 0')
             rospy.set_param('distance_control_stand_bar',0)
             os.system('rosparam set /search_port/open_hold_flag 1')
             time.sleep(20)
+            os.system('rosparam set /search_port/enable_control_stand_bar 2')
+            os.system('rosparam set /search_port/enable_control_stand_bar 0')
             rospy.loginfo("waiting for stand bar go to start point")
             rospy.set_param('write_flex_pole_motor_down',2)
             time.sleep(15)
             rospy.loginfo("waiting for flex bar go down to start point")
             rospy.set_param('write_flex_pole_motor_down',0)
             
-            rospy.set_param('distance_climb_control',0)
-            os.system('rosparam set /search_port/open_climb_flag 1')
-            time.sleep(15)
-            rospy.loginfo("waiting for climb robot go down to start point")
+
             
-            rospy.set_param('rad_control_rotation',0)
-            os.system('rosparam set /search_port/open_rotation_flag 1')
-            time.sleep(15)
-            rospy.loginfo("waiting for rotation robot go  to start rad/degree")            
+           
             rospy.set_param('home_climb_flex_bar',0)
+            os.system('rosparam set /search_port/open_rotation_flag 0')
+            os.system('rosparam set /search_port/enable_control_rotation 2')
+            os.system('rosparam set /search_port/enable_control_rotation 0')
+            os.system('rosparam set /search_port/enable_climb_control 2')
+            os.system('rosparam set /search_port/enable_climb_control 0')
+
         rate.sleep()
 
 if __name__=="__main__":
