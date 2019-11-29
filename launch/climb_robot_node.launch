@@ -31,7 +31,7 @@
     <!-- get  climb_line_homing_abs_encode_data-->
     <param name="climb_line_homing_abs_encode_data" value="0.40"/>
     <!-- get  rotation_homing_abs_encode_data-->
-    <param name="rotation_homing_abs_encode_data" value="39932"/>
+    <param name="rotation_homing_abs_encode_data" value="44418"/>
     <!--set /climb_pkg_para/enable_control_stand_bar-->
     <param name="velocity_control_stand_bar" value="1000" />
     <!--set /climb_pkg_para/enable_control_rotation-->

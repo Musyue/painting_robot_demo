@@ -149,7 +149,7 @@ class CLMBPKG:
         """
         rospy.loginfo("0-3.14 Degree,Positive disclockwise,Negtive clockwise")
         
-        outputPulse = int(outputDegree*9.17)
+        outputPulse = int(outputDegree*8.73)#9.17
         self.Control_3DOF_Robot(ser, control_id, velocity, -1.0*outputPulse)
 
 
@@ -208,7 +208,7 @@ def main():
         open_serial_port_again_flag=1
 
     count=0
-    rate = rospy.Rate(10)
+    rate = rospy.Rate(30)
 
     while not rospy.is_shutdown():
         rotation_homing_abs_encode_data=rospy.get_param("rotation_homing_abs_encode_data")
