@@ -21,7 +21,7 @@ def main():
     climb_go_up_down_flag=0
     open_stand_bar_flag=0
     w_count=2
-    path_num=2
+    path_num=1
     climb_minus_count=0
     while not rospy.is_shutdown():
         open_control_mobile_platform=rospy.get_param('open_control_mobile_platform')
@@ -34,11 +34,13 @@ def main():
         climb_max_length=rospy.get_param('climb_max_length')
         climb_way_point_length=rospy.get_param('climb_way_point_length')
         climb_num_way_point=rospy.get_param('climb_num_way_point')
+
         # climb_and_stand_bar_rotaion_homing=rospy.get_param('climb_and_stand_bar_rotaion_homing')
         if path_num>0:
-            
+            rospy.logerr("-------path_num----%d",path_num)
             # os.system('rosparam set /search_port/enable_control_stand_bar 1')
             if w_count>0:
+                rospy.logerr("-------w_count----%d",w_count)
                 if mobile_tracking_stop_flag==1:
                     # rospy.loginfo("mobile tracking over----")
                     #stand bar
@@ -46,15 +48,22 @@ def main():
                         rospy.loginfo("flex pole up-----")
                         # rospy.set_param('write_flex_pole_motor_up',1)
                         os.system('rosparam set /search_port/enable_control_stand_bar 1')
+                        time.sleep(0.05)
+                        os.system('rosparam set /search_port/enable_control_stand_bar 1')
                         os.system('rosparam set /search_port/enable_control_stand_bar 0')
+                        os.system('rosparam set /search_port/write_flex_pole_motor_up 1')
+                        time.sleep(0.05)
                         os.system('rosparam set /search_port/write_flex_pole_motor_up 1')
                     
                         time.sleep(20)
                         rospy.loginfo("waiting for flex pole go to point")
                         os.system('rosparam set /search_port/write_flex_pole_motor_up 0')
                         # rospy.set_param('distance_control_stand_bar',10)#30cm
-                        os.system('rosparam set /search_port/distance_control_stand_bar 0.2')
+                        os.system('rosparam set /search_port/distance_control_stand_bar 0.16')
                         os.system('rosparam set /search_port/open_hold_flag 1')
+                        time.sleep(0.05)
+                        os.system('rosparam set /search_port/open_hold_flag 1')
+
                         
 
                         time.sleep(20)
@@ -65,6 +74,9 @@ def main():
                         initial_line_encode_data=float(output)
 
                         open_stand_bar_flag=1
+                        
+                        os.system('rosparam set /search_port/enable_control_stand_bar 2')
+                        time.sleep(0.05)
                         os.system('rosparam set /search_port/enable_control_stand_bar 2')
                         os.system('rosparam set /search_port/enable_control_stand_bar 0')
 
@@ -74,7 +86,11 @@ def main():
                     
                     if climb_distance_tracking_over==0:
                         if climb_go_up_down_flag==0:
+                            rospy.logerr("climb----to----max point-----")
                             os.system('rosparam set /search_port/enable_climb_control 1')
+                            time.sleep(0.1)
+                            os.system('rosparam set /search_port/enable_climb_control 1')
+                            time.sleep(0.1)
                             os.system('rosparam set /search_port/enable_climb_control 0')
                             # rospy.set_param('enable_climb_control',1)
                             # rospy.set_param('enable_climb_control',0)
@@ -83,10 +99,14 @@ def main():
                             rospy.loginfo(tempstr)
                             os.system(tempstr)#('rosparam set /search_port/distance_climb_control 0.1')
                             os.system('rosparam set /search_port/open_climb_flag 1')
+                            time.sleep(0.1)
+                            os.system('rosparam set /search_port/open_climb_flag 1')
                             
                     
                             time.sleep(10)
                             rospy.loginfo("waiting for climb go to maxlength point")
+                            os.system('rosparam set /search_port/climb_distance_tracking_over 1')
+                            time.sleep(0.05)
                             os.system('rosparam set /search_port/climb_distance_tracking_over 1')
                             rospy.logerr('climb_max_length+initial_line_encode_data%s',climb_max_length+initial_line_encode_data)
                             if read_line_encode>=(climb_max_length+initial_line_encode_data):
@@ -94,9 +114,15 @@ def main():
                                 os.system('rosparam set /search_port/climb_distance_tracking_over 1')
                     
                         if climb_go_up_down_flag==1:
+                            os.system('rosparam set /search_port/enable_climb_control 1')
+                            time.sleep(0.1)
+                            os.system('rosparam set /search_port/enable_climb_control 1')
+                            time.sleep(0.1)
                             # rospy.set_param('distance_climb_control',-1.0*climb_way_point_length)#climb down 70cm
                             tempstr='rosparam set /search_port/distance_climb_control '+str(climb_max_length-climb_minus_count*climb_way_point_length)
                             os.system(tempstr)
+                            os.system('rosparam set /search_port/open_climb_flag 1')
+                            time.sleep(0.05)
                             os.system('rosparam set /search_port/open_climb_flag 1')
 
                             time.sleep(10)
@@ -112,6 +138,8 @@ def main():
                     if climb_distance_tracking_over==1:
                         if rotation_distance_tracking_over==0:
                             rospy.loginfo("rotation_distance_tracking-----")
+                            os.system('rosparam set /search_port/enable_control_rotation 1')
+                            time.sleep(0.05)
                             os.system('rosparam set /search_port/enable_control_rotation 1')
                             os.system('rosparam set /search_port/enable_control_rotation 0')
                             # rospy.set_param('rad_control_rotation',pi/2)#rotation clockwise pi/2
@@ -153,7 +181,9 @@ def main():
                     
                                 # rospy.set_param('painting_oprea_over',0)
                                 os.system('rosparam set /search_port/painting_oprea_over 0')
-                    
+                                time.sleep(0.05)
+                                os.system('rosparam set /search_port/painting_oprea_over 0')
+                                rospy.loginfo("go to next  opreating task--------")
                                 if w_count==0:
                                     # rospy.set_param('open_control_mobile_platform',1)
                                     os.system('rosparam set /search_port/open_control_mobile_platform 1')
@@ -186,8 +216,12 @@ def main():
             rospy.set_param('open_aubo_oprea_flag',0)
             rospy.set_param('painting_oprea_over',0)
             rospy.set_param('enable_control_rotation',2)
+            rospy.set_param('enable_control_rotation',0)
             rospy.set_param('enable_climb_control',2)
+            rospy.set_param('enable_climb_control',0)
+
             rospy.set_param('enable_control_stand_bar',2)
+            rospy.set_param('enable_control_stand_bar',0)
             rospy.set_param("home_climb_flex_bar",0)
         rate.sleep()
 
