@@ -23,19 +23,6 @@ def main():
     w_count=2
     path_num=2
     climb_minus_count=0
-    #enable rotation robot
-    # rospy.set_param('enable_control_rotation',1)
-    # os.system('rosparam set /search_port/enable_control_rotation 1')
-    # #enable stand robot
-    # # rospy.set_param('enable_control_stand_bar',1)
-    
-    # os.system('rosparam set /search_port/enable_control_stand_bar 1')
-    # #enable climb robot
-    # # rospy.set_param('enable_climb_control',1)
-    # os.system('rosparam set /search_port/enable_climb_control 1')
-    # os.system('rosparam set /search_port/enable_control_rotation 0')
-    # os.system('rosparam set /search_port/enable_control_stand_bar 0')
-    # os.system('rosparam set /search_port/enable_climb_control 0')
     while not rospy.is_shutdown():
         open_control_mobile_platform=rospy.get_param('open_control_mobile_platform')
         mobile_tracking_stop_flag=rospy.get_param('mobile_tracking_stop_flag')

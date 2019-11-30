@@ -146,6 +146,7 @@ class CLMBPKG:
         :param outputDegree: 0-3.14Degree,Positive disclockwise,Negtive clockwise
         :param control_id:
         :return:
+        int(outputDegree)#
         """
         rospy.loginfo("0-3.14 Degree,Positive disclockwise,Negtive clockwise")
         
