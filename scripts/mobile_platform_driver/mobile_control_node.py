@@ -11,6 +11,7 @@ from mobileplatform_driver_steptech import *
 from geometry_msgs.msg import Twist,Pose
 from scipy.io import loadmat
 import tf2_ros
+import os
 from nav_msgs.msg import Path
 from tf.transformations import euler_from_quaternion, quaternion_from_euler
 # import matplotlib.pyplot as plt
@@ -23,7 +24,7 @@ class AGV4WDICONTROLLER():
         self.car_width=0.395
         self.imu_sub=rospy.Subscriber('/imu_data',Imu,self.Imu_callback)
         self.cmd_vel_sub=rospy.Subscriber('/cmd_vel',Twist,self.CmdVel_callback)
-        self.path_sub=rospy.Subscriber('/straight_path',Path,self.PathTarget_callback)
+        self.path_sub=rospy.Subscriber('/mobile_base_path',Path,self.PathTarget_callback)
         self.ImuOrientation=()
         self.ImuAngularvelocity=()
         self.ImuLinearAcceleration=()
@@ -166,11 +167,11 @@ class AGV4WDICONTROLLER():
         print("RPM_fl",RPM_fl,RPM_fr,RPM_rl,RPM_rr)
         if 0 not in [RPM_fl,RPM_fr,RPM_rl,RPM_rr]:
             Velocity=[(RPM_fl*2*pi*self.wheel_R)/60.0,(RPM_fr*2*pi*self.wheel_R)/60.0,(RPM_rl*2*pi*self.wheel_R)/60.0,(RPM_rr*2*pi*self.wheel_R)/60.0]
-            print("------Velocity---------",Velocity)#self.mpfh.Driver_walk_velocity_encode_fl
+            # print("------Velocity---------",Velocity)#self.mpfh.Driver_walk_velocity_encode_fl
             return Velocity
         else:
             Velocity=[(RPM_fl*2*pi*self.wheel_R)/60.0,(RPM_fr*2*pi*self.wheel_R)/60.0,(RPM_rl*2*pi*self.wheel_R)/60.0,(RPM_rr*2*pi*self.wheel_R)/60.0]
-            print("----some zero in list for velocity---",Velocity)
+            # print("----some zero in list for velocity---",Velocity)
             return [-1.0*self.vel_reference,1.0*self.vel_reference,-1.0*self.vel_reference,1.0*self.vel_reference]
             # return [-0.50*self.vel_reference,0.50*self.vel_reference,-0.50*self.vel_reference,0.50*self.vel_reference]
             # print "there are velocity error in encode"
@@ -354,7 +355,7 @@ def main():
    flagg=1
    flaggg=1
    pathfilename='path'#'pathsmallCirclexythera'
-   limit_error_rad_for_start_point=0.1#rad
+   limit_error_rad_for_start_point=0.08#rad
    rotation_velocity=0.1
    flag_path_tracking=0
    flag_send_ref_velocity_for_onece=0
@@ -372,6 +373,7 @@ def main():
    first_step_roation_error_max=10.0
    limit_e_distance=0.5
    end_step_tracking_kp=0.5#1.0
+   oepn_one_VC_flag=0
    open_control_mobile_platform=rospy.get_param('open_control_mobile_platform')
    while not rospy.is_shutdown():
         open_control_mobile_platform=rospy.get_param('open_control_mobile_platform')
@@ -418,7 +420,7 @@ def main():
                         elif flag_for_servo_first_step==0 and abs(agvobj.traget_pha_error(agvobj.path_all[0][2],odemetry_pha_pha))<=limit_error_rad_for_start_point:
                             agvobj.mpfh.Send_same_velocity_to_four_walking_wheel([-1.0,1.0,-1.0,1.0],1,0.0)
                             agvobj.mpfh.Send_diff_degree_position_to_four_steering_wheel([-1.0,-1.0,-1.0,-1.0],[0.0,0.0,0.0,0.0])
-                            time.sleep(2)
+                            time.sleep(1)
                             flag_for_servo_first_step=1
                             flag_path_tracking=1
                             flag_send_ref_velocity_for_onece=1
@@ -445,9 +447,20 @@ def main():
                             agvobj.mpfh.Send_diff_degree_position_to_four_steering_wheel([-1.0,-1.0,-1.0,-1.0],[0.0,0.0,0.0,0.0])
                             time.sleep(2)
                             flag_for_servo_to_end_point=0
+                            flag_for_servo_first_step=0
+                            flag_go_x_shape=0
                             # rospy.set_param('open_control_mobile_platform',0)
                             #notice pating node mobile base stop
+                            time.sleep(3)
+                            rospy.logerr("Finishing tracking to end point,I will go to the painting opreating task-----")
+
+                            os.system('rosparam set /search_port/mobile_tracking_stop_flag 1')
                             rospy.set_param('mobile_tracking_stop_flag',1)
+                            time.sleep(0.05)
+                            os.system('rosparam set /search_port/mobile_tracking_stop_flag 1')
+                            os.system('rosparam set /search_port/open_control_mobile_platform 0')
+                            time.sleep(0.05)
+                            os.system('rosparam set /search_port/open_control_mobile_platform 0')
 
                         else:
                             pass                
@@ -473,9 +486,10 @@ def main():
                             # flag_close_all=0
                         velocity_real_time=agvobj.Caculate_velocity_from_RPM()
                         if len(velocity_real_time)!=0 and flag_path_tracking==1:
+                            rospy.loginfo("---path_tracking in second step---------")
                             rad_real_time=agvobj.Caculate_rad_from_position_data()
-                            print("velocity_real_time",velocity_real_time)
-                            print("rad_real_time",rad_real_time)
+                            # print("velocity_real_time",velocity_real_time)
+                            # print("rad_real_time",rad_real_time)
                             Vfi=velocity_real_time[0]
                             Vfo=velocity_real_time[1]
                             Vri=velocity_real_time[2]
@@ -485,16 +499,18 @@ def main():
                             detari=rad_real_time[2]
                             detaro=rad_real_time[3]
                             # VC=(agvobj.sign(Vri)*Vri+agvobj.sign(Vro)*Vro)/2.
-                            VC=agvobj.vel_reference
+                            if oepn_one_VC_flag==0:
+                                VC=agvobj.vel_reference
+                                oepn_one_VC_flag=1
 
                             deta_speed=agvobj.caculate_deta_from_slide(agvobj.path_all,[odemetry_xx,odemetry_yy,odemetry_pha_pha])
                             e_distance=sqrt((agvobj.path_all[-1][0]-odemetry_xx)**2+(agvobj.path_all[-1][1]-odemetry_yy)**2)
-
+                            rospy.logerr("---e_distance-----%s",str(e_distance))
                             if e_distance<=limit_e_distance:
                                 VC=end_step_tracking_kp*e_distance
 
-                            print("VC-------",VC)
-                            print("deta_speed---------",deta_speed)
+                            rospy.logerr("---VC-------%s",str(VC))
+                            rospy.logerr("---deta_speed---------%s",str(deta_speed))
                             agvobj.pub_deta_same.publish(deta_speed)
                             # v_deta=agvobj.hoffman_kinematic_model_new(VC,agvobj.phi)
                             # print("four velocity and four steer---",v_deta)
@@ -521,7 +537,7 @@ def main():
                         agvobj.mpfh.Send_same_velocity_to_four_walking_wheel([-1.0,1.0,-1.0,1.0],1,0.0)
                         agvobj.mpfh.Send_diff_degree_position_to_four_steering_wheel(ratation_flag,[0.0,0.0,0.0,0.0])
                     agvobj.mpfh.Send_Control_Command(agvobj.mpfh.CanAnalysis.yamlDic['sync_data_ID'], agvobj.mpfh.MobileDriver_Command.ZERO_COMMAND)
-                    print("---------read data----")
+                    # print("---------read data----")
                 endtime=time.time()
                 dt=endtime-starttime
                 print("-----------dt------",dt)

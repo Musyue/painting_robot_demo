@@ -467,7 +467,7 @@ def main():
                     mpfh.MobileControl.Send_Velocity_Driver(-1*int(VelocityData),0,mpfh.MobileControl.CanAnalysis.yamlDic['walking_channel_pdo']['rear_walking_left_rpdo']['rpdo']['rpdo3'])
                     mpfh.MobileControl.Send_Velocity_Driver(-1*int(VelocityData),0,mpfh.MobileControl.CanAnalysis.yamlDic['walking_channel_pdo']['rear_walking_right_rpdo']['rpdo']['rpdo3'])
                 elif key=='i':
-                    VelocityData= mpfh.caculate_velocity(-1.0*speed)
+                    VelocityData= mpfh.caculate_velocity(1.0*speed)
                     print("VelocityData:RPM/Min",VelocityData)
                     mpfh.MobileControl.Send_Velocity_Driver(-1*int(VelocityData),0,mpfh.MobileControl.CanAnalysis.yamlDic['walking_channel_pdo']['front_walking_left_rpdo']['rpdo']['rpdo3'])
                     mpfh.MobileControl.Send_Velocity_Driver(1*int(VelocityData),0,mpfh.MobileControl.CanAnalysis.yamlDic['walking_channel_pdo']['front_walking_right_rpdo']['rpdo']['rpdo3'])
@@ -475,7 +475,7 @@ def main():
                     mpfh.MobileControl.Send_Velocity_Driver(1*int(VelocityData),0,mpfh.MobileControl.CanAnalysis.yamlDic['walking_channel_pdo']['rear_walking_right_rpdo']['rpdo']['rpdo3'])
                 
                 elif key ==',':
-                    VelocityData= mpfh.caculate_velocity(speed)
+                    VelocityData= mpfh.caculate_velocity(-1.0*speed)
                     print("VelocityData:RPM/Min",VelocityData)
                     mpfh.MobileControl.Send_Velocity_Driver(-1*int(VelocityData),0,mpfh.MobileControl.CanAnalysis.yamlDic['walking_channel_pdo']['front_walking_left_rpdo']['rpdo']['rpdo3'])
                     mpfh.MobileControl.Send_Velocity_Driver(1*int(VelocityData),0,mpfh.MobileControl.CanAnalysis.yamlDic['walking_channel_pdo']['front_walking_right_rpdo']['rpdo']['rpdo3'])
@@ -581,7 +581,7 @@ def main():
         rate.sleep()
 
 
-
+    mpfh.MobileControl.Disable_ALL_Motor_Controller()
     mpfh.MobileControl.CanAnalysis.Can_VCICloseDevice()
     mpfh.MobileControl.Close_driver_can_Node(0x00000000,1)
 if __name__=="__main__":

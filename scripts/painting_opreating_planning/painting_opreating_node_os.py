@@ -18,11 +18,15 @@ def main():
     Aub.Init_node()
     rate = rospy.Rate(ratet)
     rospy.set_param('open_control_mobile_platform',1)
+    rospy.set_param('mobile_path_way_planning',1)
     climb_go_up_down_flag=0
     open_stand_bar_flag=0
-    w_count=2
-    path_num=1
+    w_count=2#rospy.get_param('climb_num_way_point')
+    path_num=2#rospy.get_param('path_num_planning')
+    # rospy.loginfo("path_num%s",str(path_num))
     climb_minus_count=0
+    mobile_path_way_num=1
+    close_all_path_flag=0
     while not rospy.is_shutdown():
         open_control_mobile_platform=rospy.get_param('open_control_mobile_platform')
         mobile_tracking_stop_flag=rospy.get_param('mobile_tracking_stop_flag')
@@ -34,7 +38,8 @@ def main():
         climb_max_length=rospy.get_param('climb_max_length')
         climb_way_point_length=rospy.get_param('climb_way_point_length')
         climb_num_way_point=rospy.get_param('climb_num_way_point')
-
+        path_num_planning=rospy.get_param('path_num_planning')
+        rospy.loginfo("path_num_planning%s",str(path_num_planning))
         # climb_and_stand_bar_rotaion_homing=rospy.get_param('climb_and_stand_bar_rotaion_homing')
         if path_num>0:
             rospy.logerr("-------path_num----%d",path_num)
@@ -59,7 +64,7 @@ def main():
                         rospy.loginfo("waiting for flex pole go to point")
                         os.system('rosparam set /search_port/write_flex_pole_motor_up 0')
                         # rospy.set_param('distance_control_stand_bar',10)#30cm
-                        os.system('rosparam set /search_port/distance_control_stand_bar 0.16')
+                        os.system('rosparam set /search_port/distance_control_stand_bar 0.18')
                         os.system('rosparam set /search_port/open_hold_flag 1')
                         time.sleep(0.05)
                         os.system('rosparam set /search_port/open_hold_flag 1')
@@ -130,6 +135,8 @@ def main():
                             rospy.loginfo("waiting for climb go back to next climb way point")
                             rospy.logerr('climb_max_length+initial_line_encode_data-w_count*climb_way_point_length%s',climb_max_length+initial_line_encode_data-w_count*climb_way_point_length)
                             os.system('rosparam set /search_port/climb_distance_tracking_over 1')
+                            time.sleep(0.05)
+                            os.system('rosparam set /search_port/climb_distance_tracking_over 1')
                             if read_line_encode<=(climb_max_length+initial_line_encode_data-w_count*climb_way_point_length):
                                 # rospy.set_param('climb_distance_tracking_over',1)
                                 os.system('rosparam set /search_port/climb_distance_tracking_over 1')
@@ -162,7 +169,8 @@ def main():
                                     os.system('rosparam set /search_port/aubo_go_back_opreating_point 0')
                                 rospy.loginfo("starting aubo painting opreation-----")
                                 os.system('rosparam set /search_port/open_aubo_oprea_flag 1')
-
+                                time.sleep(0.05)
+                                os.system('rosparam set /search_port/open_aubo_oprea_flag 1')
                                 time.sleep(30)
                                 rospy.loginfo("waiting for aubo opreating-----")
                                 os.system('rosparam set /search_port/painting_oprea_over 1')
@@ -186,7 +194,7 @@ def main():
                                 rospy.loginfo("go to next  opreating task--------")
                                 if w_count==0:
                                     # rospy.set_param('open_control_mobile_platform',1)
-                                    os.system('rosparam set /search_port/open_control_mobile_platform 1')
+                                    
                     
                                     # rospy.set_param('mobile_tracking_stop_flag',0)
                                     os.system('rosparam set /search_port/mobile_tracking_stop_flag 0')
@@ -208,7 +216,16 @@ def main():
                                     rospy.loginfo("waiting for home program over-------")
                                     # rospy.set_param('home_climb_flex_bar',0)
                                     os.system('rosparam set /search_port/home_climb_flex_bar 0')
-                    
+                                    
+                                    if mobile_path_way_num>=path_num_planning:
+                                        mobile_path_way_num=0
+                                    else:
+                                        mobile_path_way_num+=1
+                                        os.system('rosparam set /search_port/mobile_path_way_planning '+str(mobile_path_way_num))
+                                        rospy.logerr("I will go to [ %s ]the mobile_path_way_point-----",str(mobile_path_way_num))
+                                    os.system('rosparam set /search_port/open_control_mobile_platform 1')
+                                    time.sleep(0.05)
+                                    os.system('rosparam set /search_port/open_control_mobile_platform 1')
                
         else:
             rospy.loginfo("-------all path over-----")
@@ -223,6 +240,13 @@ def main():
             rospy.set_param('enable_control_stand_bar',2)
             rospy.set_param('enable_control_stand_bar',0)
             rospy.set_param("home_climb_flex_bar",0)
+            if close_all_path_flag==0:
+                os.system('rosparam set /search_port/mobile_path_way_planning '+str(3))
+                rospy.logerr("I will go to [ %s ]the mobile_path_way_point-----",str(3))
+                os.system('rosparam set /search_port/open_control_mobile_platform 1')
+                time.sleep(0.05)
+                os.system('rosparam set /search_port/open_control_mobile_platform 1')
+                close_all_path_flag=1           
         rate.sleep()
 
 if __name__ == '__main__':

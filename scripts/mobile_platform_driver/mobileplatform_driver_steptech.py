@@ -416,7 +416,7 @@ class MobilePlatformDriver():
             newvelocity=[velocity[i:i+2] for i in range(0,len(velocity), 2)]
             # print newvelocity
             NEWCMD=(int(newvelocity[4],16),int(newvelocity[3],16),int(newvelocity[2],16),int(newvelocity[1],16))+BASIC[4:]
-            print(newvelocity,NEWCMD)
+            # print(newvelocity,NEWCMD)
             return NEWCMD
 
         elif VelocityData>0:
@@ -569,7 +569,7 @@ class MobilePlatformDriver():
                 pass
 
             NEWCMD=BASIC[:4]+(int(tempnewposition[3],16),int(tempnewposition[2],16),int(tempnewposition[1],16),int(tempnewposition[0],16))
-            print NEWCMD
+            # print NEWCMD
             return NEWCMD
 
         else:

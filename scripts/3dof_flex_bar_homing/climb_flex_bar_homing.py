@@ -57,12 +57,12 @@ def main():
             os.system('rosparam set /search_port/open_hold_flag 1')
             time.sleep(0.05)
             os.system('rosparam set /search_port/open_hold_flag 1')
-            time.sleep(20)
+            time.sleep(10)
             os.system('rosparam set /search_port/enable_control_stand_bar 2')
             os.system('rosparam set /search_port/enable_control_stand_bar 0')
             rospy.loginfo("waiting for stand bar go to start point")
             rospy.set_param('write_flex_pole_motor_down',2)
-            time.sleep(15)
+            time.sleep(25)
             rospy.loginfo("waiting for flex bar go down to start point")
             rospy.set_param('write_flex_pole_motor_down',0)
 
@@ -78,7 +78,7 @@ def main():
             os.system('rosparam set /search_port/enable_climb_control 2')
             os.system('rosparam set /search_port/enable_climb_control 0')
             rospy.set_param('mobile_tracking_stop_flag',0)
-
+            rospy.loginfo("homing program over--  go to next mobile way point-------")
         rate.sleep()
 
 if __name__=="__main__":

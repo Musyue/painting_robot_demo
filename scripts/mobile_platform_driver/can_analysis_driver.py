@@ -45,9 +45,9 @@ class VCI_INIT_CONFIG(Structure):
 class CanAnalysisDriver:
     def __init__(self):
         self.configname="mobileparameter.yaml"
-        self.canlibpath="/data/ros/renov_robot_ws/src/painting_robot_demo/lib/libcontrolcan.so"#rospy.get_param('cansolib_path')
+        self.canlibpath="/data/ros/yue_wk_2019/src/painting_robot_demo/lib/libcontrolcan.so"#rospy.get_param('cansolib_path')
         self.OpreateCanAnalysis = cdll.LoadLibrary(self.canlibpath)#(str('/data/ros/yue_wk_2019/src/painting_robot_demo/lib/libcontrolcan.so'))
-        self.canyamlconfig_path="/data/ros/renov_robot_ws/src/painting_robot_demo/config/"#rospy.get_param('canyaml_config_path')
+        self.canyamlconfig_path="/data/ros/yue_wk_2019/src/painting_robot_demo/config/"#rospy.get_param('canyaml_config_path')
         self.yamlDic={}
         self.Opreating_Yaml()# init yaml
         
@@ -192,26 +192,29 @@ class CanAnalysisDriver:
             self.logger.loggerinfo(Canstatus)
             return True  
     def Can_Transmit_new_multi(self,CanInd,SenData_dic):
-        Len=len(SenData_dic)
-        vci_can_obj = (Len*VCI_CAN_OBJ)()
-        for i in range(Len):
-            vci_can_obj[i].ID=SenData_dic[IDD]
-            vci_can_obj[i].RemoteFlag=0
-            vci_can_obj[i].ExternFlag =0
-            vci_can_obj[i].SendType = 0
-            vci_can_obj[i].DataLen = 8
-            vci_can_obj[i].Data=SenData_dic[SenData]
-        Canstatus=self.OpreateCanAnalysis.VCI_Transmit(self.yamlDic['nDeviceType'],self.yamlDic['nDeviceInd'],CanInd,vci_can_obj,48)
-        if Canstatus== -1:
-            self.logger.loggererror("Can analysis offline!")
-            self.logger.loggererror(Canstatus)
-        elif Canstatus==0:
-            self.logger.loggererror("Can Analysis Receive No data!!")
-            self.logger.loggererror(Canstatus)
-        else:
-            self.logger.loggerinfo("Can Analysis Receive Success!!")
-            self.logger.loggerinfo(Canstatus)
-        return Canstatus,vci_can_obj
+        try:
+            Len=len(SenData_dic)
+            vci_can_obj = (Len*VCI_CAN_OBJ)()
+            for i in range(Len):
+                vci_can_obj[i].ID=SenData_dic[IDD]
+                vci_can_obj[i].RemoteFlag=0
+                vci_can_obj[i].ExternFlag =0
+                vci_can_obj[i].SendType = 0
+                vci_can_obj[i].DataLen = 8
+                vci_can_obj[i].Data=SenData_dic[SenData]
+            Canstatus=self.OpreateCanAnalysis.VCI_Transmit(self.yamlDic['nDeviceType'],self.yamlDic['nDeviceInd'],CanInd,vci_can_obj,48)
+            if Canstatus== -1:
+                self.logger.loggererror("Can analysis offline!")
+                self.logger.loggererror(Canstatus)
+            elif Canstatus==0:
+                self.logger.loggererror("Can Analysis Receive No data!!")
+                self.logger.loggererror(Canstatus)
+            else:
+                self.logger.loggerinfo("Can Analysis Receive Success!!")
+                self.logger.loggerinfo(Canstatus)
+            return Canstatus,vci_can_obj
+        except:
+            pass
     def Can_Transmit_PyInit(self,CanInd,Length,VCI_CAN_OBJ_STRUC):
         CanFuncStruc=self.OpreateCanAnalysis.VCI_Transmit#(self.yamlDic['nDeviceType'],self.yamlDic['nDeviceInd'],CanInd,)
         CanFuncStruc.restype = c_uint
@@ -257,18 +260,21 @@ class CanAnalysisDriver:
         # a = ubyte_array(0, 0, 0, 0, 0, 0, 0, 0)
         # ubyte_3array = c_ubyte*3
         # b = ubyte_3array(0, 0 , 0)
-        vci_can_obj = (Len*VCI_CAN_OBJ)()
-        Canstatus=self.OpreateCanAnalysis.VCI_Receive(self.yamlDic['nDeviceType'],self.yamlDic['nDeviceInd'],CanInd,vci_can_obj,Len,0)
-        if Canstatus== -1:
-            self.logger.loggererror("Can analysis offline!")
-            self.logger.loggererror(Canstatus)
-        elif Canstatus==0:
-            self.logger.loggererror("Can Analysis Receive No data!!")
-            self.logger.loggererror(Canstatus)
-        else:
-            self.logger.loggerinfo("Can Analysis Receive Success!!")
-            self.logger.loggerinfo(Canstatus)
-        return Canstatus,vci_can_obj
+        try:
+            vci_can_obj = (Len*VCI_CAN_OBJ)()
+            Canstatus=self.OpreateCanAnalysis.VCI_Receive(self.yamlDic['nDeviceType'],self.yamlDic['nDeviceInd'],CanInd,vci_can_obj,Len,0)
+            if Canstatus== -1:
+                self.logger.loggererror("Can analysis offline!")
+                self.logger.loggererror(Canstatus)
+            elif Canstatus==0:
+                self.logger.loggererror("Can Analysis Receive No data!!")
+                self.logger.loggererror(Canstatus)
+            else:
+                self.logger.loggerinfo("Can Analysis Receive Success!!")
+                self.logger.loggerinfo(Canstatus)
+            return Canstatus,vci_can_obj
+        except:
+            print("can device error--------maybe can device disconnected----please check")
     def Can_Receive_PyInit(self,CanInd,Len,WaitTime,VCI_CAN_OBJ_STRUC):
         CanFuncStruc=self.OpreateCanAnalysis.VCI_Receive#(self.yamlDic['nDeviceType'],self.yamlDic['nDeviceInd'],CanInd,)
         CanFuncStruc.restype = c_uint
