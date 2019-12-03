@@ -50,34 +50,50 @@ def main():
             os.system('rosparam set /search_port/aubo_go_back_initial_point 0')
 
             os.system('rosparam set /search_port/enable_control_stand_bar 1')
-            time.sleep(0.1)
+            time.sleep(0.05)
             os.system('rosparam set /search_port/enable_control_stand_bar 1')
             os.system('rosparam set /search_port/enable_control_stand_bar 0')
-            rospy.set_param('distance_control_stand_bar',0)
+            os.system('rosparam set /search_port/distance_control_stand_bar 0')
+            time.sleep(0.05)
+            os.system('rosparam set /search_port/distance_control_stand_bar 0')
+            # rospy.set_param('distance_control_stand_bar',0)
             os.system('rosparam set /search_port/open_hold_flag 1')
             time.sleep(0.05)
             os.system('rosparam set /search_port/open_hold_flag 1')
-            time.sleep(10)
+            time.sleep(15)
             os.system('rosparam set /search_port/enable_control_stand_bar 2')
             os.system('rosparam set /search_port/enable_control_stand_bar 0')
             rospy.loginfo("waiting for stand bar go to start point")
-            rospy.set_param('write_flex_pole_motor_down',2)
+            os.system('rosparam set /search_port/write_flex_pole_motor_down 2')
+            time.sleep(0.05)
+            os.system('rosparam set /search_port/write_flex_pole_motor_down 2')
+            # rospy.set_param('write_flex_pole_motor_down',2)
             time.sleep(25)
             rospy.loginfo("waiting for flex bar go down to start point")
-            rospy.set_param('write_flex_pole_motor_down',0)
+            # rospy.set_param('write_flex_pole_motor_down',0)
+
+            os.system('rosparam set /search_port/open_climb_flag 0')
+            os.system('rosparam set /search_port/write_flex_pole_motor_down 0')
 
             
 
             
            
             rospy.set_param('home_climb_flex_bar',0)
+            os.system('rosparam set /search_port/home_climb_flex_bar 0')
             os.system('rosparam set /search_port/open_rotation_flag 0')
+            os.system('rosparam set /search_port/open_hold_flag 0')
             os.system('rosparam set /search_port/enable_control_rotation 2')
             
             os.system('rosparam set /search_port/enable_control_rotation 0')
             os.system('rosparam set /search_port/enable_climb_control 2')
             os.system('rosparam set /search_port/enable_climb_control 0')
+
+            # os.system('rosparam set /search_port/enable_climb_control 2')
+            # os.system('rosparam set /search_port/enable_climb_control 0')
+
             rospy.set_param('mobile_tracking_stop_flag',0)
+            os.system('rosparam set /search_port/mobile_tracking_stop_flag 0')
             rospy.loginfo("homing program over--  go to next mobile way point-------")
         rate.sleep()
 
