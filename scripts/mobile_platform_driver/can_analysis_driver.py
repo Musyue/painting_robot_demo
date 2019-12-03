@@ -45,9 +45,9 @@ class VCI_INIT_CONFIG(Structure):
 class CanAnalysisDriver:
     def __init__(self):
         self.configname="mobileparameter.yaml"
-        self.canlibpath="/data/ros/yue_wk_2019/src/painting_robot_demo/lib/libcontrolcan.so"#rospy.get_param('cansolib_path')
+        self.canlibpath="/data/ros/renov_robot_ws/src/painting_robot_demo/lib/libcontrolcan.so"#rospy.get_param('cansolib_path')
         self.OpreateCanAnalysis = cdll.LoadLibrary(self.canlibpath)#(str('/data/ros/yue_wk_2019/src/painting_robot_demo/lib/libcontrolcan.so'))
-        self.canyamlconfig_path="/data/ros/yue_wk_2019/src/painting_robot_demo/config/"#rospy.get_param('canyaml_config_path')
+        self.canyamlconfig_path="/data/ros/renov_robot_ws/src/painting_robot_demo/config/"#rospy.get_param('canyaml_config_path')
         self.yamlDic={}
         self.Opreating_Yaml()# init yaml
         
