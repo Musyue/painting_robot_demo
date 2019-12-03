@@ -50,7 +50,7 @@ def main():
             time.sleep(4)
             rospy.loginfo("waiting for aubo robot go back to bar point")
             os.system('rosparam set /search_port/aubo_go_back_initial_point 0')
-
+            os.system('rosparam set /search_port/distance_control_stand_bar 0')
             os.system('rosparam set /search_port/enable_control_stand_bar 1')
             time.sleep(0.05)
             os.system('rosparam set /search_port/enable_control_stand_bar 1')
@@ -86,7 +86,7 @@ def main():
             os.system('rosparam set /search_port/open_rotation_flag 0')
             os.system('rosparam set /search_port/open_hold_flag 0')
             os.system('rosparam set /search_port/enable_control_rotation 2')
-            
+            os.system('rosparam set /search_port/enable_second_control_stand_bar 0')
             os.system('rosparam set /search_port/enable_control_rotation 0')
             os.system('rosparam set /search_port/enable_climb_control 2')
             os.system('rosparam set /search_port/enable_climb_control 0')

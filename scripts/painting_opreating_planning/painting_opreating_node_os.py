@@ -64,9 +64,9 @@ def main():
                         rospy.loginfo("waiting for flex pole go to point")
                         os.system('rosparam set /search_port/write_flex_pole_motor_up 0')
                         # rospy.set_param('distance_control_stand_bar',10)#30cm
-                        os.system('rosparam set /search_port/distance_control_stand_bar 0.18')
+                        os.system('rosparam set /search_port/distance_control_stand_bar 0.15')
                         time.sleep(0.05)
-                        os.system('rosparam set /search_port/distance_control_stand_bar 0.18')
+                        os.system('rosparam set /search_port/distance_control_stand_bar 0.15')
                         os.system('rosparam set /search_port/open_hold_flag 1')
                         time.sleep(0.05)
                         os.system('rosparam set /search_port/open_hold_flag 1')
@@ -74,6 +74,7 @@ def main():
                         
 
                         time.sleep(23)
+                        os.system('rosparam set /search_port/open_hold_flag 0')
                         rospy.loginfo("waiting for stand bar go to point")
                         # initial_line_encode_data=rospy.get_param('read_line_encode')
                         cmd_str='rosparam get /search_port/read_line_encode'
@@ -212,7 +213,7 @@ def main():
 
                                     os.system('rosparam set /search_port/home_climb_flex_bar 1')
                                     
-                                    time.sleep(35)
+                                    time.sleep(45)
                                     os.system('rosparam set /search_port/rotation_distance_tracking_over 0')
                                     os.system('rosparam set /search_port/enable_second_control_stand_bar 0')
                                     rospy.loginfo("waiting for home program over-------")
