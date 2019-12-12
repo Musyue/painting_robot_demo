@@ -330,6 +330,14 @@ class AGV4WDICONTROLLER():
         self.pub_detarl.publish(detarl)
         self.pub_detarr.publish(detarr)
         return [Vfl,Vfr,Vrl,Vrr,detafl,detafr,detarl,detarr]
+    def avg_num_list(self,listdata):
+        if len(listdata)<=0:
+            return 0
+        else:
+            sum_num=0
+            for i in listdata:
+                sum_num+=i
+            return sum_num/len(listdata)
 
 
 def main():
@@ -376,7 +384,10 @@ def main():
    end_step_tracking_kp=0.5#1.0
    oepn_one_VC_flag=0
    open_control_mobile_platform=rospy.get_param('open_control_mobile_platform')
+   rotation_velocity_first_list=[]
+   rotation_velocity_end_list =[]
    while not rospy.is_shutdown():
+
         open_control_mobile_platform=rospy.get_param('open_control_mobile_platform')
         mobile_way_point_judge_status=rospy.get_param('mobile_way_point_judge_status')
         if open_control_mobile_platform!=0:
@@ -405,8 +416,18 @@ def main():
                     agvobj.pub_pha_error.publish(agvobj.traget_pha_error(agvobj.path_all[0][2],odemetry_pha_pha))
                     detat=detat+dt
                     if flag_for_servo_first_step==0:
+
                         first_step_roation_linear_velocity=first_step_roation_kp*abs(agvobj.traget_pha_error(agvobj.path_all[0][2],odemetry_pha_pha))+first_step_roation_ki*abs(agvobj.traget_pha_error(agvobj.path_all[0][2],odemetry_pha_pha))*dt
                         agvobj.pub_rotation_linear_velocity.publish(first_step_roation_linear_velocity)
+                        if len(rotation_velocity_first_list)>8:
+                            rotation_velocity_first_list=rotation_velocity_first_list[1:]
+                            rotation_velocity_first_list.append(first_step_roation_linear_velocity)
+                        else:
+                            rotation_velocity_first_list.append(first_step_roation_linear_velocity)
+                        if abs(agvobj.avg_num_list(rotation_velocity_first_list)-first_step_roation_linear_velocity)<=0.000004:
+                            first_step_roation_linear_velocity=0.03
+                        else:
+                            continue
                         print("agvobj.path_all[0][2],odemetry_pha_pha,error",agvobj.path_all[0][2],odemetry_pha_pha,agvobj.traget_pha_error(agvobj.path_all[0][2],odemetry_pha_pha))
                         if flag_for_servo_first_step==0 and abs(agvobj.traget_pha_error(agvobj.path_all[0][2],odemetry_pha_pha))>limit_error_rad_for_start_point:
                             rospy.loginfo("------First: Servo to the latest pha error with mobile coordinate------")
@@ -432,6 +453,16 @@ def main():
                     elif flag_for_servo_to_end_point==1:
                         first_step_roation_linear_velocity=first_step_roation_kp*abs(agvobj.traget_pha_error(agvobj.path_all[-1][2],odemetry_pha_pha))+first_step_roation_ki*abs(agvobj.traget_pha_error(agvobj.path_all[0][2],odemetry_pha_pha))*dt
                         agvobj.pub_rotation_linear_velocity.publish(first_step_roation_linear_velocity)
+                        
+                        if len(rotation_velocity_end_list)>8:
+                            rotation_velocity_end_list=rotation_velocity_end_list[1:]
+                            rotation_velocity_end_list.append(first_step_roation_linear_velocity)
+                        else:
+                            rotation_velocity_end_list.append(first_step_roation_linear_velocity)
+                        if abs(agvobj.avg_num_list(rotation_velocity_end_list)-first_step_roation_linear_velocity)<=0.000004:
+                            first_step_roation_linear_velocity=0.03
+                        else:
+                            continue
                         print("agvobj.path_all[0][2],odemetry_pha_pha,error",agvobj.path_all[-1][2],odemetry_pha_pha,agvobj.traget_pha_error(agvobj.path_all[-1][2],odemetry_pha_pha))
                         if flag_for_servo_to_end_point==1 and abs(agvobj.traget_pha_error(agvobj.path_all[-1][2],odemetry_pha_pha))>limit_error_rad_for_start_point:
                             rospy.loginfo("------End: Servo to the latest pha error with mobile coordinate------")
