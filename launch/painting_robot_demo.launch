@@ -17,8 +17,8 @@
   -->
   <group ns="search_port">
 
-    <param name="climb_max_length" value="0.6" />
-    <param name="climb_way_point_length" value="0.3"/>
+    <param name="climb_max_length" value="0.5" />
+    <param name="climb_way_point_length" value="0.2"/>
     <param name="rotation_distance_tracking_over" value="0"/>
     <param name="climb_distance_tracking_over" value="0"/>
     <param name="mobile_tracking_stop_flag" value="0"/>
