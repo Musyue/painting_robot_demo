@@ -369,7 +369,7 @@ def main():
    flag_open_pi_4=0.0
    first_step_roation_linear_velocity=0
    first_step_roation_kp=1/(4*2*pi)#1/(2*pi)
-   first_step_roation_ki=0.1/(4*2*pi)
+   first_step_roation_ki=1/(2*pi)
    first_step_roation_error=0
    first_step_roation_error_max=10.0
    limit_e_distance=0.5
@@ -405,7 +405,7 @@ def main():
                     agvobj.pub_pha_error.publish(agvobj.traget_pha_error(agvobj.path_all[0][2],odemetry_pha_pha))
                     detat=detat+dt
                     if flag_for_servo_first_step==0:
-                        first_step_roation_linear_velocity=first_step_roation_kp*abs(agvobj.traget_pha_error(agvobj.path_all[0][2],odemetry_pha_pha))#+first_step_roation_ki*abs(agvobj.traget_pha_error(agvobj.path_all[0][2],odemetry_pha_pha))*detat
+                        first_step_roation_linear_velocity=first_step_roation_kp*abs(agvobj.traget_pha_error(agvobj.path_all[0][2],odemetry_pha_pha))+first_step_roation_ki*abs(agvobj.traget_pha_error(agvobj.path_all[0][2],odemetry_pha_pha))*dt
                         agvobj.pub_rotation_linear_velocity.publish(first_step_roation_linear_velocity)
                         print("agvobj.path_all[0][2],odemetry_pha_pha,error",agvobj.path_all[0][2],odemetry_pha_pha,agvobj.traget_pha_error(agvobj.path_all[0][2],odemetry_pha_pha))
                         if flag_for_servo_first_step==0 and abs(agvobj.traget_pha_error(agvobj.path_all[0][2],odemetry_pha_pha))>limit_error_rad_for_start_point:
@@ -430,7 +430,7 @@ def main():
                         else:
                             pass                
                     elif flag_for_servo_to_end_point==1:
-                        first_step_roation_linear_velocity=first_step_roation_kp*abs(agvobj.traget_pha_error(agvobj.path_all[-1][2],odemetry_pha_pha))#+first_step_roation_ki*abs(agvobj.traget_pha_error(agvobj.path_all[0][2],odemetry_pha_pha))*detat
+                        first_step_roation_linear_velocity=first_step_roation_kp*abs(agvobj.traget_pha_error(agvobj.path_all[-1][2],odemetry_pha_pha))+first_step_roation_ki*abs(agvobj.traget_pha_error(agvobj.path_all[0][2],odemetry_pha_pha))*dt
                         agvobj.pub_rotation_linear_velocity.publish(first_step_roation_linear_velocity)
                         print("agvobj.path_all[0][2],odemetry_pha_pha,error",agvobj.path_all[-1][2],odemetry_pha_pha,agvobj.traget_pha_error(agvobj.path_all[-1][2],odemetry_pha_pha))
                         if flag_for_servo_to_end_point==1 and abs(agvobj.traget_pha_error(agvobj.path_all[-1][2],odemetry_pha_pha))>limit_error_rad_for_start_point:
