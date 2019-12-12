@@ -9,6 +9,7 @@
     <!--set /climb_pkg_para/close all 3dof driver-->
     <param name="open_control_mobile_platform" value="0"/>
     <param name="mobile_tracking_stop_flag" value="0" />
+    <param name="mobile_way_point_judge_status" value="0" />
     
     <!--set /climb_pkg_para/close all 3dof driver-->
     <param name="ref_velocity" value="0.08"/>

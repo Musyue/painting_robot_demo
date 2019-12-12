@@ -378,6 +378,7 @@ def main():
    open_control_mobile_platform=rospy.get_param('open_control_mobile_platform')
    while not rospy.is_shutdown():
         open_control_mobile_platform=rospy.get_param('open_control_mobile_platform')
+        mobile_way_point_judge_status=rospy.get_param('mobile_way_point_judge_status')
         if open_control_mobile_platform!=0:
             if len(agvobj.path_all)!=0:
                 try:
@@ -453,16 +454,25 @@ def main():
                             flag_go_x_shape=0
                             # rospy.set_param('open_control_mobile_platform',0)
                             #notice pating node mobile base stop
-                            time.sleep(3)
-                            rospy.logerr("Finishing tracking to end point,I will go to the painting opreating task-----")
+                            if mobile_way_point_judge_status==1:
+                                time.sleep(3)
+                                rospy.logerr("Finishing tracking to end point,I will go to the painting opreating task-----")
 
-                            os.system('rosparam set /search_port/mobile_tracking_stop_flag 1')
-                            rospy.set_param('mobile_tracking_stop_flag',1)
-                            time.sleep(0.05)
-                            os.system('rosparam set /search_port/mobile_tracking_stop_flag 1')
-                            os.system('rosparam set /search_port/open_control_mobile_platform 0')
-                            time.sleep(0.05)
-                            os.system('rosparam set /search_port/open_control_mobile_platform 0')
+                                os.system('rosparam set /search_port/mobile_tracking_stop_flag 1')
+                                rospy.set_param('mobile_tracking_stop_flag',1)
+                                time.sleep(0.05)
+                                os.system('rosparam set /search_port/mobile_tracking_stop_flag 1')
+                                os.system('rosparam set /search_port/open_control_mobile_platform 0')
+                                time.sleep(0.05)
+                                os.system('rosparam set /search_port/open_control_mobile_platform 0')
+                                os.system('rosparam set /search_port/mobile_way_point_judge_status 0')
+                                time.sleep(0.05)
+                                os.system('rosparam set /search_port/mobile_way_point_judge_status 0')
+                            elif mobile_way_point_judge_status==2:
+                                rospy.loginfo("mobile_way_point_judge_status is 2,this mobile way point is non-task requirement")
+                                continue
+                            else:
+                                rospy.loginfo("mobile_way_point_judge_status is zero")
 
                         else:
                             pass                
