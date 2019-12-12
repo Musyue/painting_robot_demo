@@ -60,7 +60,7 @@ def main():
                         time.sleep(0.05)
                         os.system('rosparam set /search_port/write_flex_pole_motor_up 1')
                     
-                        time.sleep(25)
+                        time.sleep(10)
                         rospy.loginfo("waiting for flex pole go to point")
                         os.system('rosparam set /search_port/write_flex_pole_motor_up 0')
                         # rospy.set_param('distance_control_stand_bar',10)#30cm
@@ -153,7 +153,7 @@ def main():
                             os.system('rosparam set /search_port/enable_control_rotation 1')
                             os.system('rosparam set /search_port/enable_control_rotation 0')
                             # rospy.set_param('rad_control_rotation',pi/2)#rotation clockwise pi/2
-                            os.system('rosparam set /search_port/rad_control_rotation '+str(-pi/2))
+                            os.system('rosparam set /search_port/rad_control_rotation '+str(pi/2))
                             os.system('rosparam set /search_port/open_rotation_flag 1')
                             # os.system('rosparam set /search_port/open_rotation_flag 0')
                             time.sleep(5)
