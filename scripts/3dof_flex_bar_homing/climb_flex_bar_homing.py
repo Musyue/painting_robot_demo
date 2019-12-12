@@ -70,7 +70,7 @@ def main():
             time.sleep(0.05)
             os.system('rosparam set /search_port/write_flex_pole_motor_down 2')
             rospy.set_param('write_flex_pole_motor_down',2)
-            time.sleep(25)
+            time.sleep(10)
             rospy.loginfo("waiting for flex bar go down to start point")
             rospy.set_param('write_flex_pole_motor_down',0)
 

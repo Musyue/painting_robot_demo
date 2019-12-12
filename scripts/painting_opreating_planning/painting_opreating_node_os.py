@@ -70,9 +70,7 @@ def main():
                         os.system('rosparam set /search_port/open_hold_flag 1')
                         time.sleep(0.05)
                         os.system('rosparam set /search_port/open_hold_flag 1')
-
                         
-
                         time.sleep(23)
                         os.system('rosparam set /search_port/open_hold_flag 0')
                         rospy.loginfo("waiting for stand bar go to point")
