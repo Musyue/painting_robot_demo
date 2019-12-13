@@ -22,7 +22,7 @@ def main():
     climb_go_up_down_flag=0
     open_stand_bar_flag=0
     w_count=2#rospy.get_param('climb_num_way_point')
-    path_num=2#rospy.get_param('path_num_planning')
+    path_num=3#rospy.get_param('path_num_planning')
     # rospy.loginfo("path_num%s",str(path_num))
     climb_minus_count=0
     mobile_path_way_num=1
@@ -242,11 +242,11 @@ def main():
             rospy.set_param('enable_control_stand_bar',0)
             rospy.set_param("home_climb_flex_bar",0)
             if close_all_path_flag==0:
-                os.system('rosparam set /search_port/mobile_path_way_planning '+str(3))
-                rospy.logerr("I will go to [ %s ]the mobile_path_way_point-----",str(3))
-                os.system('rosparam set /search_port/open_control_mobile_platform 1')
+                os.system('rosparam set /search_port/mobile_path_way_planning '+str(0))
+                rospy.logerr("I will go to [ %s ]the mobile_path_way_point-----",str(0))
+                os.system('rosparam set /search_port/open_control_mobile_platform 0')
                 time.sleep(0.05)
-                os.system('rosparam set /search_port/open_control_mobile_platform 1')
+                os.system('rosparam set /search_port/open_control_mobile_platform 0')
                 close_all_path_flag=1           
         rate.sleep()
 
