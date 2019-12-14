@@ -23,7 +23,7 @@
     <param name="climb_distance_tracking_over" value="0"/>
     <param name="mobile_tracking_stop_flag" value="0"/>
     <param name="climb_num_way_point" value="2"/>
-    <param name="path_num_planning" value="2"/>
+    <param name="path_num_planning" value="3"/>
     <param name="mobile_path_way_planning" value="0"/>
     <node pkg="painting_robot_demo" type="painting_opreating_node_os.py" name="painting_opreating_node_os" output="screen" >
     </node>

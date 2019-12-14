@@ -22,7 +22,7 @@ def main():
     climb_go_up_down_flag=0
     open_stand_bar_flag=0
     w_count=2#rospy.get_param('climb_num_way_point')
-    path_num=3#rospy.get_param('path_num_planning')
+    path_num=4#rospy.get_param('path_num_planning')
     # rospy.loginfo("path_num%s",str(path_num))
     climb_minus_count=0
     mobile_path_way_num=1
@@ -71,7 +71,7 @@ def main():
                         time.sleep(0.05)
                         os.system('rosparam set /search_port/open_hold_flag 1')
                         
-                        time.sleep(23)
+                        time.sleep(20)
                         os.system('rosparam set /search_port/open_hold_flag 0')
                         rospy.loginfo("waiting for stand bar go to point")
                         # initial_line_encode_data=rospy.get_param('read_line_encode')

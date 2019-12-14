@@ -12,7 +12,7 @@
     <param name="mobile_way_point_judge_status" value="0" />
     
     <!--set /climb_pkg_para/close all 3dof driver-->
-    <param name="ref_velocity" value="0.08"/>
+    <param name="ref_velocity" value="0.12"/>
 
     <node pkg="painting_robot_demo" type="mobile_control_node.py" name="mobile_control_node" output="screen" >
     </node>
