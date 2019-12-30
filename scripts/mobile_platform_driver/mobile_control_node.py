@@ -122,8 +122,8 @@ class AGV4WDICONTROLLER():
             self.pose_quaternion_w=msg.poses[i].pose.orientation.w
             orientation_list = [self.pose_quaternion_x, self.pose_quaternion_y, self.pose_quaternion_z,self.pose_quaternion_w]
             (self.roll,self.pitch,self.yaw) = euler_from_quaternion (orientation_list)
-            if i==0:
-                rospy.logerr("from call back data------>%s",[self.pose_x,self.pose_y,self.yaw])
+            # if i==0:
+                # rospy.logerr("from call back data------>%s",[self.pose_x,self.pose_y,self.yaw])
             self.path_all.append([self.pose_x,self.pose_y,self.yaw])
             # print("-------path---data----",[self.pose_x,self.pose_y,self.pose_z,self.roll,self.pitch,self.yaw])
     def Avage_list(self,listdata,appendata):
@@ -430,7 +430,7 @@ def main():
                     # rospy.logerr("odemetry_pha_pha-----:%s,agvobj.path_all[0][2]---:%s,",str(odemetry_pha_pha),str(agvobj.path_all[0][2]))
                     pha_error_for_start=agvobj.traget_pha_error(agvobj.path_all[0][2],odemetry_pha_pha)
                     pha_error_for_end=agvobj.traget_pha_error(agvobj.path_all[-1][2],odemetry_pha_pha)
-                    
+                    # rospy.logerr("agvobj.path_all[0][2]--->%s,odemetry_pha_pha--->%s,error----->%s",str(agvobj.path_all[0][2]),str(odemetry_pha_pha),str(pha_error_for_start))
                     
                     detat=detat+dt
                     
@@ -475,7 +475,7 @@ def main():
                         # print("agvobj.path_all[0][2],odemetry_pha_pha,error",agvobj.path_all[-1][2],odemetry_pha_pha,pha_error_for_end)
                         if flag_for_servo_to_end_point==1 and abs(pha_error_for_end)>limit_error_rad_for_start_point:
                             rospy.loginfo("------End: Servo to the latest pha error with mobile coordinate------")
-                        
+                            rospy.logerr("endpoint pha angular data:---->%s",str(agvobj.path_all[-1][2])+"tf_pha:"+str(odemetry_pha_pha))
                             if flag_go_x_shape==0:
                                 agvobj.mpfh.Send_same_degree_position_to_four_steering_wheel([1.0,-1.0,-1.0,1.0],pi/4)
                                 time.sleep(2)
@@ -496,6 +496,7 @@ def main():
                             pha_error_for_end=0
                             first_step_roation_linear_velocity=0
                             agvobj.path_all=[]
+                            rospy.logerr("Non-task Point Finishing tracking to end point,I will go to the painting opreating task-----")
                             # rospy.set_param('open_control_mobile_platform',0)
                             #notice pating node mobile base stop
                             if mobile_way_point_judge_status==1:
