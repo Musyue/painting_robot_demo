@@ -38,6 +38,7 @@ def main():
         climb_max_length=rospy.get_param('climb_max_length')
         climb_way_point_length=rospy.get_param('climb_way_point_length')
         climb_num_way_point=rospy.get_param('climb_num_way_point')
+
         path_num_planning=rospy.get_param('path_num_planning')
         rospy.loginfo("path_num_planning%s",str(path_num_planning))
         # climb_and_stand_bar_rotaion_homing=rospy.get_param('climb_and_stand_bar_rotaion_homing')
@@ -217,7 +218,7 @@ def main():
                                     rospy.loginfo("waiting for home program over-------")
                                     # rospy.set_param('home_climb_flex_bar',0)
                                     os.system('rosparam set /search_port/home_climb_flex_bar 0')
-                                    
+                                    climb_go_up_down_flag=0
                                     if mobile_path_way_num>=path_num_planning:
                                         mobile_path_way_num=0
                                     else:

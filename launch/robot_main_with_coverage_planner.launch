@@ -25,6 +25,7 @@
     <param name="climb_num_way_point" value="2"/>
     <param name="path_num_planning" value="3"/>
     <param name="mobile_path_way_planning" value="0"/>
+    <param name="data_path_abs" value="/data/ros/yue_ws_2020/src/painting_robot_demo/data"/>
     <node pkg="painting_robot_demo" type="painting_opreating_node_os.py" name="painting_opreating_node_os" output="screen" >
     </node>
     
