@@ -4,7 +4,7 @@ import rospy, sys
 from math import *
 import numpy as np
 import numpy.matlib
-import moveit_commander
+# import moveit_commander
 import scipy.io as io
 from transfer import *
 from aubo_kinematics import *
@@ -87,7 +87,7 @@ class Renovationrobot_inverse_kinematics():
             datadict.update({("aubo_data_num_"+str(i)):list(data[i])})
         return datadict
 if __name__ == "__main__":
-    mat_path="/data/ros/yue_wk_2019/src/painting_robot_demo/data/data.mat"
+    mat_path="/data/ros/renov_robot_ws/src/painting_robot_demo/data/data.mat"
     data = io.loadmat(mat_path)
     # print(data) 
     manipulatorbase_targetpose=data['renovation_cells_manipulatorbase_positions']
