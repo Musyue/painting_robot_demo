@@ -1,6 +1,6 @@
 <launch>
   <!-- set /global_example parameter -->  
-  <group ns="search_port">
+  <group ns="renov_up_level">
     <!--set /plc_pkg_para/top_limit_switch_status 1-on -->
     <param name="read_buffer_bytes_num" value="6" />
     <!--set /plc_pkg_para/top_limit_switch_status 1-on -->
@@ -21,6 +21,10 @@
     <param name="test_plc_communication" value="0" />
     <!--set /plc_pkg_para/read_line_encode-->
     <param name="read_line_encode" value="0" />
+    <!-- power on first line encode data name:l0 -->
+    <param name="read_line_l0_encode" value="0" />
+    <!-- stand bar status 1 line encode data name:l1 -->
+    <param name="read_line_l1_encode" value="0" />
     <!--set /plc_pkg_para/read_limit_switch_status-->
     <param name="read_limit_switch_status" value="0" />
     <!--set /plc_pkg_para/read_echos_status-->

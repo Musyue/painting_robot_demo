@@ -1,7 +1,7 @@
 <launch>
 
   <!-- set /global_example parameter -->  
-  <group ns="search_port">
+  <group ns="renov_up_level">
 
     <param name="home_climb_flex_bar" value="0" />
 

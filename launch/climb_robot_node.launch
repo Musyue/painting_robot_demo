@@ -1,7 +1,7 @@
 <launch>
 
   <!-- set /global_example parameter -->  
-  <group ns="search_port">
+  <group ns="renov_up_level">
 
     <param name="open_climb_flag" value="0" />
 
@@ -11,7 +11,9 @@
 
 
 
-
+    <param name="climb_kp" value="0.1"/>
+    <param name="climb_ki" value="0.1"/>
+    <param name="climb_kd" value="0.1"/>
 
     <!--set /climb_pkg_para/close all 3dof driver-->
     <param name="close_all_3dof_climb_driver_flag" value="0"/>

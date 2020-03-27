@@ -61,8 +61,9 @@ def main():
     # fetch the utterance parameter from our parent namespace
     plc_port_baudrate = rospy.get_param('plc_port_baudrate')
     rospy.loginfo("%s is %s", rospy.resolve_name('plc_port_baudrate'), plc_port_baudrate)
-
-
+    """0 save the initial data"""
+    flag_for_line_encode_0_state=0
+    flag_for_line_encode_1_state=0
     try:
         ser = serial.Serial(port=plc_port, baudrate=plc_port_baudrate, bytesize=serial.EIGHTBITS, parity=serial.PARITY_NONE, stopbits=1,timeout=0.3, xonxoff=0,rtscts=False,dsrdtr=False)
     except:
@@ -76,6 +77,9 @@ def main():
         # rospy.loginfo("%s is %s", rospy.resolve_name('plc_port_ok_flag'), plc_port_ok_flag)
 
         read_line_encode = rospy.get_param("read_line_encode")
+        read_line_l0_encode = rospy.get_param("read_line_l0_encode")
+        read_line_l1_encode = rospy.get_param("read_line_l1_encode")
+        top_limit_switch_status=ospy.get_param("top_limit_switch_status")
         # rospy.loginfo("%s is %s", rospy.resolve_name('read_line_encode'), read_line_encode)
 
         # fetch the utterance parameter from our parent namespace
@@ -127,7 +131,7 @@ def main():
         # rospy.loginfo("%s is %s", rospy.resolve_name('write_electric_switch_painting_open'), write_electric_switch_painting_open)
         rotation_abs_encode = rospy.get_param("rotation_abs_encode")
         # rospy.loginfo("%s is %s", rospy.resolve_name('rotation_abs_encode'), rotation_abs_encode)
-
+        if count>1000:
         if open_serial_port_again_flag!=1 and plc_port_ok_flag==1:
             # read line encode data
             start_time=time.time()
@@ -140,6 +144,12 @@ def main():
             
             if len(read_line_encode_data)!=0 and read_line_encode_data[0]==4:
                 rospy.set_param('read_line_encode', read_line_encode_data[4]/100.0)
+                if flag_for_line_encode_0_state==0 and count>4:
+                    rospy.set_param('read_line_l0_encode', read_line_encode_data[4]/100.0)
+                    flag_for_line_encode_0_state=1
+                if top_limit_switch_status==1 and count>4 and flag_for_line_encode_1_state==0:
+                    rospy.set_param('read_line_encode', read_line_encode_data[4]/100.0)
+                    flag_for_line_encode_1_state=1
                 # read_limit_status_data=bin(read_line_limitswitch_echos_encode_data[6])[2:]
                 # read_limit_status_data=read_limit_status_data.zfill(len(read_limit_status_data)+3-len(read_limit_status_data))
                 # rospy.loginfo("read_limit_status_data------%s",read_limit_status_data)
@@ -227,7 +237,7 @@ def main():
                 rospy.loginfo("Please check PLC Usb port----,I will reconnect after three seconds-----")
                 open_serial_port_again_flag=1
                 time.sleep(3)
-            
+        count+=1    
         rate.sleep()
 if __name__ == "__main__":
     main()
