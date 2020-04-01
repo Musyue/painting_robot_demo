@@ -93,7 +93,6 @@ def main(test_count):
                 # robot.set_joint_maxvelc((1.5, .5, 1.5, 1.5, 1.5, 1.5))
                 # 设置关节最大加速度
                 robot.set_joint_maxacc((1.5, 1.5, 1.5, 1.5, 1.5, 1.5))
-
                 # 设置关节最大加速度
                 robot.set_joint_maxvelc((1.5, 1.5, 1.5, 1.5, 1.5, 1.5))
                 # 设置机械臂末端最大线加速度(m/s)
@@ -102,142 +101,54 @@ def main(test_count):
                 # 获取机械臂末端最大线加速度(m/s)
                 # robot.set_end_max_line_velc(0.2)
                 robot.set_end_max_line_velc(0.5)
+
+
+                robot.remove_all_waypoint()
+                joint_radian=(-0.28525098, -0.53203763,  1.36669062, -1.24286441, -1.85604731, 1.57079633)
+                # print("move joint to {0}".format(joint_radian))
+                robot.move_joint(joint_radian)
+                flag1=robot.add_waypoint(joint_radian)
+                print("point1:",flag1)
+
+                # print("move joint to {0}".format(joint_radian))
+                # robot.move_joint(joint_radian)
+                flag2=robot.add_waypoint(joint_radian)
+                print('point2:',flag2)
+
+                joint_radian=(0.71039368, -0.63763321,  1.4856621 , -1.01829734, -0.86040264, 1.57079633)
+                flag3=robot.add_waypoint(joint_radian)
+                print('point3:',flag3)
+
+                joint_radian=(-0.28525098, -0.63763321,  1.4856621 , -1.01829734, -1.85604731, 1.57079633)
+                flag4=robot.add_waypoint(joint_radian)
+                print('point4:',flag4)
+
+                joint_radian=(-0.28525098, -0.78704025,  1.5382336 , -0.8163188 , -1.85604731, 1.57079633)
+                flag5=robot.add_waypoint(joint_radian)
+                print('point5:',flag5)
+
+                joint_radian=(0.71039368, -0.78704025,  1.5382336 , -0.8163188 , -0.86040264, 1.57079633)
+                flag6=robot.add_waypoint(joint_radian)
+                print("point6:",flag6)
+
+                set_flag=robot.set_blend_radius(blend_radius=0.01)
+                print("set_flag=:",set_flag)
+
+                set_flag1=robot.move_track(RobotMoveTrackType.CARTESIAN_MOVEP)
+                print("set_flag1=:",set_flag1)
                 
-                # joint_radian = deg_to_rad((-3.07,-2.094,80.07,64.0747,95.11,89.98))#((0,0,0,0,0,0))
-                # joint_radian=(0.710393681906976, 
-                #     -1.3977020494122865, 
-                #     1.3012983964751612, 
-                #     -0.4425922077023454, 
-                #     -0.8604026448879205, 
-                #     1.5707963267948966)
-            #     dictdata={
-            #         "aubo_data_num_0": [
-            #         -0.2852509833270265, 
-            #         -0.5320376301933496, 
-            #         1.3666906155038931, 
-            #         -1.2428644078925508, 
-            #         -1.856047310121923, 
-            #         1.5707963267948966
-            #     ], 
-            #     "aubo_data_num_1": [
-            #         -0.2852509833270265, 
-            #         -1.3977020494122865, 
-            #         1.3012983964751612, 
-            #         -0.4425922077023463, 
-            #         -1.856047310121923, 
-            #         1.5707963267948966
-            #     ], 
-            #     "aubo_data_num_10": [
-            #         0.710393681906976, 
-            #         -0.6376332132456559, 
-            #         1.4856621047642653, 
-            #         -1.018297335579872, 
-            #         -0.8604026448879205, 
-            #         1.5707963267948966
-            #     ], 
-            #     "aubo_data_num_11": [
-            #         0.710393681906976, 
-            #         -0.5320376301933489, 
-            #         1.3666906155038934, 
-            #         -1.24286440789255, 
-            #         -0.8604026448879205, 
-            #         1.5707963267948966
-            #     ], 
-            #     "aubo_data_num_12": [
-            #         -0.2852509833270265, 
-            #         -0.5320376301933498, 
-            #         1.3666906155038934, 
-            #         -1.2428644078925508, 
-            #         -1.856047310121923, 
-            #         1.5707963267948966
-            #     ], 
-            #     "aubo_data_num_2": [
-            #         0.710393681906976, 
-            #         -1.3977020494122865, 
-            #         1.3012983964751612, 
-            #         -0.4425922077023454, 
-            #         -0.8604026448879205, 
-            #         1.5707963267948966
-            #     ], 
-            #     "aubo_data_num_3": [
-            #         0.710393681906976, 
-            #         -1.1756504138805868, 
-            #         1.447317763230986, 
-            #         -0.5186244764782195, 
-            #         -0.8604026448879205, 
-            #         1.5707963267948966
-            #     ], 
-            #     "aubo_data_num_4": [
-            #         -0.2852509833270265, 
-            #         -1.1756504138805868, 
-            #         1.447317763230986, 
-            #         -0.5186244764782204, 
-            #         -1.856047310121923, 
-            #         1.5707963267948966
-            #     ], 
-            #     "aubo_data_num_5": [
-            #         -0.2852509833270265, 
-            #         -0.9698667703466137, 
-            #         1.525512678114401, 
-            #         -0.6462132051287792, 
-            #         -1.856047310121923, 
-            #         1.5707963267948966
-            #     ], 
-            #     "aubo_data_num_6": [
-            #         0.710393681906976, 
-            #         -0.9698667703466137, 
-            #         1.525512678114401, 
-            #         -0.6462132051287783, 
-            #         -0.8604026448879205, 
-            #         1.5707963267948966
-            #     ], 
-            #     "aubo_data_num_7": [
-            #         0.710393681906976, 
-            #         -0.787040253980912, 
-            #         1.53823360029741, 
-            #         -0.8163187993114711, 
-            #         -0.8604026448879205, 
-            #         1.5707963267948966
-            #     ], 
-            #     "aubo_data_num_8": [
-            #         -0.2852509833270265, 
-            #         -0.787040253980912, 
-            #         1.53823360029741, 
-            #         -0.8163187993114711, 
-            #         -1.856047310121923, 
-            #         1.5707963267948966
-            #     ], 
-            #     "aubo_data_num_9": [
-            #         -0.2852509833270265, 
-            #         -0.6376332132456559, 
-            #         1.4856621047642644, 
-            #         -1.0182973355798728, 
-            #         -1.856047310121923, 
-            #         1.5707963267948966
-            #     ]
-            # }
+                # print("robot.get_joint_maxacc()",robot.get_joint_maxacc())
+                # print("robot.get_joint_maxvelc()",robot.get_joint_maxvelc())
+                # print("robot.get_end_max_line_acc()",robot.get_end_max_line_acc())
+                # print("robot.get_end_max_linevelc()",robot.get_end_max_line_velc())
+                # print("robot.get_end_max_angle_acc()",robot.get_end_max_angle_acc())
+                # print("robot.get_end_max_angle_velc()",robot.get_end_max_angle_velc())
+                # print("robot.get_joint_status()",robot.get_joint_status())
+                # print("get_tool_dynamics_param",robot.get_tool_dynamics_param())
+                # print("get_dynidentify_results",robot.get_dynidentify_results())
+                # print("get_current_waypoint",robot.get_current_waypoint())
+                # print_json(robot.get_current_waypoint())
 
-                # robot.set_blend_radius(0.01)
-                # for i in range(len(dictdata)):
-                #     joint_radian=tuple(dictdata["aubo_data_num_"+str(i)])
-                #     logger.info("move joint to {0}".format(joint_radian))
-                    # robot.add_waypoint(joint_radian)
-                    # robot.move_joint(joint_radian)
-                    # robot.move_line(joint_radian)
-                # robot.remove_all_waypoint()
-                # robot.move_joint((0,0,0,0,0,0))
-                print("robot.get_joint_maxacc()",robot.get_joint_maxacc())
-                print("robot.get_joint_maxvelc()",robot.get_joint_maxvelc())
-                print("robot.get_end_max_line_acc()",robot.get_end_max_line_acc())
-                print("robot.get_end_max_linevelc()",robot.get_end_max_line_velc())
-                print("robot.get_end_max_angle_acc()",robot.get_end_max_angle_acc())
-                print("robot.get_end_max_angle_velc()",robot.get_end_max_angle_velc())
-                print("robot.get_joint_status()",robot.get_joint_status())
-                print("get_tool_dynamics_param",robot.get_tool_dynamics_param())
-                print("get_dynidentify_results",robot.get_dynidentify_results())
-
-                print("get_current_waypoint",robot.get_current_waypoint())
-                print_json(robot.get_current_waypoint())
             # 断开服务器链接
             robot.disconnect()
 

@@ -4134,3 +4134,17 @@
 07/11/2019 15:55:13,790 [139845603080000] [INFO ] - rshd:0---addr:192.168.1.11---port:8899
 07/11/2019 15:55:16,862 [139845603080000] [ERROR] - sdk log: Login service connect server failed.
 07/11/2019 15:55:16,863 [139845603080000] [INFO ] - remove client, rshd=0
+04/01/2020 17:25:02,669 [140560547665728] [INFO ] - log4cplus started.
+04/01/2020 17:25:02,669 [140560547665728] [INFO ] - rshd:0---addr:192.168.1.11---port:8899
+04/01/2020 17:25:02,670 [140560547665728] [INFO ] - sdk log: Connect robot server success.
+04/01/2020 17:25:02,674 [140560547665728] [INFO ] - sdk log: set dhparam success. type:0, DhParam:0.408000,0.376000,0.098500,0.121500,0.102500,0.094000
+04/01/2020 17:25:02,674 [140560547665728] [INFO ] - sdk log: login  success.
+04/01/2020 17:25:02,675 [140560547665728] [INFO ] - sdk log: login completed, set joint6 retate 360 falg success. joint6Rot360Enable=0
+04/01/2020 17:25:05,601 [140560354490112] [INFO ] - sdk log: init ik param success.
+04/01/2020 17:26:54,303 [139759961683776] [INFO ] - log4cplus started.
+04/01/2020 17:26:54,303 [139759961683776] [INFO ] - rshd:0---addr:192.168.1.11---port:8899
+04/01/2020 17:26:54,303 [139759961683776] [INFO ] - sdk log: Connect robot server success.
+04/01/2020 17:26:54,309 [139759961683776] [INFO ] - sdk log: set dhparam success. type:0, DhParam:0.408000,0.376000,0.098500,0.121500,0.102500,0.094000
+04/01/2020 17:26:54,309 [139759961683776] [INFO ] - sdk log: login  success.
+04/01/2020 17:26:54,311 [139759961683776] [INFO ] - sdk log: login completed, set joint6 retate 360 falg success. joint6Rot360Enable=0
+04/01/2020 17:26:57,241 [139759645095680] [INFO ] - sdk log: init ik param success.
