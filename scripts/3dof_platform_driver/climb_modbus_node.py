@@ -58,6 +58,65 @@ class CLMBPKG:
             datahexstr=hex(int(data)).replace('0x','')
             datahexstr=datahexstr.zfill(len(datahexstr)+4-len(datahexstr))
             return [int(datahexstr[:2],16),int(datahexstr[2:],16)]
+    def Control_3DOF_Robot_Velocity(self, ser, control_id, velocity):  # velocity control
+                """
+
+                :param master:
+                :param control_id: 1-stand,2-rotation,3-climber
+                :param velocity: 0-2500
+                :param outputPulse: High 32位
+                :return:
+                """
+                if control_id==1:
+                    #p001
+                    self.Send_message_to_port(ser,self.Get_crc_16_str(self.plccmd.HOLD_DRIVER_MODEL_VELOCITY))#seting vel model
+                    #p324
+                    send324DataHEXlist=self.plccmd.HOLDING_INITIAL_P324_BASE_VELOCITY_DATA[:4]+self.Get_hex_list_from_OCT(velocity)
+                    self.Send_message_to_port(ser,self.Get_crc_16_str(send324DataHEXlist))#seting pos model
+
+                    # self.Send_message_to_port(ser,self.Get_crc_16_str(self.plccmd.HOLD_DRIVER_MODEL_POSITION))#seting pos model
+                    
+                    # rospy.loginfo(master.execute(control_id, cst.READ_HOLDING_REGISTERS, 0, 8))
+                    # # print type(master.execute(4, cst.READ_HOLDING_REGISTERS, 0, 8))
+                    # master.execute(control_id, cst.WRITE_SINGLE_REGISTER, 1, output_value=6) #
+                    # #rospy.loginfo(master.execute(control_id, cst.WRITE_SINGLE_REGISTER, 282, output_value=1))  # enable Climb Driver
+                    # master.execute(control_id, cst.WRITE_SINGLE_REGISTER, 290,
+                    #                         output_value=outputPulse)  # High 16 10000 pulse 1 rpm,negtive up,positive up
+                    # #rospy.loginfo(master.execute(control_id, cst.WRITE_SINGLE_REGISTER, 291, output_value=outputPulse))  # Low 16bit
+                    # master.execute(control_id, cst.WRITE_SINGLE_REGISTER, 97, output_value=velocity)  # internal velocity
+                    # # rospy.loginfo(master.execute(4, cst.WRITE_SINGLE_REGISTER, 113, output_value=1000))  # internal velocity
+                    # # rospy.loginfo(master.execute(4, cst.WRITE_SINGLE_REGISTER, 114, output_value=1000))  # internal velocity
+                    # master.execute(control_id, cst.WRITE_SINGLE_REGISTER, 324, output_value=1000)  # set fixed velocity
+                if control_id==3:
+                    #p001
+                    self.Send_message_to_port(ser,self.Get_crc_16_str(self.plccmd.CLIMB_DRIVER_MODEL_VELOCITY))#seting pos model
+                    #p290
+    
+                    # send290DataHEXlist=self.plccmd.CLIMB_INITIAL_P290_BASE_PULSE_DATA[:4]+self.Get_hex_list_from_OCT(outputPulse)
+                    # rospy.loginfo(self.Send_message_to_port(ser,self.Get_crc_16_str(send290DataHEXlist)))#seting pos model
+
+    
+                    # send97DataHEXlist=self.plccmd.CLIMB_INITIAL_P97_BASE_VELOCITY_DATA[:4]+self.Get_hex_list_from_OCT(velocity)
+                    # self.Send_message_to_port(ser,self.Get_crc_16_str(send97DataHEXlist))#seting pos model
+
+                    send324DataHEXlist=self.plccmd.CLIMB_INITIAL_P324_BASE_VELOCITY_DATA[:4]+self.Get_hex_list_from_OCT(velocity)
+                    self.Send_message_to_port(ser,self.Get_crc_16_str(send324DataHEXlist))#seting pos model
+                if control_id==2:
+                    #p001
+                    self.Send_message_to_port(ser,self.Get_crc_16_str(self.plccmd.ROTATION_DRIVER_MODEL_VELOCITY))#seting pos model
+                    #p290
+    
+                    # send290DataHEXlist=self.plccmd.ROTATION_INITIAL_P290_BASE_PULSE_DATA[:4]+self.Get_hex_list_from_OCT(outputPulse)
+                    # rospy.loginfo(self.Send_message_to_port(ser,self.Get_crc_16_str(send290DataHEXlist)))#seting pos model
+
+    
+                    # send97DataHEXlist=self.plccmd.ROTATION_INITIAL_P97_BASE_VELOCITY_DATA[:4]+self.Get_hex_list_from_OCT(velocity)
+                    # self.Send_message_to_port(ser,self.Get_crc_16_str(send97DataHEXlist))#seting pos model
+
+                    send324DataHEXlist=self.plccmd.ROTATION_INITIAL_P324_BASE_VELOCITY_DATA[:4]+self.Get_hex_list_from_OCT(velocity)
+                    self.Send_message_to_port(ser,self.Get_crc_16_str(send324DataHEXlist))#seting pos model
+
+
     def Control_3DOF_Robot(self, ser, control_id, velocity, outputPulse):  # position control
             """
 
@@ -121,7 +180,7 @@ class CLMBPKG:
                 send97DataHEXlist=self.plccmd.ROTATION_INITIAL_P97_BASE_VELOCITY_DATA[:4]+self.Get_hex_list_from_OCT(velocity)
                 self.Send_message_to_port(ser,self.Get_crc_16_str(send97DataHEXlist))#seting pos model
 
-                send324DataHEXlist=self.plccmd.ROTATION_INITIAL_P97_BASE_VELOCITY_DATA[:4]+self.Get_hex_list_from_OCT(1000)
+                send324DataHEXlist=self.plccmd.ROTATION_INITIAL_P324_BASE_VELOCITY_DATA[:4]+self.Get_hex_list_from_OCT(1000)
                 self.Send_message_to_port(ser,self.Get_crc_16_str(send324DataHEXlist))#seting pos model
 
 

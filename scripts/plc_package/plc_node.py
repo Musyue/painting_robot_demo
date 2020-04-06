@@ -79,7 +79,7 @@ def main():
         read_line_encode = rospy.get_param("read_line_encode")
         read_line_l0_encode = rospy.get_param("read_line_l0_encode")
         read_line_l1_encode = rospy.get_param("read_line_l1_encode")
-        top_limit_switch_status=ospy.get_param("top_limit_switch_status")
+        top_limit_switch_status=rospy.get_param("top_limit_switch_status")
         # rospy.loginfo("%s is %s", rospy.resolve_name('read_line_encode'), read_line_encode)
 
         # fetch the utterance parameter from our parent namespace
@@ -132,6 +132,7 @@ def main():
         rotation_abs_encode = rospy.get_param("rotation_abs_encode")
         # rospy.loginfo("%s is %s", rospy.resolve_name('rotation_abs_encode'), rotation_abs_encode)
         if count>1000:
+            count=0
         if open_serial_port_again_flag!=1 and plc_port_ok_flag==1:
             # read line encode data
             start_time=time.time()
