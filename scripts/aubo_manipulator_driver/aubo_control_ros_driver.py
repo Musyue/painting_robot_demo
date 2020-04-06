@@ -11,7 +11,6 @@ import os
 class AuboRosDriver():
     def __init__(self,):
         Auboi5Robot.initialize()
-        # 创建机械臂控制类
         self.robot = Auboi5Robot()
         self.aubo_joint_movej_sub = rospy.Subscriber('/aubo_ros_script/movej', String, self.aubo_joint_movej, queue_size=1)
         self.aubo_joint_movej_sub = rospy.Subscriber('/aubo_ros_script/movel', String, self.aubo_joint_movel, queue_size=1)
@@ -52,7 +51,7 @@ class AuboRosDriver():
         # # 创建机械臂控制类
         # robot = Auboi5Robot()
         # 创建上下文
-        handle = robot.create_context()
+        handle = self.robot.create_context()
         # 打印上下文
         rospy.loginfo("robot.rshd={0}".format(handle))
         try:
@@ -60,7 +59,7 @@ class AuboRosDriver():
             # 链接服务器
             ip = Aubo_IP#'192.168.1.11'
             port = 8899
-            result = robot.connect(ip, port)
+            result = self.robot.connect(ip, port)
             if result != RobotErrorType.RobotError_SUCC:
                 rospy.loginfo("connect server{0}:{1} failed.".format(ip, port))
             else:
@@ -84,7 +83,7 @@ class AuboRosDriver():
                 rospy.loginfo("tool_io_0={0}".format(tool_io_status))
 
                 # 设置工具端ＩＯ_0状态
-                robot.set_tool_io_status(RobotToolIoName.tool_io_0, 1)
+                self.robot.set_tool_io_status(RobotToolIoName.tool_io_0, 1)
 
                 # 获取控制柜用户DI
                 io_config = self.robot.get_board_io_config(RobotIOType.User_DI)
@@ -140,19 +139,19 @@ class AuboRosDriver():
         End_point:rad
         """
         # joint_radian = self.deg_to_rad(start_point)
-        rospy.loginfo("move joint to {0}".format(joint_radian))
-        self.robot.move_joint(joint_radian)
-        joint_radian = self.deg_to_rad(End_point)
-        rospy.loginfo("move joint to {0}".format(joint_radian))
-        self.robot.move_line(joint_radian)
+        rospy.loginfo("move joint to {0}".format(start_point))
+        self.robot.move_joint(start_point)
+        # joint_radian = self.deg_to_rad(End_point)
+        rospy.loginfo("move joint to {0}".format(End_point))
+        self.robot.move_line(End_point)
 
     def Aubo_Move_to_Point(self,jointRad):
         """
         JointAngular:rad
         """
         # joint_radian = self.deg_to_rad(jointAngular)
-        rospy.loginfo("move joint to {0}".format(joint_radian))
-        self.robot.move_joint(joint_radian)
+        rospy.loginfo("move joint to {0}".format(jointRad))
+        self.robot.move_joint(jointRad)
     def Tuple_string_to_tuple(self,tuplestring):
         tupletemp = re.findall(r'\-?\d+\.?\d*', tuplestring)
         resdata=[]
@@ -160,21 +159,21 @@ class AuboRosDriver():
             resdata.append(float(i))
         return tuple(resdata)
 def main():
-    ratet=10
+    ratet=1
 
     Aub=AuboRosDriver()
     Aub.Init_node()
     rate = rospy.Rate(ratet)
     flag_roation=0
     count=0
-    IP=rospy.get_param('aubo_ip')
+    IPP=rospy.get_param('aubo_ip')
     StartPoint=Aub.Tuple_string_to_tuple(rospy.get_param('aubo_start_point'))
     maxacctuple=Aub.Tuple_string_to_tuple(rospy.get_param('ee_maxacc_tuple'))
     maxvelctuple=Aub.Tuple_string_to_tuple(rospy.get_param('ee_maxvelc_tuple'))
 
     try:
         
-        Robot = Aub.Init_aubo_driver(IP,maxacctuple, maxvelctuple)
+        Robot = Aub.Init_aubo_driver(IPP,maxacctuple, maxvelctuple)
         # print("StartPoint",StartPoint,type(StartPoint),type(StartPoint[0]))
     except:
         logger.error("Aubo robot disconnect,Please check!")
@@ -186,5 +185,15 @@ def main():
             rate.sleep()
     except:
         rospy.logerr("ros node down")
+    # finally:
+    #     # 断开服务器链接
+    #     if Aub.robot.connected:
+    #         # 关闭机械臂
+    #         Aub.robot.robot_shutdown()
+    #         # 断开机械臂链接
+    #         robot.disconnect()
+    #     # 释放库资源
+    #     Auboi5Robot.uninitialize()
+    #     logger.info("{0} test completed.".format(Auboi5Robot.get_local_time()))
 if __name__ == '__main__':
     main()

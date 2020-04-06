@@ -4,6 +4,8 @@
 import rospy
 import math
 from std_msgs.msg import String
+from sensor_msgs.msg import JointState
+from geometry_msgs.msg import Pose
 import re
 from robotcontrol import *
 
@@ -126,6 +128,38 @@ class Aubocontrol:
         
 
         self.joint_msg_sub = rospy.Subscriber('joint_msgs', String, self.get_joint_states, queue_size=1)
+
+        self.current_joint_pub = rospy.Publisher('current_joints', JointState, queue_size=1)
+        self.current_pose_pub = rospy.Publisher('curren_pose', Pose, queue_size=1)
+        
+        
+        rate = rospy.Rate(1) #10Hz
+        while not rospy.is_shutdown():
+            current_pos = self.robot.get_current_waypoint()
+            print("show msg")
+            print(current_pos)
+            
+            current_joint_msg = JointState()
+            current_joint_msg.header.frame_id = ""
+            current_joint_msg.header.stamp = rospy.Time.now()
+            current_joint_msg.position = current_pos['joint']
+            current_joint_msg.velocity = []
+            current_joint_msg.effort = []
+
+            current_pose_msg = Pose()
+            current_pose_msg.position.x = current_pos['pos'][0]
+            current_pose_msg.position.y = current_pos['pos'][1]
+            current_pose_msg.position.z = current_pos['pos'][2]
+            current_pose_msg.orientation.x = current_pos['ori'][0]
+            current_pose_msg.orientation.y = current_pos['ori'][1]
+            current_pose_msg.orientation.z = current_pos['ori'][2]
+            current_pose_msg.orientation.w = current_pos['ori'][3]
+           
+
+            self.current_joint_pub.publish(current_joint_msg)
+            self.current_pose_pub.publish(current_pose_msg)
+            rate.sleep()
+
 
 
     def __del__ (self):
