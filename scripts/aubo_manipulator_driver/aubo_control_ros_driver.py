@@ -13,8 +13,8 @@ class AuboRosDriver():
         Auboi5Robot.initialize()
         # 创建机械臂控制类
         self.robot = Auboi5Robot()
-        self.aubo_joint_movej_sub = rospy.Subscriber('/aubo_ros_script/movej', String, self.aubo_joint_movej, queue_size=10)
-        self.aubo_joint_movej_sub = rospy.Subscriber('/aubo_ros_script/movel', String, self.aubo_joint_movel, queue_size=10)
+        self.aubo_joint_movej_sub = rospy.Subscriber('/aubo_ros_script/movej', String, self.aubo_joint_movej, queue_size=1)
+        self.aubo_joint_movej_sub = rospy.Subscriber('/aubo_ros_script/movel', String, self.aubo_joint_movel, queue_size=1)
         self.move_to_point=[]
         self.move_line_points={}
     def Init_node(self):
@@ -174,8 +174,8 @@ def main():
 
     try:
         
-        # Robot = Aub.Init_aubo_driver(IP,maxacctuple, maxvelctuple)
-        print("StartPoint",StartPoint,type(StartPoint),type(StartPoint[0]))
+        Robot = Aub.Init_aubo_driver(IP,maxacctuple, maxvelctuple)
+        # print("StartPoint",StartPoint,type(StartPoint),type(StartPoint[0]))
     except:
         logger.error("Aubo robot disconnect,Please check!")
     # finally:
