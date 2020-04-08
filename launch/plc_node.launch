@@ -9,6 +9,8 @@
     <param name="mid_limit_switch_status" value="0" />
     <!--set /plc_pkg_para/bottom_limit_switch_status 1 on-->
     <param name="bottom_limit_switch_status" value="0" />
+    <!-- Use for light scan dervice -->
+    <param name="light_scan_to_ceil_distance" value="0" />
 
 
     <param name="climb_distance_tracking_over" value="0" />

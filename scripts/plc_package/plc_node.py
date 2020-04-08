@@ -75,6 +75,7 @@ def main():
     while not rospy.is_shutdown():
         plc_port_ok_flag = rospy.get_param("plc_port_ok_flag")
         # rospy.loginfo("%s is %s", rospy.resolve_name('plc_port_ok_flag'), plc_port_ok_flag)
+        light_scan_to_ceil_distance = rospy.get_param("light_scan_to_ceil_distance")
 
         read_line_encode = rospy.get_param("read_line_encode")
         read_line_l0_encode = rospy.get_param("read_line_l0_encode")
@@ -138,8 +139,11 @@ def main():
             start_time=time.time()
             # read_line_limitswitch_echos_encode_data,read_line_limitswitch_echos_encode_str=plcpkg.Send_message_to_port(ser,plcpkg.crc16.Combining_CRC_and_info(plcpkg.plccmd.READ_D9_D10_D11_D12_REG_DATA))
             # rospy.logerr("-------read_line_limitswitch_echos_encode line %s-%s",read_line_limitswitch_echos_encode_data,read_line_limitswitch_echos_encode_str)
-            
-            
+            light_scan_to_ceil_distance,light_scan_to_ceil_distance_str=plcpkg.Send_message_to_port(ser,plcpkg.crc16.Combining_CRC_and_info(plcpkg.plccmd.READ_LIGHT_SCAN_ENCODE_DATA))  rospy.logerr("-------read light_scan device-- %s-%s",light_scan_to_ceil_distance,light_scan_to_ceil_distance_str)        
+            if len(light_scan_to_ceil_distance)!=0 and light_scan_to_ceil_distance[0]==5:
+                rospy.set_param('light_scan_to_ceil_distance', light_scan_to_ceil_distance[6]/1000.0)
+
+
             read_line_encode_data,line_encode_str=plcpkg.Send_message_to_port(ser,plcpkg.crc16.Combining_CRC_and_info(plcpkg.plccmd.READ_LINE_ENCODE))
             rospy.logerr("-------read line %s-%s",read_line_encode_data,line_encode_str)
             
