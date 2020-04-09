@@ -15,6 +15,14 @@
     <param name="climb_ki" value="0.1"/>
     <param name="climb_kd" value="0.1"/>
 
+    <param name="hold_kp" value="0.1"/>
+    <param name="hold_ki" value="0.1"/>
+    <param name="hold_kd" value="0.1"/>
+
+    <param name="rotation_kp" value="0.1"/>
+    <param name="rotation_ki" value="0.1"/>
+    <param name="rotation_kd" value="0.1"/>
+
     <param name="stand_bar_flex_distance" value="0.437"/>
     <param name="light_scan_to_top_distance" value="0.810"/>
 

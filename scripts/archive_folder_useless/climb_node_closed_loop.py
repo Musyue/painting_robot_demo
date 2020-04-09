@@ -199,47 +199,6 @@ class Control3DOFROBOT():
             outputPulse = self.output_climb *42.5
             self.Control_3DOF_Robot(master, control_id, velocity, -1.0*outputPulse)
 
-    def Climbing_Robot_close_loop_velocity_control(self, master, velocity, DesireDistance, feedback_distance,control_id=3):  # position control
-        """
-        Integral windup, also known as integrator windup or reset windup,
-        refers to the situation in a PID feedback controller where
-        a large change in setpoint occurs (say a positive change)
-        and the integral terms accumulates a significant error
-        during the rise (windup), thus overshooting and continuing
-        to increase as this accumulated error is unwound
-        (offset by errors in the other direction).
-        The specific problem is the excess overshooting.
-        :param master:
-        :param velocity: 0-2500
-        :param DesireDistance: 0-3m
-        :param control_id:
-        :return:
-        """
-        Distance_error=DesireDistance-feedback_distance
-        rospy.loginfo("------climb robot,neg down,pos up")
-        self.current_time_climb=time.time()
-        deltatime=self.current_time_climb-self.last_time_climb
-
-        # outputPulse = DesireDistance *42.5
-        
-        deltaerror=Distance_error-self.last_error_climb
-        if(deltatime>=self.sample_time_climb):
-            self.PTerm_climb=self.Kp_climb*Distance_error
-            self.ITerm_climb+=Distance_error*deltatime
-
-            if (self.ITerm_climb < -self.windup_guard_climb):
-                self.ITerm_climb = -self.windup_guard_climb
-            elif (self.ITerm_climb > self.windup_guard_climb):
-                self.ITerm_climb = self.windup_guard_climb
-
-            self.DTerm_climb=0.0
-            if deltatime>0:
-                self.DTerm_climb=deltaerror/deltatime
-            self.last_time_climb=self.current_time_climb
-            self.last_error_climb=Distance_error
-            self.output_climb=self.PTerm_climb + (self.Ki_climb *self.ITerm_climb) + (self.Kd_climb * self.DTerm_climb)
-            outputvelocity = self.output_climb *42.5
-            self.Control_3DOF_Robot_Speed_Mode(master, control_id, outputvelocity)
 
 
     def Read_3DOF_Controller_Buffe(self, master):

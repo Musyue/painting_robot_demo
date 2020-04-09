@@ -152,8 +152,9 @@ def main():
                 if flag_for_line_encode_0_state==0 and count>4:
                     rospy.set_param('read_line_l0_encode', read_line_encode_data[4]/100.0)
                     flag_for_line_encode_0_state=1
+                # use for top limit switch on,that's meanning ,the hold touch ceil or more than the max hold bar risiging range,here not flex bar distance
                 if top_limit_switch_status==1 and count>4 and flag_for_line_encode_1_state==0:
-                    rospy.set_param('read_line_encode', read_line_encode_data[4]/100.0)
+                    rospy.set_param('read_line_l1_encode', read_line_encode_data[4]/100.0)
                     flag_for_line_encode_1_state=1
                 # read_limit_status_data=bin(read_line_limitswitch_echos_encode_data[6])[2:]
                 # read_limit_status_data=read_limit_status_data.zfill(len(read_limit_status_data)+3-len(read_limit_status_data))

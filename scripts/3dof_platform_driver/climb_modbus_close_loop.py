@@ -20,6 +20,51 @@ class CLMBPKG:
         self.plccmd=CLBDriverCommands() 
         self.Openmodbus_ok_flag=0
         self.buf = bytearray()
+        self.climb_close_loop_inital()
+        self.rotation_close_loop_inital()
+        self.hold_close_loop_inital()
+    def rotation_close_loop_inital(self,):
+        self.Kp_rotation = rospy.get_param("rotation_kp")
+        self.Ki_rotation = rospy.get_param("rotation_ki")
+        self.Kd_rotation = rospy.get_param("rotation_kd")
+        self.current_time_rotation=0
+        self.last_time_rotation=0
+        self.last_error_rotation=0
+        self.sample_time_rotation=0.00
+        self.PTerm_rotation=0
+        self.ITerm_rotation=0
+        self.DTerm_rotation=0
+        self.int_rotation_error = 0.0
+        self.windup_guard_rotation = 0.1
+        self.output_rotation = 0.0
+    def hold_close_loop_inital(self,):
+        self.Kp_hold = rospy.get_param("hold_kp")
+        self.Ki_hold = rospy.get_param("hold_ki")
+        self.Kd_hold = rospy.get_param("hold_kd")
+        self.current_time_hold=0
+        self.last_time_hold=0
+        self.last_error_hold=0
+        self.sample_time_hold=0.00
+        self.PTerm_hold=0
+        self.ITerm_hold=0
+        self.DTerm_hold=0
+        self.int_hold_error = 0.0
+        self.windup_guard_hold = 0.1
+        self.output_hold = 0.0        
+    def climb_close_loop_inital(self,):
+        self.Kp_climb = rospy.get_param("climb_kp")
+        self.Ki_climb = rospy.get_param("climb_ki")
+        self.Kd_climb = rospy.get_param("climb_kd")
+        self.current_time_climb=0
+        self.last_time_climb=0
+        self.last_error_climb=0
+        self.sample_time_climb=0.00
+        self.PTerm_climb=0
+        self.ITerm_climb=0
+        self.DTerm_climb=0
+        self.int_climb_error = 0.0
+        self.windup_guard_climb = 0.1
+        self.output_climb = 0.0
     def Init_node(self):
         rospy.init_node(self.nodename)
 
@@ -115,8 +160,6 @@ class CLMBPKG:
 
                     send324DataHEXlist=self.plccmd.ROTATION_INITIAL_P324_BASE_VELOCITY_DATA[:4]+self.Get_hex_list_from_OCT(velocity)
                     self.Send_message_to_port(ser,self.Get_crc_16_str(send324DataHEXlist))#seting pos model
-
-
     def Control_3DOF_Robot(self, ser, control_id, velocity, outputPulse):  # position control
             """
 
@@ -182,8 +225,122 @@ class CLMBPKG:
 
                 send324DataHEXlist=self.plccmd.ROTATION_INITIAL_P324_BASE_VELOCITY_DATA[:4]+self.Get_hex_list_from_OCT(1000)
                 self.Send_message_to_port(ser,self.Get_crc_16_str(send324DataHEXlist))#seting pos model
+    def Hold_Robot_close_loop_control(self, ser,DesireDistance, feedback_distance,control_id=1):  # velocity control
+            """
+            Integral windup, also known as integrator windup or reset windup,
+            refers to the situation in a PID feedback controller where
+            a large change in setpoint occurs (say a positive change)
+            and the integral terms accumulates a significant error
+            during the rise (windup), thus overshooting and continuing
+            to increase as this accumulated error is unwound
+            (offset by errors in the other direction).
+            The specific problem is the excess overshooting.
+            :param ser:
+            :param velocity: +-2500
+            :param DesireDistance: 0-3m
+            :param control_id:
+            :return:
+            """
+            Distance_error=DesireDistance-feedback_distance
+            rospy.loginfo("------climb robot,neg down,pos up")
+            self.current_time_hold=time.time()
+            deltatime=self.current_time_hold-self.last_time_hold
+            
+            deltaerror=Distance_error-self.last_error_hold
+            if(deltatime>=self.sample_time_hold):
+                self.PTerm_hold=self.Kp_climb*Distance_error
+                self.ITerm_hold+=Distance_error*deltatime
+                if (self.ITerm_hold < -self.windup_guard_hold):
+                    self.ITerm_hold = -self.windup_guard_hold
+                elif (self.ITerm_hold > self.windup_guard_hold):
+                    self.ITerm_hold = self.windup_guard_hold
+                self.DTerm_hold=0.0
+                if deltatime>0:
+                    self.DTerm_hold=deltaerror/deltatime
+                self.last_time_hold=self.current_time_hold
+                self.last_error_hold=Distance_error
+                self.output_hold=self.PTerm_hold + (self.Ki_hold *self.ITerm_hold) + (self.Kd_hold * self.DTerm_hold)
 
+                velocity = self.output_hold 
+                self.Control_3DOF_Robot_Velocity(ser, control_id, velocity)
+    def Rotation_Robot_close_loop_control(self, ser,DesireRad,feedback_rad,control_id=2):  # velocity control
+        """
+        Integral windup, also known as integrator windup or reset windup,
+        refers to the situation in a PID feedback controller where
+        a large change in setpoint occurs (say a positive change)
+        and the integral terms accumulates a significant error
+        during the rise (windup), thus overshooting and continuing
+        to increase as this accumulated error is unwound
+        (offset by errors in the other direction).
+        The specific problem is the excess overshooting.
+        :param master:
+        :param velocity: 0-2500
+        :param DesireDistance: 0-3m
+        :param control_id:
+        :return:
+        """
+        rad_error=DesireRad-feedback_rad
+        rospy.loginfo("------neg anticlockwise ,pos clockwise")
+        self.current_time_rotation=time.time()
+        deltatime=self.current_time_rotation-self.last_time_rotation
+        
+        deltaerror=rad_error-self.last_error_rotation
+        if(deltatime>=self.sample_time_rotation):
+            self.PTerm_rotation=self.Kp_climb*rad_error
+            self.ITerm_rotation+=rad_error*deltatime
+            if (self.ITerm_rotation < -self.windup_guard_rotation):
+                self.ITerm_rotation = -self.windup_guard_rotation
+            elif (self.ITerm_rotation > self.windup_guard_rotation):
+                self.ITerm_rotation = self.windup_guard_rotation
+            self.DTerm_rotation=0.0
+            if deltatime>0:
+                self.DTerm_rotation=deltaerror/deltatime
+            self.last_time_rotation=self.current_time_climb
+            self.last_error_rotation=rad_error
+            self.output_rotation=self.PTerm_rotation + (self.Ki_rotation *self.ITerm_rotation) + (self.Kd_climb * self.DTerm_climb)
 
+            velocity = self.output_rotation 
+            self.Control_3DOF_Robot_Velocity(ser, control_id, velocity)
+    def Climbing_Robot_close_loop_control(self, ser,DesireDistance, feedback_distance,control_id=3):  # velocity control
+        """
+        Integral windup, also known as integrator windup or reset windup,
+        refers to the situation in a PID feedback controller where
+        a large change in setpoint occurs (say a positive change)
+        and the integral terms accumulates a significant error
+        during the rise (windup), thus overshooting and continuing
+        to increase as this accumulated error is unwound
+        (offset by errors in the other direction).
+        The specific problem is the excess overshooting.
+        :param master:
+        :param velocity: 0-2500
+        :param DesireDistance: 0-3m
+        :param control_id:
+        :return:
+        """
+        Distance_error=DesireDistance-feedback_distance
+        rospy.loginfo("------climb robot,neg down,pos up")
+        self.current_time_climb=time.time()
+        deltatime=self.current_time_climb-self.last_time_climb
+
+        # outputPulse = DesireDistance *42.5
+        
+        deltaerror=Distance_error-self.last_error_climb
+        if(deltatime>=self.sample_time_climb):
+            self.PTerm_climb=self.Kp_climb*Distance_error
+            self.ITerm_climb+=Distance_error*deltatime
+            if (self.ITerm_climb < -self.windup_guard_climb):
+                self.ITerm_climb = -self.windup_guard_climb
+            elif (self.ITerm_climb > self.windup_guard_climb):
+                self.ITerm_climb = self.windup_guard_climb
+            self.DTerm_climb=0.0
+            if deltatime>0:
+                self.DTerm_climb=deltaerror/deltatime
+            self.last_time_climb=self.current_time_climb
+            self.last_error_climb=Distance_error
+            self.output_climb=self.PTerm_climb + (self.Ki_climb *self.ITerm_climb) + (self.Kd_climb * self.DTerm_climb)
+
+            velocity = self.output_climb #*42.5
+            self.Control_3DOF_Robot_Velocity(ser, control_id, velocity)
     def Holding_Robot(self, ser, velocity, outputDistance, control_id=1):  # position control
         """
 
@@ -246,7 +403,6 @@ class CLMBPKG:
             if stop_open_flag==0:
                 rospy.loginfo(self.Send_message_to_port(ser,self.Get_crc_16_str(self.plccmd.ROTATION_DRIVER_P282_DISENABALE)))#seting pos model      
                         
-        # master.execute(control_id, cst.WRITE_SINGLE_REGISTER, 282, output_value=stop_open_flag)  # enable
 
 def main():
     clbpkg=CLMBPKG("tridof_pkg_node")
@@ -260,6 +416,11 @@ def main():
     climb_port_baudrate = rospy.get_param('climb_port_baudrate')
     rospy.loginfo("%s is %s", rospy.resolve_name('climb_port_baudrate'), climb_port_baudrate)
 
+    stand_bar_flex_distance=rospy.get_param("stand_bar_flex_distance")
+    light_scan_to_top_distance=rospy.get_param("light_scan_to_top_distance")
+    rotation_homing_abs_encode_data=rospy.get_param("rotation_homing_abs_encode_data")
+    read_line_l0_encode = rospy.get_param("read_line_l0_encode")
+    read_line_l1_encode = rospy.get_param("read_line_l1_encode")
 
     try:
         ser = serial.Serial(port=climb_port, baudrate=climb_port_baudrate, bytesize=serial.EIGHTBITS, parity=serial.PARITY_EVEN, stopbits=1,timeout=0.3, xonxoff=0,rtscts=False,dsrdtr=False)
@@ -271,16 +432,15 @@ def main():
     rate = rospy.Rate(30)
 
     while not rospy.is_shutdown():
-        rotation_homing_abs_encode_data=rospy.get_param("rotation_homing_abs_encode_data")
-        # rospy.loginfo("%s is %s", rospy.resolve_name('rotation_homing_abs_encode_data'), rotation_homing_abs_encode_data)
+        
         read_line_encode = rospy.get_param("read_line_encode")
         # rospy.loginfo("%s is %s", rospy.resolve_name('read_line_encode'), read_line_encode)
         rotation_abs_encode= rospy.get_param("rotation_abs_encode")
-        # rospy.loginfo("%s is %s", rospy.resolve_name('rotation_abs_encode'), rotation_abs_encode)
-        # rospy.logerr("rotation %s---rad--",1.1*(-rotation_homing_abs_encode_data+rotation_abs_encode)*2*pi/1024)
         
         climb_port_ok_flag = rospy.get_param("climb_port_ok_flag")
-        # rospy.loginfo("%s is %s", rospy.resolve_name('climb_port_ok_flag'), climb_port_ok_flag)
+
+        light_scan_to_ceil_distance = rospy.get_param("light_scan_to_ceil_distance")
+
 
         close_all_3dof_climb_driver_flag = rospy.get_param("close_all_3dof_climb_driver_flag")
         # rospy.loginfo("%s is %s", rospy.resolve_name('close_all_3dof_climb_driver_flag'), close_all_3dof_climb_driver_flag)
@@ -422,22 +582,26 @@ def main():
             #set velocity
             if open_hold_flag==1:
                 try:
-                    clbpkg.Holding_Robot(ser,velocity_control_stand_bar,distance_control_stand_bar)
+                    target_hold_distance=light_scan_to_ceil_distance-light_scan_to_top_distance
+                    clbpkg.Hold_Robot_close_loop_control(ser,distance_control_stand_bar, read_line_encode)
                 except:
                     rospy.logerr("something errro with open_hold_flag----")
                 # open_hold_flag=0
                 rospy.set_param('open_hold_flag',0)
 
             if open_climb_flag==1:
-                # try:
-                clbpkg.Climbing_Robot(ser,velocity_climb_control,distance_climb_control)
-                # except:
-                #     rospy.logerr("something errro with open_climb_flag----")
+                try:
+                    target_distance=distance_climb_control-read_line_l0_encode
+                    clbpkg.Climbing_Robot_close_loop_control(ser,target_distance,read_line_encode)
+                except:
+                    rospy.logerr("something errro with open_climb_flag----")
                 # open_climb_flag=0
                 rospy.set_param('open_climb_flag',0)
             if open_rotation_flag==1:
                 try:
-                    clbpkg.Rotation_Robot(ser,velocity_control_rotation,rad_control_rotation) 
+                    target_rad=rad_control_rotation+(rotation_abs_encode-rotation_homing_abs_encode_data)#here need to transform
+                    
+                    clbpkg.Rotation_Robot_close_loop_control(ser,target_rad,rotation_abs_encode) 
                 except:
                     rospy.logerr("something errro with open_rotation_flag----")
                 rospy.set_param('open_rotation_flag',0)
