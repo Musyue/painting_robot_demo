@@ -582,7 +582,7 @@ def main():
             #set velocity
             if open_hold_flag==1:
                 try:
-                    target_hold_distance=light_scan_to_ceil_distance-light_scan_to_top_distance
+                    target_hold_distance=light_scan_to_ceil_distance#-light_scan_to_top_distance
                     clbpkg.Hold_Robot_close_loop_control(ser,distance_control_stand_bar, read_line_encode)
                 except:
                     rospy.logerr("something errro with open_hold_flag----")
@@ -591,7 +591,7 @@ def main():
 
             if open_climb_flag==1:
                 try:
-                    target_distance=distance_climb_control-read_line_l0_encode
+                    target_distance=distance_climb_control#-read_line_l0_encode
                     clbpkg.Climbing_Robot_close_loop_control(ser,target_distance,read_line_encode)
                 except:
                     rospy.logerr("something errro with open_climb_flag----")

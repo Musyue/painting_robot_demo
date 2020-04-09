@@ -96,24 +96,25 @@ def main(test_count):
                 # 设置关节最大加速度
                 robot.set_joint_maxvelc((1.5, 1.5, 1.5, 1.5, 1.5, 1.5))
                 # 设置机械臂末端最大线加速度(m/s)
-                robot.set_end_max_line_acc(0.5)
+                robot.set_end_max_line_acc(0.3)
                 logger.info("-------go-----to-----start-------step--01")
                 # 获取机械臂末端最大线加速度(m/s)
                 # robot.set_end_max_line_velc(0.2)
-                robot.set_end_max_line_velc(0.5)
+                robot.set_end_max_line_velc(0.1)
 
 
                 robot.remove_all_waypoint()
-                joint_radian=(-0.28525098, -0.53203763,  1.36669062, -1.24286441, -1.85604731, 1.57079633)
+                joint_radian=(0.71039368, -0.63763321,  1.4856621 , -1.01829734, -0.86040264, 1.57079633)
+                # joint_radian=(-0.28525098, -0.53203763,  1.36669062, -1.24286441, -1.85604731, 1.57079633)
                 # print("move joint to {0}".format(joint_radian))
                 robot.move_joint(joint_radian)
-                flag1=robot.add_waypoint(joint_radian)
-                print("point1:",flag1)
+                #flag1=robot.add_waypoint(joint_radian)
+                #print("point1:",flag1)
 
                 # print("move joint to {0}".format(joint_radian))
                 # robot.move_joint(joint_radian)
-                flag2=robot.add_waypoint(joint_radian)
-                print('point2:',flag2)
+                # flag2=robot.add_waypoint(joint_radian)
+                # print('point2:',flag2)
 
                 joint_radian=(0.71039368, -0.63763321,  1.4856621 , -1.01829734, -0.86040264, 1.57079633)
                 flag3=robot.add_waypoint(joint_radian)
@@ -131,7 +132,7 @@ def main(test_count):
                 flag6=robot.add_waypoint(joint_radian)
                 print("point6:",flag6)
 
-                set_flag=robot.set_blend_radius(blend_radius=0.01)
+                set_flag=robot.set_blend_radius(blend_radius=0.05)
                 print("set_flag=:",set_flag)
 
                 set_flag1=robot.move_track(RobotMoveTrackType.CARTESIAN_MOVEP)

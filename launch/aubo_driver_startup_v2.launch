@@ -1,0 +1,17 @@
+<launch>
+
+  <!-- set /global_example parameter -->  
+  <group ns="aubo_startup_ns">
+
+    <param name="aubo_ip" value='192.168.1.11'/>
+    <param name="aubo_start_point" value='(-3.3364,12.406,-81.09,-91.207,-86.08,0.164)'/> 
+    <param name="ee_maxacc_tuple" value='(2.5, 2.5, 2.5, 2.5, 2.5, 2.5)'/> 
+    <param name="ee_maxvelc_tuple" value='(1.5, 1.5, 1.5, 1.5, 1.5, 1.5)'/> 
+
+    <node pkg="painting_robot_demo" type="aubo_control_ros_driver_v2.py" name="aubo_control_ros_driver" output="screen" >
+    </node>
+    
+  </group>
+  
+</launch>
+
