@@ -19,12 +19,15 @@
     <param name="hold_ki" value="0.1"/>
     <param name="hold_kd" value="0.1"/>
 
-    <param name="rotation_kp" value="0.1"/>
+    <param name="rotation_kp" value="20"/>
     <param name="rotation_ki" value="0.1"/>
     <param name="rotation_kd" value="0.1"/>
 
     <param name="stand_bar_flex_distance" value="0.437"/>
     <param name="light_scan_to_top_distance" value="0.810"/>
+
+    <param name="rotation_joint_line_equation_k" value="0.0066903"/>
+    <param name="rotation_joint_line_equation_b" value="-297.03"/>
 
     <!--set /climb_pkg_para/close all 3dof driver-->
     <param name="close_all_3dof_climb_driver_flag" value="0"/>
@@ -44,7 +47,7 @@
     <!-- get  climb_line_homing_abs_encode_data-->
     <param name="climb_line_homing_abs_encode_data" value="0.40"/>
     <!-- get  rotation_homing_abs_encode_data-->
-    <param name="rotation_homing_abs_encode_data" value="44396"/>
+    <param name="rotation_homing_abs_encode_data" value="44397"/>
     <!--set /climb_pkg_para/enable_control_stand_bar-->
     <param name="velocity_control_stand_bar" value="1000" />
     <!--set /climb_pkg_para/enable_control_rotation-->

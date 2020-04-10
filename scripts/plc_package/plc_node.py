@@ -55,11 +55,11 @@ def main():
     open_serial_port_again_flag=0
     plcpkg.Init_node()
 
-    plc_port = "/dev/ttyUSB0" #rospy.get_param("plc_port")
+    plc_port =rospy.get_param("plc_port")
     # rospy.loginfo("%s is %s", rospy.resolve_name('plc_port'), plc_port)
 
     # fetch the utterance parameter from our parent namespace
-    plc_port_baudrate = 115200#rospy.get_param('plc_port_baudrate')
+    plc_port_baudrate =rospy.get_param('plc_port_baudrate')
     # rospy.loginfo("%s is %s", rospy.resolve_name('plc_port_baudrate'), plc_port_baudrate)
     """0 save the initial data"""
     flag_for_line_encode_0_state=0
@@ -73,7 +73,7 @@ def main():
     count=0
     rate = rospy.Rate(100)
     while not rospy.is_shutdown():
-        plc_port_ok_flag = 1#rospy.get_param("plc_port_ok_flag")
+        plc_port_ok_flag = rospy.get_param("plc_port_ok_flag")
         # rospy.loginfo("%s is %s", rospy.resolve_name('plc_port_ok_flag'), plc_port_ok_flag)
         light_scan_to_ceil_distance = rospy.get_param("light_scan_to_ceil_distance")
 

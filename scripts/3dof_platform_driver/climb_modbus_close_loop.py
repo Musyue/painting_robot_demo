@@ -10,7 +10,7 @@ from CRC_16_Check_CLB import *
 from clb_command import *
 from textwrap import wrap
 from std_msgs.msg import String,UInt64MultiArray
-
+import math
 class CLMBPKG:
     def __init__(self,nodename):
         self.readstringlength=7
@@ -248,7 +248,7 @@ class CLMBPKG:
             
             deltaerror=Distance_error-self.last_error_hold
             if(deltatime>=self.sample_time_hold):
-                self.PTerm_hold=self.Kp_climb*Distance_error
+                self.PTerm_hold=self.Kp_hold*Distance_error
                 self.ITerm_hold+=Distance_error*deltatime
                 if (self.ITerm_hold < -self.windup_guard_hold):
                     self.ITerm_hold = -self.windup_guard_hold
@@ -263,7 +263,7 @@ class CLMBPKG:
 
                 velocity = self.output_hold 
                 self.Control_3DOF_Robot_Velocity(ser, control_id, velocity)
-    def Rotation_Robot_close_loop_control(self, ser,DesireRad,feedback_rad,control_id=2):  # velocity control
+    def Rotation_Robot_close_loop_control(self, ser,DesireEncodeData,feedback_EncodeData,control_id=2):  # velocity control
         """
         Integral windup, also known as integrator windup or reset windup,
         refers to the situation in a PID feedback controller where
@@ -279,15 +279,15 @@ class CLMBPKG:
         :param control_id:
         :return:
         """
-        rad_error=DesireRad-feedback_rad
-        rospy.loginfo("------neg anticlockwise ,pos clockwise")
+        encodedata_error=DesireEncodeData-feedback_EncodeData
+        rospy.loginfo("------neg anticlockwise ,pos clockwise---%s",encodedata_error)
         self.current_time_rotation=time.time()
         deltatime=self.current_time_rotation-self.last_time_rotation
         
-        deltaerror=rad_error-self.last_error_rotation
+        deltaerror=encodedata_error-self.last_error_rotation
         if(deltatime>=self.sample_time_rotation):
-            self.PTerm_rotation=self.Kp_climb*rad_error
-            self.ITerm_rotation+=rad_error*deltatime
+            self.PTerm_rotation=self.Kp_rotation*encodedata_error
+            self.ITerm_rotation+=encodedata_error*deltatime
             if (self.ITerm_rotation < -self.windup_guard_rotation):
                 self.ITerm_rotation = -self.windup_guard_rotation
             elif (self.ITerm_rotation > self.windup_guard_rotation):
@@ -296,11 +296,23 @@ class CLMBPKG:
             if deltatime>0:
                 self.DTerm_rotation=deltaerror/deltatime
             self.last_time_rotation=self.current_time_climb
-            self.last_error_rotation=rad_error
+            self.last_error_rotation=encodedata_error
             self.output_rotation=self.PTerm_rotation + (self.Ki_rotation *self.ITerm_rotation) + (self.Kd_climb * self.DTerm_climb)
 
-            velocity = self.output_rotation 
+            velocity = -1.0*self.output_rotation
+            rospy.loginfo("-------roation pid control velocity------%s",velocity) 
+            
+            if velocity<0 and abs(velocity)>1000:
+                velocity=-1000.0
+            elif velocity>0 and abs(velocity)>1000:
+                velocity=1000.0
+            else:
+                pass
+            if abs(encodedata_error)<=3:
+                velocity=0
             self.Control_3DOF_Robot_Velocity(ser, control_id, velocity)
+
+                
     def Climbing_Robot_close_loop_control(self, ser,DesireDistance, feedback_distance,control_id=3):  # velocity control
         """
         Integral windup, also known as integrator windup or reset windup,
@@ -421,7 +433,8 @@ def main():
     rotation_homing_abs_encode_data=rospy.get_param("rotation_homing_abs_encode_data")
     read_line_l0_encode = rospy.get_param("read_line_l0_encode")
     read_line_l1_encode = rospy.get_param("read_line_l1_encode")
-
+    rotation_joint_line_equation_k = rospy.get_param("rotation_joint_line_equation_k")
+    rotation_joint_line_equation_b = rospy.get_param("rotation_joint_line_equation_b")
     try:
         ser = serial.Serial(port=climb_port, baudrate=climb_port_baudrate, bytesize=serial.EIGHTBITS, parity=serial.PARITY_EVEN, stopbits=1,timeout=0.3, xonxoff=0,rtscts=False,dsrdtr=False)
     except:
@@ -461,6 +474,7 @@ def main():
         # rospy.loginfo("%s is %s", rospy.resolve_name('velocity_control_rotation'), velocity_control_rotation)
 
         velocity_climb_control = rospy.get_param("velocity_climb_control")
+
         # rospy.loginfo("%s is %s", rospy.resolve_name('velocity_climb_control'), velocity_climb_control)
 
         distance_control_stand_bar = rospy.get_param("distance_control_stand_bar")
@@ -587,24 +601,33 @@ def main():
                 except:
                     rospy.logerr("something errro with open_hold_flag----")
                 # open_hold_flag=0
-                rospy.set_param('open_hold_flag',0)
+                # rospy.set_param('open_hold_flag',0)
 
             if open_climb_flag==1:
                 try:
                     target_distance=distance_climb_control#-read_line_l0_encode
+
                     clbpkg.Climbing_Robot_close_loop_control(ser,target_distance,read_line_encode)
                 except:
                     rospy.logerr("something errro with open_climb_flag----")
                 # open_climb_flag=0
-                rospy.set_param('open_climb_flag',0)
+                # rospy.set_param('open_climb_flag',0)
             if open_rotation_flag==1:
                 try:
-                    target_rad=rad_control_rotation+(rotation_abs_encode-rotation_homing_abs_encode_data)#here need to transform
-                    
-                    clbpkg.Rotation_Robot_close_loop_control(ser,target_rad,rotation_abs_encode) 
+                    if rad_control_rotation<=-0.51:
+                        rospy.logerr("-------rad_control_rotation is more than the anticlockwise limit ,you can not more than----%s",0.5)
+                        rad_control_rotation=-0.5
+                    elif rad_control_rotation>=3.0*math.pi/4.0+0.01:
+                        rospy.logerr("-------rad_control_rotation is more than the clockwise limit ,you can not more than----%s","3*pi/4")
+                        rad_control_rotation=3.0*math.pi/4.0
+                    else:
+                        pass
+                    target_abs_encode_data=(rad_control_rotation-rotation_joint_line_equation_b)/rotation_joint_line_equation_k
+                    rospy.logerr("-------target_abs_encode_data----%s",target_abs_encode_data)
+                    clbpkg.Rotation_Robot_close_loop_control(ser,target_abs_encode_data,rotation_abs_encode) 
                 except:
                     rospy.logerr("something errro with open_rotation_flag----")
-                rospy.set_param('open_rotation_flag',0)
+                # rospy.set_param('open_rotation_flag',0)
                 # open_rotation_flag=0       
         else:
             try:
