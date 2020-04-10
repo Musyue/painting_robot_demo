@@ -26,8 +26,8 @@
     <param name="stand_bar_flex_distance" value="0.437"/>
     <param name="light_scan_to_top_distance" value="0.810"/>
 
-    <param name="rotation_joint_line_equation_k" value="0.0066903"/>
-    <param name="rotation_joint_line_equation_b" value="-297.03"/>
+    <param name="rotation_joint_line_equation_k" value="0.0035634"/>
+    <param name="rotation_joint_line_equation_b" value="-158.2"/>
 
     <!--set /climb_pkg_para/close all 3dof driver-->
     <param name="close_all_3dof_climb_driver_flag" value="0"/>
