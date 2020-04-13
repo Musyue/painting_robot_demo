@@ -64,6 +64,7 @@ def main():
     """0 save the initial data"""
     flag_for_line_encode_0_state=0
     flag_for_line_encode_1_state=0
+    flag_for_line_encode_0_state_bottom=0
     try:
         ser = serial.Serial(port=plc_port, baudrate=plc_port_baudrate, bytesize=serial.EIGHTBITS, parity=serial.PARITY_NONE, stopbits=1,timeout=0.3, xonxoff=0,rtscts=False,dsrdtr=False)
     except:
@@ -78,6 +79,7 @@ def main():
         light_scan_to_ceil_distance = rospy.get_param("light_scan_to_ceil_distance")
 
         read_line_encode = rospy.get_param("read_line_encode")
+        read_line_encode_bottom = rospy.get_param("read_line_encode_bottom")
         read_line_l0_encode = rospy.get_param("read_line_l0_encode")
         read_line_l1_encode = rospy.get_param("read_line_l1_encode")
         top_limit_switch_status=rospy.get_param("top_limit_switch_status")
@@ -148,6 +150,15 @@ def main():
                 rospy.set_param('light_scan_to_ceil_distance', int(int(light_scan_to_ceil_distance_str[scan_len-4:],16))/1000.0)
                 # rospy.logerr("-------read light_scan device-- %s-%s",light_scan_to_ceil_distance,int(int(light_scan_to_ceil_distance_str[scan_len-4:],16)))        
             
+            read_line_encode_data_bottom,line_encode_str_bottom=plcpkg.Send_message_to_port(ser,plcpkg.crc16.Combining_CRC_and_info(plcpkg.plccmd.READ_LINE_ENCODE_BOTTOM))
+            rospy.logerr("-------read_line_encode_data_bottom %s-%s",read_line_encode_data_bottom,line_encode_str_bottom)
+            if len(read_line_encode_data_bottom)!=0 and read_line_encode_data_bottom[0]==4:
+                rospy.set_param('read_line_encode_bottom', read_line_encode_data_bottom[4]/100.0)
+                rospy.logerr("-------read_line_encode_data_bottom--%s",read_line_encode_data_bottom[4]/100.0)
+                if flag_for_line_encode_0_state_bottom==0 and count>4:
+                    rospy.set_param('read_line_l0_encode_bottom', read_line_encode_data_bottom[4]/100.0)
+                    rospy.logerr("-------read_line_l0_encode_bottom l0-%s",read_line_encode_data_bottom[4]/100.0)
+                    flag_for_line_encode_0_state_bottom=1
 
             read_line_encode_data,line_encode_str=plcpkg.Send_message_to_port(ser,plcpkg.crc16.Combining_CRC_and_info(plcpkg.plccmd.READ_LINE_ENCODE))
             rospy.logerr("-------read line %s-%s",read_line_encode_data,line_encode_str)

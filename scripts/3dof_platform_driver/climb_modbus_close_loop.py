@@ -237,12 +237,12 @@ class CLMBPKG:
             The specific problem is the excess overshooting.
             :param ser:
             :param velocity: +-2500
-            :param DesireDistance: 0-3m
+            :param DesireDistance: 0.07-0.22
             :param control_id:
             :return:
             """
             Distance_error=DesireDistance-feedback_distance
-            rospy.loginfo("------climb robot,neg down,pos up")
+            rospy.loginfo("------hold robot,pos up")
             self.current_time_hold=time.time()
             deltatime=self.current_time_hold-self.last_time_hold
             
@@ -262,6 +262,17 @@ class CLMBPKG:
                 self.output_hold=self.PTerm_hold + (self.Ki_hold *self.ITerm_hold) + (self.Kd_hold * self.DTerm_hold)
 
                 velocity = self.output_hold 
+                rospy.logerr("hold----velocity---before:  %s",str(velocity))
+                if velocity<0 and abs(velocity)>1300:
+                    velocity=-1300.0
+                elif velocity>0 and abs(velocity)>1300:
+                    velocity=1300.0
+                else:
+                    pass
+                rospy.logerr("hold----velocity---after:  %s",str(velocity))
+                if abs(Distance_error)<=0.005:
+                    velocity=0
+                rospy.logerr("hold----Distance_error---%s",str(Distance_error))
                 self.Control_3DOF_Robot_Velocity(ser, control_id, velocity)
     def Rotation_Robot_close_loop_control(self, ser,DesireEncodeData,feedback_EncodeData,control_id=2):  # velocity control
         """
@@ -280,7 +291,7 @@ class CLMBPKG:
         :return:
         """
         encodedata_error=DesireEncodeData-feedback_EncodeData
-        rospy.loginfo("------neg anticlockwise ,pos clockwise---%s",encodedata_error)
+        rospy.loginfo("------neg anticlockwise ,pos clockwise---error---%s",encodedata_error)
         self.current_time_rotation=time.time()
         deltatime=self.current_time_rotation-self.last_time_rotation
         
@@ -351,7 +362,18 @@ class CLMBPKG:
             self.last_error_climb=Distance_error
             self.output_climb=self.PTerm_climb + (self.Ki_climb *self.ITerm_climb) + (self.Kd_climb * self.DTerm_climb)
 
-            velocity = self.output_climb #*42.5
+            velocity = -1.0*self.output_climb #*42.5
+            rospy.loginfo("-------climb pid control velocity------before:  %s",str(velocity))
+            if velocity<0 and abs(velocity)>1000:
+                velocity=-1000.0
+            elif velocity>0 and abs(velocity)>1000:
+                velocity=1000.0
+            else:
+                pass
+            rospy.loginfo("-------climb pid control velocity------after:  %s",str(velocity))
+            rospy.logerr("-------climb pid control Distance_error-:  %s",str(Distance_error))
+            if abs(Distance_error)<=0.05:
+                velocity=0
             self.Control_3DOF_Robot_Velocity(ser, control_id, velocity)
     def Holding_Robot(self, ser, velocity, outputDistance, control_id=1):  # position control
         """
@@ -447,6 +469,8 @@ def main():
     while not rospy.is_shutdown():
         
         read_line_encode = rospy.get_param("read_line_encode")
+        read_line_encode_bottom = rospy.get_param("read_line_encode_bottom")
+        read_line_l0_encode_bottom = rospy.get_param("read_line_l0_encode_bottom")
         # rospy.loginfo("%s is %s", rospy.resolve_name('read_line_encode'), read_line_encode)
         rotation_abs_encode= rospy.get_param("rotation_abs_encode")
         
@@ -596,8 +620,12 @@ def main():
             #set velocity
             if open_hold_flag==1:
                 try:
-                    target_hold_distance=light_scan_to_ceil_distance#-light_scan_to_top_distance
-                    clbpkg.Hold_Robot_close_loop_control(ser,distance_control_stand_bar, read_line_encode)
+                    if distance_control_stand_bar>=0 and distance_control_stand_bar<0.18:
+                        # rospy.logerr("you can not more than 0.2----")
+                        target_hold_distance=read_line_l0_encode_bottom-distance_control_stand_bar#-light_scan_to_top_distance
+                        clbpkg.Hold_Robot_close_loop_control(ser,target_hold_distance, read_line_encode_bottom)
+                    else:
+                        rospy.logerr("you can not more than 0-0.18----")
                 except:
                     rospy.logerr("something errro with open_hold_flag----")
                 # open_hold_flag=0
@@ -605,9 +633,12 @@ def main():
 
             if open_climb_flag==1:
                 try:
-                    target_distance=distance_climb_control#-read_line_l0_encode
+                    if distance_climb_control>=0.0 and distance_climb_control<0.7:
+                        target_distance=distance_climb_control+read_line_l0_encode
 
-                    clbpkg.Climbing_Robot_close_loop_control(ser,target_distance,read_line_encode)
+                        clbpkg.Climbing_Robot_close_loop_control(ser,target_distance,read_line_encode)
+                    else:
+                        rospy.logerr("you can not more than 0.0-0.7----")
                 except:
                     rospy.logerr("something errro with open_climb_flag----")
                 # open_climb_flag=0

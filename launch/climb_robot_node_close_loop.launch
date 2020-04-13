@@ -11,15 +11,15 @@
 
 
 
-    <param name="climb_kp" value="0.1"/>
+    <param name="climb_kp" value="10000"/>
     <param name="climb_ki" value="0.1"/>
     <param name="climb_kd" value="0.1"/>
 
-    <param name="hold_kp" value="0.1"/>
+    <param name="hold_kp" value="30000"/>
     <param name="hold_ki" value="0.1"/>
     <param name="hold_kd" value="0.1"/>
 
-    <param name="rotation_kp" value="20"/>
+    <param name="rotation_kp" value="15"/>
     <param name="rotation_ki" value="0.1"/>
     <param name="rotation_kd" value="0.1"/>
 
