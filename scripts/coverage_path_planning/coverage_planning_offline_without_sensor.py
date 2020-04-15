@@ -56,7 +56,7 @@ class Renovation_BIM_Model_Opreating():
         for i in range(points_num):
             # motion of manipulator
             aubo_joints=np.array(aubo_joints_list[6*i:6*i+6])
-            print('aubo_joints=:',aubo_joints)
+            # print('aubo_joints=:',aubo_joints)
 
         aubo_targetjoints = aubo_joints_list.reshape(len(aubo_joints_list) / 6, 6)
         return mobileplatform_targetjoints, rodclimbing_robot_targetjoints, aubo_targetjoints
@@ -184,7 +184,7 @@ class Renovation_BIM_Model_Opreating():
         self.print_json(plan_num)
         return plan_num
 def main():
-    mat_path="/data/ros/renov_robot_ws/src/painting_robot_demo/data/data.mat"
+    mat_path="/data/ros/yue_2020_ws/src/painting_robot_demo/data/data.mat"
     parameterx=0.430725381079
     parametery=-0.00033063639818
     parameterz=0.028625
