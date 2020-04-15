@@ -12,12 +12,12 @@ from Quaternion import *
 from std_msgs.msg import String,Float64,Bool
 from sensor_msgs.msg import JointState
 import json
-class Renovationrobot_inverse_kinematics():
-    def __init__(self):
-        self.parameterx=0.430725381079
-        self.parametery=-0.00033063639818
-        self.parameterz=0.028625
-        self.interval=0.10
+class Renovation_BIM_Model_Opreating():
+    def __init__(self,parameterx,parametery,parameterz,interval):
+        self.parameterx=parameterx#0.430725381079
+        self.parametery=parametery#-0.00033063639818
+        self.parameterz=parameterz#0.028625
+        self.interval=  interval#0.10
     def renovationrobot_joints_computation_1(self,manipulatorbase_targetpose_onecell,manipulatorendeffector_targetpose_onecell):
 
         # computation of target joints of mobile platform
@@ -127,15 +127,75 @@ class Renovationrobot_inverse_kinematics():
 
             datadict.update({("aubo_data_num_"+str(i)):list(data[i])})
         return datadict
-if __name__ == "__main__":
+    def get_mat_data_json(self):
+        data = io.loadmat(self.mat_path)
+        # print(data) 
+        manipulatorbase_targetpose=data['renovation_cells_manipulatorbase_positions']
+        # print(len(manipulatorbase_targetpose[0]))
+        manipulatorendeffector_targetpose=data['manipulator_endeffector_positions']
+        mobile_base=[]
+        data_result={}
+        room_num={}
+        plan_num={}
+        mobile_way_point={}
+        climb_way_point={}
+        rotation_way_point={}
+        aubo_joint_space_point={}
+        # count_mobile_num=0
+        mobile_way_point_data={}
+        clim_way_temp={}
+        for i in range(len(manipulatorbase_targetpose[0])):#plane
+            # print("plane",i)
+            for j in range(len(manipulatorbase_targetpose[0][i][0])):#v
+                # print("v num",j)
+
+                for k in range(len(manipulatorbase_targetpose[0][i][0][j][0])):#h
+                    
+                    manipulatorbase_targetpose_onecell= manipulatorbase_targetpose[0][i][0][j][0][k]
+                    manipulatorendeffector_targetpose_onecell = manipulatorendeffector_targetpose[0][i][0][j][0][k]
+
+                    mobileplatform_targetjoints, rodclimbing_robot_targetjoints,aubo_targetjoints = self.renovationrobot_joints_computation_1(manipulatorbase_targetpose_onecell,manipulatorendeffector_targetpose_onecell)
+                    # print(manipulatorendeffector_targetpose_onecell)
+                    # mobile_base.append(mobileplatform_targetjoints)
+                    # print("mobileplatform_targetjoints=:",mobileplatform_targetjoints)
+                    # room_num={
+                    #     0:plan_num.update({i:mobile_way_point})
+                    # }
+                    # print(i,j,k,len(aubo_targetjoints),Paintrobot.array_to_dictlist(aubo_targetjoints))
+                    climb_way_point.update({("climb_num_"+str(k)):rodclimbing_robot_targetjoints})
+                    aubo_joint_space_point.update({("aubo_planning_voxel_num_"+str(k)):self.array_to_dictlist(aubo_targetjoints)})
+
+                mobile_base.append(mobileplatform_targetjoints)
+                mobile_way_point_data.update({("mobile_data_num_"+str(j)):mobileplatform_targetjoints})
+                mobile_way_point.update({("moible_way_num_"+str(j)):mobile_way_point_data,("current_mobile_way_climb_num_"+str(j)):climb_way_point,("current_mobile_way_aubo_num_"+str(j)):aubo_joint_space_point})
+                climb_way_point={}
+                aubo_joint_space_point={}
+                
+            
+            plan_num.update({("plane_num_"+str(i)):mobile_way_point})
+            mobile_way_point_data={}
+            
+                
+
+                    # print("mobile_base",len(mobile_base))
+                    # print("rodclimbing_robot_targetjoints=:",rodclimbing_robot_targetjoints)
+                    # print("aubo_targetjoints=:",aubo_targetjoints)
+        # print(mobile_way_point)
+        self.print_json(plan_num)
+        return plan_num
+def main():
     mat_path="/data/ros/renov_robot_ws/src/painting_robot_demo/data/data.mat"
+    parameterx=0.430725381079
+    parametery=-0.00033063639818
+    parameterz=0.028625
+    interval=0.10
     data = io.loadmat(mat_path)
     # print(data) 
     manipulatorbase_targetpose=data['renovation_cells_manipulatorbase_positions']
     # print(len(manipulatorbase_targetpose[0]))
     manipulatorendeffector_targetpose=data['manipulator_endeffector_positions']
     mobile_base=[]
-    Paintrobot = Renovationrobot_inverse_kinematics()
+    Paintrobot = Renovation_BIM_Model_Opreating(parameterx,parametery,parameterz,interval)
 
 
     # plane_num=len(manipulatorbase_targetpose[0])
@@ -198,4 +258,6 @@ if __name__ == "__main__":
 
     #         #     total_rodclimbing_robot_positions=rodclimbing_robot_targetjoints
     #         #     total_manipulator_joints=aubo_targetjoints
-    #         # total_mobile_base_positions=mobile_base
+    #         # total_mobile_base_positions=mobile_base    
+if __name__ == "__main__":
+    main()
