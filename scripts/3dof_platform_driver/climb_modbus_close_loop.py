@@ -11,6 +11,7 @@ from clb_command import *
 from textwrap import wrap
 from std_msgs.msg import String,UInt64MultiArray
 import math
+import os
 class CLMBPKG:
     def __init__(self,nodename):
         self.readstringlength=7
@@ -437,7 +438,37 @@ class CLMBPKG:
             if stop_open_flag==0:
                 rospy.loginfo(self.Send_message_to_port(ser,self.Get_crc_16_str(self.plccmd.ROTATION_DRIVER_P282_DISENABALE)))#seting pos model      
                         
+    def stand_bar_and_flexiable_part_hold_to_ceil(self,up_distance):
 
+        rospy.loginfo("flex pole up-----")
+        os.system('rosparam set /search_port/enable_control_stand_bar 1')
+        time.sleep(0.05)
+        os.system('rosparam set /search_port/enable_control_stand_bar 1')
+        os.system('rosparam set /search_port/enable_control_stand_bar 0')
+        os.system('rosparam set /search_port/write_flex_pole_motor_up 1')
+        time.sleep(0.05)
+        os.system('rosparam set /search_port/write_flex_pole_motor_up 1')
+    
+        time.sleep(10)
+        rospy.loginfo("waiting for flex pole go to point")
+        os.system('rosparam set /search_port/write_flex_pole_motor_up 0')
+        # rospy.set_param('distance_control_stand_bar',10)#30cm
+        os.system('rosparam set /search_port/distance_control_stand_bar '+str(up_distance))
+        time.sleep(0.05)
+        os.system('rosparam set /search_port/distance_control_stand_bar '+str(up_distance))
+        os.system('rosparam set /search_port/open_hold_flag 1')
+        time.sleep(0.05)
+        os.system('rosparam set /search_port/open_hold_flag 1')
+        time.sleep(10)
+        os.system('rosparam set /search_port/open_hold_flag 0')
+        rospy.loginfo("waiting for stand bar go to point")
+    def caculate_top_to_ceil_distance(self,stand_bar_flex_distance,light_scan_to_top_distance,light_scan_to_ceil_distance):
+        detax=light_scan_to_ceil_distance-light_scan_to_top_distance-stand_bar_flex_distance
+        if detax<-0.0:
+            rospy.logerr("you can not run the system here,the ceil is too low----")
+            return 0
+        else:
+            return detax
 def main():
     clbpkg=CLMBPKG("tridof_pkg_node")
     open_serial_port_again_flag=0
@@ -536,12 +567,19 @@ def main():
         # rospy.loginfo("%s is %s", rospy.resolve_name('enable_second_climb_control'), enable_second_climb_control)
         open_rotation_flag = rospy.get_param("open_rotation_flag")
         # rospy.loginfo("%s is %s", rospy.resolve_name('enable_third_stand_bar'), enable_third_stand_bar)
+        open_hold_to_ceil_flag = rospy.get_param("open_hold_to_ceil_flag")
 
         if clbpkg.Openmodbus_ok_flag!=1 and climb_port_ok_flag==1:
+            if open_hold_to_ceil_flag==1:
+                detax=clbpkg.caculate_top_to_ceil_distance(stand_bar_flex_distance,light_scan_to_top_distance,light_scan_to_ceil_distance)
+
+                clbpkg.stand_bar_and_flexiable_part_hold_to_ceil(detax)
+
+                rospy.set_param('open_hold_to_ceil_flag',0)
             if top_limit_switch_status==1:
                 if enable_second_control_stand_bar==0:
                     try:
-                        clbpkg.Open_Stop_Enable_Driver(ser,1,0)
+                        clbpkg.Control_3DOF_Robot_Velocity(ser, 1, 0)
                     except:
                         rospy.logerr("some errors with top_limit_switch_status --- hold--0")
                     rospy.set_param('open_hold_flag',0)
@@ -549,29 +587,22 @@ def main():
             if mid_limit_switch_status==1:
                 if enable_second_climb_control==0:
                     try:
-                        clbpkg.Open_Stop_Enable_Driver(ser,3,0)
+                        clbpkg.Control_3DOF_Robot_Velocity(ser, 3, 0)
                     except:
                         rospy.logerr("some errors with mid_limit_switch_status--- climb--0")
-                    rospy.set_param('open_hold_flag',0)
+                    rospy.set_param('open_climb_flag',0)
 
-            if read_line_encode!=0 and read_line_encode<0.35:#0.39-->-80---0.44--->0
-                if enable_second_control_stand_bar==0:
-                    try:
-                        clbpkg.Open_Stop_Enable_Driver(ser,1,0)
-                    except:
-                        rospy.logerr("some errors with read_line_encode--- hold--line encode")
-                    rospy.set_param('open_hold_flag',0)
-                else:
-                    pass
-                # pass
             if bottom_limit_switch_status==1:
                 if enable_third_stand_bar==0:
                     try:
-                        clbpkg.Open_Stop_Enable_Driver(ser,1,0)
+                        clbpkg.Control_3DOF_Robot_Velocity(ser, 1, 0)
                     except:
                         rospy.logerr("some errors with bottom_limit_switch_status--- hold")
 
                     rospy.set_param('open_hold_flag',0)
+
+
+
 
             if enable_control_stand_bar==1:
                 try:

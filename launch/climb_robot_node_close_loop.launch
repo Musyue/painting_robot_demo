@@ -43,7 +43,12 @@
 
     <param name="enable_second_climb_control" value="0"/>
 
+
     <param name="enable_third_stand_bar" value="0"/>
+    <!-- 1,open,0close -->
+    <param name="open_hold_to_ceil_flag" value="0"/>
+
+
     <!-- get  climb_line_homing_abs_encode_data-->
     <param name="climb_line_homing_abs_encode_data" value="0.40"/>
     <!-- get  rotation_homing_abs_encode_data-->

@@ -28,15 +28,17 @@
     <param name="mat_parameterz" value="0.028625" />
     <param name="mat_interval" value="0.10" />
     <!--  -->
+
     <param name="mobile_tracking_stop_flag" value="0" />
-    <param name="climb_max_length" value="0.5" />
+
+    <!-- <param name="climb_max_length" value="0.5" />
     <param name="climb_way_point_length" value="0.2"/>
     <param name="rotation_distance_tracking_over" value="0"/>
     <param name="climb_distance_tracking_over" value="0"/>
     <param name="mobile_tracking_stop_flag" value="0"/>
     <param name="climb_num_way_point" value="2"/>
     <param name="path_num_planning" value="3"/>
-    <param name="mobile_path_way_planning" value="0"/>
+    <param name="mobile_path_way_planning" value="0"/> -->
     <node pkg="painting_robot_demo" type="main_node_os_coverage_planner.py" name="main_node_os_coverage_planner" output="screen" >
     </node>
     
