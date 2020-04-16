@@ -22,7 +22,7 @@
     parameterz=0.028625
     interval=0.10 -->
     <!-- BIM MODEL PLANNING DATA FROM MAT -->
-    <param name="mat_data_path" value="/data/ros/renov_robot_ws/src/painting_robot_demo/data/data.mat" />
+    <param name="mat_data_path" value="/data/ros/yue_ws_2020/src/painting_robot_demo/data/data.mat" />
     <param name="mat_parameterx" value="0.430725381079" />
     <param name="mat_parametery" value="-0.00033063639818" />
     <param name="mat_parameterz" value="0.028625" />
@@ -30,13 +30,20 @@
     <!--  -->
 
     <param name="mobile_tracking_stop_flag" value="0" />
+    <param name="aubo_painting_opreating_over" value="0" />
+    <param name="climb_distance_tracking_over" value="0" />
+    <param name="rotation_distance_tracking_over" value="0" />
 
+    <!-- aubo_painting_opreating_over climb_distance_tracking_over -->
     <!-- <param name="climb_max_length" value="0.5" />
     <param name="climb_way_point_length" value="0.2"/>
     <param name="rotation_distance_tracking_over" value="0"/>
     <param name="climb_distance_tracking_over" value="0"/>
     <param name="mobile_tracking_stop_flag" value="0"/>
     <param name="climb_num_way_point" value="2"/>
+
+    aubo_painting_opreating_over
+
     <param name="path_num_planning" value="3"/>
     <param name="mobile_path_way_planning" value="0"/> -->
     <node pkg="painting_robot_demo" type="main_node_os_coverage_planner.py" name="main_node_os_coverage_planner" output="screen" >

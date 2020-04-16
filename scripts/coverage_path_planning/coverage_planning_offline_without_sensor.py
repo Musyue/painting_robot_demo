@@ -13,11 +13,12 @@ from std_msgs.msg import String,Float64,Bool
 from sensor_msgs.msg import JointState
 import json
 class Renovation_BIM_Model_Opreating():
-    def __init__(self,parameterx,parametery,parameterz,interval):
+    def __init__(self,mat_path,parameterx,parametery,parameterz,interval):
         self.parameterx=parameterx#0.430725381079
         self.parametery=parametery#-0.00033063639818
         self.parameterz=parameterz#0.028625
         self.interval=  interval#0.10
+        self.mat_path=mat_path
     def renovationrobot_joints_computation_1(self,manipulatorbase_targetpose_onecell,manipulatorendeffector_targetpose_onecell):
 
         # computation of target joints of mobile platform

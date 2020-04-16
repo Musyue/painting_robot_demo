@@ -25,9 +25,9 @@
     <!-- set /search_port/climb_port_ok_flag -->
     <param name="climb_port_ok_flag" value="0" />
 
-    <node pkg="painting_robot_demo" type="search_usb_port_pub.py" name="search_usb_port_pub" output="screen" >
+    <!-- <node pkg="painting_robot_demo" type="search_usb_port_pub.py" name="search_usb_port_pub" output="screen" >
     
-    </node>
+    </node> -->
     
   </group>
   
