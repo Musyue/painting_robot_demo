@@ -4,44 +4,124 @@ import rospy
 import math
 from std_msgs.msg import String,Float64,Bool
 from aubo_robotcontrol import *
+from sensor_msgs.msg import JointState
+from geometry_msgs.msg import Pose
+from geometry_msgs.msg import TwistStamped
+from aubo_bringup.msg import catersian_vel
 
+import numpy as np
 import time
 import re
 import os
 class AuboRosDriver():
-    def __init__(self,):
+    def __init__(self):
         Auboi5Robot.initialize()
         self.robot = Auboi5Robot()
+        
         self.aubo_joint_movej_sub = rospy.Subscriber('/aubo_ros_script/movej', String, self.aubo_joint_movej, queue_size=1)
-        self.aubo_joint_movej_sub = rospy.Subscriber('/aubo_ros_script/movel', String, self.aubo_joint_movel, queue_size=1)
+        self.aubo_joint_movel_sub = rospy.Subscriber('/aubo_ros_script/movel', String, self.aubo_joint_movel, queue_size=1)
+        self.aubo_joint_movet_sub = rospy.Subscriber('/aubo_ros_script/movet', String, self.aubo_joint_movet, queue_size=1)
+
         self.move_to_point=[]
         self.move_line_points={}
+
+        self.joint_maxacctuple=self.Tuple_string_to_tuple(rospy.get_param('/aubo_startup_ns/joint_maxacc_tuple'))
+        self.joint_maxvelctuple=self.Tuple_string_to_tuple(rospy.get_param('/aubo_startup_ns/joint_maxvelc_tuple'))
+        self.ee_maxacc=rospy.get_param('/aubo_startup_ns/ee_maxacc')    
+        self.ee_maxvelc=rospy.get_param('/aubo_startup_ns/ee_maxvelc')    
+        self.blend_radius=rospy.get_param('/aubo_startup_ns/blend_radius')
+
     def Init_node(self):
-        rospy.init_node("aubo_driver_node")
+        rospy.init_node("aubo_driver_node1")
+
     def aubo_joint_movej(self,msg):
         tuplefloatdata=self.Tuple_string_to_tuple(msg.data)
         if "movej" in msg.data:
+            #set joint max acc
+            self.robot.set_joint_maxacc(self.Tuple_string_to_tuple(rospy.get_param('/aubo_startup_ns/joint_maxacc_tuple')))
+            #set joint max vel
+            self.robot.set_joint_maxvelc(self.Tuple_string_to_tuple(rospy.get_param('/aubo_startup_ns/joint_maxvelc_tuple')))
+            #set ee max acc
+            self.robot.set_end_max_line_acc(rospy.get_param('/aubo_startup_ns/ee_maxacc'))
+            #set ee max vel
+            self.robot.set_end_max_line_velc(rospy.get_param('/aubo_startup_ns/ee_maxvelc'))
+            #add waypoints
             rospy.loginfo("movej start point={0}".format(tuplefloatdata[0:6]))
-            self.Aubo_Move_to_Point(tuplefloatdata[0:6])
             self.move_to_point=tuplefloatdata
+            flag=self.robot.move_joint(tuplefloatdata[0:6])
+            if flag:
+                rospy.loginfo("movej command work successfully")
+            else:
+                rospy.logerr("movej command doesn't work")
         else:
             rospy.logerr("Please send right movej message")
     def aubo_joint_movel(self,msg):
         tuplefloatdata=self.Tuple_string_to_tuple(msg.data)
         if "movel" in msg.data:
+            #set joint max acc
+            self.robot.set_joint_maxacc(self.Tuple_string_to_tuple(rospy.get_param('/aubo_startup_ns/joint_maxacc_tuple')))
+            #set joint max vel
+            self.robot.set_joint_maxvelc(self.Tuple_string_to_tuple(rospy.get_param('/aubo_startup_ns/joint_maxvelc_tuple')))
+            #set ee max acc
+            self.robot.set_end_max_line_acc(rospy.get_param('/aubo_startup_ns/ee_maxacc'))
+            #set ee max vel
+            self.robot.set_end_max_line_velc(rospy.get_param('/aubo_startup_ns/ee_maxvelc'))
+            #add waypoints
             rospy.loginfo("movel start point={0}".format(tuplefloatdata[0:6]))
             rospy.loginfo("movel end point={0}".format(tuplefloatdata[6:]))
-            # self.Aubo_Move_to_Point(tuplefloatdata[0:6])
-            self.Aubo_Line_trajectory(tuplefloatdata[0:6],tuplefloatdata[6:])
             self.move_line_points={"startpoint":tuplefloatdata[0:6],"endpoint":tuplefloatdata[6:]}
+            self.robot.move_joint(tuplefloatdata[0:6])
+            flag=self.robot.move_line(tuplefloatdata[6:])
+            if flag:
+                rospy.loginfo("movel command work successfully")
+            else:
+                rospy.logerr("movel command doesn't work")
         else:
             rospy.logerr("Please send right movel message")
+    def aubo_joint_movet(self,msg):
+        tuplefloatdata=self.Tuple_string_to_tuple(msg.data)
+        if "movet" in msg.data:
+            #set joint max acc
+            self.robot.set_joint_maxacc(self.Tuple_string_to_tuple(rospy.get_param('/aubo_startup_ns/joint_maxacc_tuple')))
+            #set joint max vel
+            self.robot.set_joint_maxvelc(self.Tuple_string_to_tuple(rospy.get_param('/aubo_startup_ns/joint_maxvelc_tuple')))
+            #set ee max acc
+            self.robot.set_end_max_line_acc(rospy.get_param('/aubo_startup_ns/ee_maxacc'))
+            #set ee max vel
+            self.robot.set_end_max_line_velc(rospy.get_param('/aubo_startup_ns/ee_maxvelc'))
+            #set blender radius
+            self.robot.set_blend_radius(blend_radius=rospy.get_param('/aubo_startup_ns/blend_radius'))
+            #add waypoints
+            waypoints_num=len(tuplefloatdata)/6
+            # for i in range(waypoints_num):
+            #     rospy.loginfo("movet waypoints={0}".format(tuplefloatdata[6*i:6*(i+1)]))
+            self.robot.move_joint(tuplefloatdata[0:6])
+            self.robot.remove_all_waypoint()
+            for i in range(waypoints_num):
+                self.robot.add_waypoint(tuplefloatdata[6*i:6*(i+1)])
+            flag=self.robot.move_track(RobotMoveTrackType.CARTESIAN_MOVEP)
+
+            if flag:
+                rospy.loginfo("movet command work successfully")
+            else:
+                rospy.logerr("movet command doesn't work")
+        else:
+            rospy.logerr("Please send right movet message")
+
+    def Tuple_string_to_tuple(self,tuplestring):
+        tupletemp = re.findall(r'\-?\d+\.?\d*', tuplestring)
+        resdata=[]
+        for i in tupletemp:
+            resdata.append(float(i))
+        return tuple(resdata)
+
     def deg_to_rad(self,tuplelist):
         dd = []
         for i in tuplelist:
             dd.append(i * math.pi / 180)
         return tuple(dd)
-    def Init_aubo_driver(self,Aubo_IP,maxacctuple,maxvelctuple):
+
+    def Init_aubo_driver(self,Aubo_IP):
         # 初始化logger
         #logger_init()
         # 启动测试
@@ -98,7 +178,9 @@ class AuboRosDriver():
                 rospy.loginfo(io_config)
                 # 当前机械臂是否运行在联机模式
                 rospy.loginfo("robot online mode is {0}".format(robot.is_online_mode()))
-                self.Aubo_trajectory_init(self.robot,maxacctuple,maxvelctuple)
+                # initial file system
+                self.robot.init_profile()
+                # self.Aubo_trajectory_init(maxacctuple,maxvelctuple,ee_maxacc,ee_maxvelc,blend_radius)
         except RobotError,e:
             rospy.logerr("{0} robot Event:{1}".format(self.robot.get_local_time(), e))
         return robot
@@ -119,81 +201,28 @@ class AuboRosDriver():
         # 释放库资源
         self.robot.uninitialize()
         rospy.loginfo("{0} test completed.".format(self.robot.get_local_time()))
-    def Aubo_trajectory_init(self,maxacctuple,maxvelctuple):
-        joint_status = self.robot.get_joint_status()
-        rospy.loginfo("joint_status={0}".format(joint_status))
-        # initial file system
-        self.robot.init_profile()
-        #set joint max acc
-        self.robot.set_joint_maxacc(maxacctuple)#(2.5, 2.5, 2.5, 2.5, 2.5, 2.5)
-        #set joint max vel
-        self.robot.set_joint_maxvelc(maxvelctuple)#(1.5, 1.5, 1.5, 1.5, 1.5, 1.5)
-        #set ee max acc
-        self.robot.set_end_max_line_acc(0.5)
-        #set ee max vel
-        self.robot.set_end_max_line_velc(0.5)
 
-    def Aubo_Line_trajectory(self,start_point,End_point):
-        """
-        start_point:rad
-        End_point:rad
-        """
-        # joint_radian = self.deg_to_rad(start_point)
-        rospy.loginfo("move joint to {0}".format(start_point))
-        self.robot.move_joint(start_point)
-        # joint_radian = self.deg_to_rad(End_point)
-        rospy.loginfo("move joint to {0}".format(End_point))
-        self.robot.move_line(End_point)
 
-    def Aubo_Move_to_Point(self,jointRad):
-        """
-        JointAngular:rad
-        """
-        # joint_radian = self.deg_to_rad(jointAngular)
-        rospy.loginfo("move joint to {0}".format(jointRad))
-        self.robot.move_joint(jointRad)
-    def Tuple_string_to_tuple(self,tuplestring):
-        tupletemp = re.findall(r'\-?\d+\.?\d*', tuplestring)
-        resdata=[]
-        for i in tupletemp:
-            resdata.append(float(i))
-        return tuple(resdata)
+
 def main():
-    ratet=1
-
+    ratet=30
     Aub=AuboRosDriver()
+
     Aub.Init_node()
     rate = rospy.Rate(ratet)
-    flag_roation=0
-    count=0
-    IPP=rospy.get_param('aubo_ip')
-    StartPoint=Aub.Tuple_string_to_tuple(rospy.get_param('aubo_start_point'))
-    maxacctuple=Aub.Tuple_string_to_tuple(rospy.get_param('ee_maxacc_tuple'))
-    maxvelctuple=Aub.Tuple_string_to_tuple(rospy.get_param('ee_maxvelc_tuple'))
+
+    IPP=rospy.get_param('/aubo_startup_ns/aubo_ip')
 
     try:
-        
-        Robot = Aub.Init_aubo_driver(IPP,maxacctuple, maxvelctuple)
-        # print("StartPoint",StartPoint,type(StartPoint),type(StartPoint[0]))
+        Aub.Init_aubo_driver(IPP)
     except:
         logger.error("Aubo robot disconnect,Please check!")
-    # finally:
-    #     Aub.DisConnect_Aubo(Robot)
     try:
         while not rospy.is_shutdown():
-            print("aubo driver run -----")
+            print("send commands to aubo driver-----")
             rate.sleep()
     except:
         rospy.logerr("ros node down")
-    # finally:
-    #     # 断开服务器链接
-    #     if Aub.robot.connected:
-    #         # 关闭机械臂
-    #         Aub.robot.robot_shutdown()
-    #         # 断开机械臂链接
-    #         robot.disconnect()
-    #     # 释放库资源
-    #     Auboi5Robot.uninitialize()
-    #     logger.info("{0} test completed.".format(Auboi5Robot.get_local_time()))
+        Aub.robot.remove_all_waypoint()
 if __name__ == '__main__':
     main()

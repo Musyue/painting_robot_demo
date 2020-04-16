@@ -322,6 +322,7 @@ class CLMBPKG:
                 pass
             if abs(encodedata_error)<=3:
                 velocity=0
+                os.system('rosparam set /renov_up_level/rotation_distance_tracking_over 1')
             self.Control_3DOF_Robot_Velocity(ser, control_id, velocity)
 
                 
@@ -375,6 +376,7 @@ class CLMBPKG:
             rospy.logerr("-------climb pid control Distance_error-:  %s",str(Distance_error))
             if abs(Distance_error)<=0.05:
                 velocity=0
+                os.system('rosparam set /renov_up_level/climb_distance_tracking_over 1')
             self.Control_3DOF_Robot_Velocity(ser, control_id, velocity)
     def Holding_Robot(self, ser, velocity, outputDistance, control_id=1):  # position control
         """
