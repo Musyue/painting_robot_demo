@@ -92,7 +92,7 @@ def main():
 
             rospy.set_param('mobile_tracking_stop_flag',0)
             os.system('rosparam set /renov_up_level/mobile_tracking_stop_flag 0')
-            rospy.loginfo("homing program over--  go to next mobile way point-------")
+            rospy.logerr("homing program over--  go to next mobile way point-------")
             rospy.set_param('home_climb_flex_bar',0)
             os.system('rosparam set /renov_up_level/home_climb_flex_bar 0')
         rate.sleep()

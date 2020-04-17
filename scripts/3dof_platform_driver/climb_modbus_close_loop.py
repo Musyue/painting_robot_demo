@@ -272,6 +272,7 @@ class CLMBPKG:
                     pass
                 rospy.logerr("hold----velocity---after:  %s",str(velocity))
                 if abs(Distance_error)<=0.005:
+                    os.system('rosparam set /renov_up_level/hold_distance_tracking_over 1')
                     velocity=0
                 rospy.logerr("hold----Distance_error---%s",str(Distance_error))
                 self.Control_3DOF_Robot_Velocity(ser, control_id, velocity)
@@ -440,37 +441,7 @@ class CLMBPKG:
             if stop_open_flag==0:
                 rospy.loginfo(self.Send_message_to_port(ser,self.Get_crc_16_str(self.plccmd.ROTATION_DRIVER_P282_DISENABALE)))#seting pos model      
                         
-    def stand_bar_and_flexiable_part_hold_to_ceil(self,up_distance):
-
-        rospy.loginfo("flex pole up-----")
-        os.system('rosparam set /search_port/enable_control_stand_bar 1')
-        time.sleep(0.05)
-        os.system('rosparam set /search_port/enable_control_stand_bar 1')
-        os.system('rosparam set /search_port/enable_control_stand_bar 0')
-        os.system('rosparam set /search_port/write_flex_pole_motor_up 1')
-        time.sleep(0.05)
-        os.system('rosparam set /search_port/write_flex_pole_motor_up 1')
-    
-        time.sleep(10)
-        rospy.loginfo("waiting for flex pole go to point")
-        os.system('rosparam set /search_port/write_flex_pole_motor_up 0')
-        # rospy.set_param('distance_control_stand_bar',10)#30cm
-        os.system('rosparam set /search_port/distance_control_stand_bar '+str(up_distance))
-        time.sleep(0.05)
-        os.system('rosparam set /search_port/distance_control_stand_bar '+str(up_distance))
-        os.system('rosparam set /search_port/open_hold_flag 1')
-        time.sleep(0.05)
-        os.system('rosparam set /search_port/open_hold_flag 1')
-        time.sleep(10)
-        os.system('rosparam set /search_port/open_hold_flag 0')
-        rospy.loginfo("waiting for stand bar go to point")
-    def caculate_top_to_ceil_distance(self,stand_bar_flex_distance,light_scan_to_top_distance,light_scan_to_ceil_distance):
-        detax=light_scan_to_ceil_distance-light_scan_to_top_distance-stand_bar_flex_distance
-        if detax<-0.0:
-            rospy.logerr("you can not run the system here,the ceil is too low----")
-            return 0
-        else:
-            return detax
+  
 def main():
     clbpkg=CLMBPKG("tridof_pkg_node")
     open_serial_port_again_flag=0
@@ -572,12 +543,7 @@ def main():
         open_hold_to_ceil_flag = rospy.get_param("open_hold_to_ceil_flag")
 
         if clbpkg.Openmodbus_ok_flag!=1 and climb_port_ok_flag==1:
-            if open_hold_to_ceil_flag==1:
-                detax=clbpkg.caculate_top_to_ceil_distance(stand_bar_flex_distance,light_scan_to_top_distance,light_scan_to_ceil_distance)
 
-                clbpkg.stand_bar_and_flexiable_part_hold_to_ceil(detax)
-
-                rospy.set_param('open_hold_to_ceil_flag',0)
             if top_limit_switch_status==1:
                 if enable_second_control_stand_bar==0:
                     try:
@@ -656,6 +622,7 @@ def main():
                     if distance_control_stand_bar>=0 and distance_control_stand_bar<0.18:
                         # rospy.logerr("you can not more than 0.2----")
                         target_hold_distance=read_line_l0_encode_bottom-distance_control_stand_bar#-light_scan_to_top_distance
+                        # rospy.logerr("read_line_encode_bottom-----inclimb modbus%s  target_hold_distance%s",read_line_encode_bottom,target_hold_distance)
                         clbpkg.Hold_Robot_close_loop_control(ser,target_hold_distance, read_line_encode_bottom)
                     else:
                         rospy.logerr("you can not more than 0-0.18----")
@@ -693,6 +660,7 @@ def main():
                     rospy.logerr("something errro with open_rotation_flag----")
                 # rospy.set_param('open_rotation_flag',0)
                 # open_rotation_flag=0       
+
         else:
             try:
                 ser = serial.Serial(port=climb_port, baudrate=climb_port_baudrate, bytesize=serial.EIGHTBITS, parity=serial.PARITY_EVEN, stopbits=1,timeout=0.3, xonxoff=0,rtscts=False,dsrdtr=False)

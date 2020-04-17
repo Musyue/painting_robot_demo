@@ -94,7 +94,7 @@ def main(test_count):
             logger.info("-------go-----to-----start-------step--01")
             # 获取机械臂末端最大线加速度(m/s)
             # robot.set_end_max_line_velc(0.2)
-            robot.set_end_max_line_velc(0.1)                
+            robot.set_end_max_line_velc(0.2)                
             joint_radian=(-0.28525098, -0.53203763,  1.36669062, -1.24286441, -1.85604731, 1.57079633)
             robot.move_joint(joint_radian)
             

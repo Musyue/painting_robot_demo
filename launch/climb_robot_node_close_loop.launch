@@ -32,6 +32,11 @@
     <!--set /climb_pkg_para/close all 3dof driver-->
     <param name="close_all_3dof_climb_driver_flag" value="0"/>
 
+    <param name="aubo_painting_opreating_over" value="0" />
+    <param name="climb_distance_tracking_over" value="0" />
+    <param name="rotation_distance_tracking_over" value="0" />
+    <param name="hold_distance_tracking_over" value="0" />
+
     <!--set /climb_pkg_para/enable_control_stand_bar 1 enable 2 disable-->
     <param name="enable_control_stand_bar" value="0" />
     <!--set /climb_pkg_para/enable_control_rotation 1 enable 2 disable-->
@@ -71,6 +76,10 @@
     </node>
     
   </group>
+  <include file="$(find painting_robot_demo)/launch/stand_flex_bar_hold.launch">
+  </include>
+  <include file="$(find painting_robot_demo)/launch/robot_home_without_mobile.launch">
+  </include>
   
 </launch>
 

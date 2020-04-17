@@ -1,0 +1,14 @@
+<launch>
+
+  <!-- set /global_example parameter -->  
+  <group ns="renov_up_level">
+
+    <param name="open_hold_to_ceil_flag" value="0"/>
+
+    <node pkg="painting_robot_demo" type="climb_flex_bar_hold.py" name="climb_flex_bar_hold" output="screen" >
+    </node>
+    
+  </group>
+  
+</launch>
+

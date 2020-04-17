@@ -30,9 +30,7 @@
     <!--  -->
 
     <param name="mobile_tracking_stop_flag" value="0" />
-    <param name="aubo_painting_opreating_over" value="0" />
-    <param name="climb_distance_tracking_over" value="0" />
-    <param name="rotation_distance_tracking_over" value="0" />
+
 
     <!-- aubo_painting_opreating_over climb_distance_tracking_over -->
     <!-- <param name="climb_max_length" value="0.5" />

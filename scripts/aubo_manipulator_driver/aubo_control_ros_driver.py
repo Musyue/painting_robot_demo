@@ -103,7 +103,8 @@ class AuboRosDriver():
             flag=self.robot.move_track(RobotMoveTrackType.CARTESIAN_MOVEP)
             os.system('rosparam set /search_port/write_electric_switch_painting_open 0')
             os.system('rosparam set /search_port/aubo_painting_opreating_over 1')
-            
+            self.robot.move_joint(tuplefloatdata[0:6])
+            os.system('rosparam set /search_port/aubo_painting_opreating_over 1')
             if flag:
                 rospy.loginfo("movet command work successfully")
             else:

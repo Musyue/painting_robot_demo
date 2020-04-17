@@ -33,6 +33,7 @@ class PaintingOpreat():
         for i in range(len(q_list)):
             resdata+=str(tuple(q_list))
         return resdata
+ 
 def main():
     ratet=1
     Aub=PaintingOpreat()
@@ -98,7 +99,7 @@ def main():
                                 os.system('rosparam set /renov_up_level/open_hold_to_ceil_flag 1')
                                 os.system('rosparam set /renov_up_level/open_hold_to_ceil_flag 0')
                                 open_stand_bar_flag=1
-                            if open_stand_bar_flag==1 and climb_base_count_num<len(planning_source_dict["plane_num_"+str(plane_num_count)]["current_mobile_way_climb_num_"+str(mobile_base_point_count)]):
+                            if top_limit_switch_status==1 and open_stand_bar_flag==1 and climb_base_count_num<len(planning_source_dict["plane_num_"+str(plane_num_count)]["current_mobile_way_climb_num_"+str(mobile_base_point_count)]):
                                 climb_data=planning_source_dict["plane_num_"+str(plane_num_count)]["current_mobile_way_climb_num_"+str(mobile_base_point_count)]["climb_num_"+ str(climb_base_count_num)]
                                 climb_height=climb_data[0]
                                 climb_rotation=climb_data[1]

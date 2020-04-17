@@ -26,7 +26,8 @@
     <param name="read_line_encode_bottom" value="0" />
     <!-- power on first line encode data name:l0 -->
     <param name="read_line_l0_encode" value="0" />
-    <param name="read_line_l0_encode_bottom" value="0" />
+    <param name="read_line_l0_encode_bottom" value="0.22" />
+    
     <!-- stand bar status 1 line encode data name:l1 -->
     <param name="read_line_l1_encode" value="0" />
     <!--set /plc_pkg_para/read_limit_switch_status-->
