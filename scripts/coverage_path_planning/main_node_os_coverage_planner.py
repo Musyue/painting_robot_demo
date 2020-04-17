@@ -45,10 +45,11 @@ def main():
     parametery=rospy.get_param('mat_parametery')#-0.00033063639818
     parameterz=rospy.get_param('mat_parameterz')#0.028625
     interval=rospy.get_param('mat_interval')#0.10
+    StartPoint=rospy.get_param('/aubo_startup_ns/aubo_start_point')#0.10
     rbmo=Renovation_BIM_Model_Opreating(mat_path,parameterx,parametery,parameterz,interval)
     planning_source_dict=rbmo.get_mat_data_json()
     
-    rospy.set_param('mobile_path_way_planning',1)
+    
 
     open_stand_bar_flag=0
     total_plane_num=len(planning_source_dict)
@@ -89,7 +90,7 @@ def main():
                             mobiledata=planning_source_dict["plane_num_"+str(plane_num_count)]["moible_way_num_"+str(plane_num_count)]["mobile_data_num_"+str(mobile_base_point_count)]
                             Aub.pub_posestamped("mobile_base_link",[mobiledata[0],mobiledata[1],0],[0,0,mobiledata[2]])
                             mobile_point_send_flag=1
-
+                            rospy.logerr("in moile base publish-----")
                         if mobile_tracking_stop_flag==1:
 
                             if top_limit_switch_status!=1 and open_stand_bar_flag==0:
@@ -101,7 +102,7 @@ def main():
                                 open_stand_bar_flag=1
                             if top_limit_switch_status==1 and open_stand_bar_flag==1 and climb_base_count_num<len(planning_source_dict["plane_num_"+str(plane_num_count)]["current_mobile_way_climb_num_"+str(mobile_base_point_count)]):
                                 climb_data=planning_source_dict["plane_num_"+str(plane_num_count)]["current_mobile_way_climb_num_"+str(mobile_base_point_count)]["climb_num_"+ str(climb_base_count_num)]
-                                climb_height=climb_data[0]
+                                climb_height=climb_data[0]-0.88
                                 climb_rotation=climb_data[1]
                                 tempstr='rosparam set /renov_up_level/distance_climb_control '+str(climb_height)
                                 os.system(tempstr)
@@ -111,7 +112,7 @@ def main():
                                     if rotation_distance_tracking_over==1:
                                         aubo_q_list=planning_source_dict["plane_num_"+str(plane_num_count)]["current_mobile_way_climb_num_"+str(mobile_base_point_count)]["aubo_planning_voxel_num_"+ str(climb_base_count_num)]
                                         for i in range(len(aubo_q_list)):
-                                            tempstr3=aubo_q_list["aubo_data_num_"+str(i)]
+                                            tempstr3=aubo_q_list["aubo_data_num_"+str(i)]+StartPoint
                                         if aubo_open_onece_flag==0:
                                             Aub.aubo_move_track_pub.publish(tempstr3)
                                             aubo_open_onece_flag=1

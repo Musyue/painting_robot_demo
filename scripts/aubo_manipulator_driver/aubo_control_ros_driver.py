@@ -7,7 +7,7 @@ from aubo_robotcontrol import *
 from sensor_msgs.msg import JointState
 from geometry_msgs.msg import Pose
 from geometry_msgs.msg import TwistStamped
-from aubo_bringup.msg import catersian_vel
+
 
 import numpy as np
 import time
@@ -96,15 +96,15 @@ class AuboRosDriver():
             # for i in range(waypoints_num):
             #     rospy.loginfo("movet waypoints={0}".format(tuplefloatdata[6*i:6*(i+1)]))
             self.robot.move_joint(tuplefloatdata[0:6])
-            os.system('rosparam set /search_port/write_electric_switch_painting_open 1')
+            os.system('rosparam set /renov_up_level/write_electric_switch_painting_open 1')
             self.robot.remove_all_waypoint()
             for i in range(waypoints_num):
                 self.robot.add_waypoint(tuplefloatdata[6*i:6*(i+1)])
             flag=self.robot.move_track(RobotMoveTrackType.CARTESIAN_MOVEP)
-            os.system('rosparam set /search_port/write_electric_switch_painting_open 0')
-            os.system('rosparam set /search_port/aubo_painting_opreating_over 1')
+            os.system('rosparam set /renov_up_level/write_electric_switch_painting_open 0')
+            os.system('rosparam set /renov_up_level/aubo_painting_opreating_over 1')
             self.robot.move_joint(tuplefloatdata[0:6])
-            os.system('rosparam set /search_port/aubo_painting_opreating_over 1')
+            os.system('rosparam set /renov_up_level/aubo_painting_opreating_over 1')
             if flag:
                 rospy.loginfo("movet command work successfully")
             else:

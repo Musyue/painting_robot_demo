@@ -4,11 +4,14 @@
   <group ns="aubo_startup_ns">
 
     <param name="aubo_ip" value='192.168.1.11'/>
-    <param name="aubo_start_point" value='(-3.3364,12.406,-81.09,-91.207,-86.08,0.164)'/> 
-    <param name="ee_maxacc_tuple" value='(2.5, 2.5, 2.5, 2.5, 2.5, 2.5)'/> 
-    <param name="ee_maxvelc_tuple" value='(1.5, 1.5, 1.5, 1.5, 1.5, 1.5)'/> 
+    <param name="aubo_start_point" value='(-0.28765888888888885,0.41081666666666666,0.4193644444444445,-1.4323633333333334,-1.5504622222222222,1.6308287777777777)'/> 
+
+    <param name="joint_maxacc_tuple" value='(2.5, 2.5, 2.5, 2.5, 2.5, 2.5)'/> 
+    <param name="joint_maxvelc_tuple" value='(1.5, 1.5, 1.5, 1.5, 1.5, 1.5)'/> 
     <param name="ee_maxacc" value='0.2'/> 
-    <param name="ee_maxvelc" value='0.2'/> 
+    <param name="ee_maxvelc" value='0.2'/>
+    <param name="blend_radius" value='0.05'/> 
+    
     <!-- '/aubo_startup_ns/ee_maxacc' -->
     <node pkg="painting_robot_demo" type="aubo_control_ros_driver.py" name="aubo_control_ros_driver" output="screen" >
     </node>
