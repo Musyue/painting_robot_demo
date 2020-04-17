@@ -54,16 +54,6 @@
     <param name="open_hold_to_ceil_flag" value="0"/>
 
 
-    <!-- get  climb_line_homing_abs_encode_data-->
-    <param name="climb_line_homing_abs_encode_data" value="0.40"/>
-    <!-- get  rotation_homing_abs_encode_data-->
-    <param name="rotation_homing_abs_encode_data" value="44397"/>
-    <!--set /climb_pkg_para/enable_control_stand_bar-->
-    <param name="velocity_control_stand_bar" value="1000" />
-    <!--set /climb_pkg_para/enable_control_rotation-->
-    <param name="velocity_control_rotation" value="2000"/>
-    <!--set /climb_pkg_para/enable_climb_control-->
-    <param name="velocity_climb_control" value="1000"/>
 
     <!--set /climb_pkg_para/enable_control_stand_bar velocity-0.05/8=0.00625m/s 0.0-0.3-max neg-down pos-up-->
     <param name="distance_control_stand_bar" value="0" />
